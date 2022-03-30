@@ -3,18 +3,18 @@ const validator = require('validator');
 
 module.exports = function ValidateLogin(data){
     let errors ={};
-    data.Email = !isEmpty(data.Email) ? data.Email : "";
-    data.Password = !isEmpty(data.Password) ? data.Password :"";
+    data.email = !isEmpty(data.email) ? data.email : "";
+    data.password = !isEmpty(data.password) ? data.password :"";
 
 
-    if (!validator.isEmail(data.Email)){
-        errors.Email ="The email format is incorrect. Please provide correct one";
+    if (!validator.isEmail(data.email)){
+        errors.email ="The email format is incorrect. Please provide correct one";
     }
-    if (validator.isEmpty(data.Email)){
-        errors.Email ="Please enter the email adress";
+    if (validator.isEmpty(data.email)){
+        errors.email ="Please enter the email adress";
     }
-    if (validator.isEmpty(data.Password)){
-        errors.Password ="Please enter the password";
+    if (validator.isEmpty(data.password)){
+        errors.password ="Please enter the password";
     }
 
 

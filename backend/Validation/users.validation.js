@@ -3,26 +3,30 @@ const validator = require('validator');
 
 module.exports = function ValidateUser(data){
     let errors ={};
-    data.Email = !isEmpty(data.Email) ? data.Email : "";
-    data.Username = !isEmpty(data.Username) ? data.Username : "";
-    data.Password = !isEmpty(data.Password) ? data.Password :"";
-    data.Role = !isEmpty(data.Role) ? data.Role : "";
+    data.email = !isEmpty(data.email) ? data.email : "";
+    data.username = !isEmpty(data.username) ? data.username : "";
+    data.password = !isEmpty(data.password) ? data.password :"";
+    data.occupation = !isEmpty(data.occupation) ? data.occupation : "";
+    data.role = !isEmpty(data.role) ? data.role : "";
 
 
-    if (!validator.isEmail(data.Email)){
-        errors.Email ="The email format is incorrect. Please provide correct one";
+    if (!validator.isEmail(data.email)){
+        errors.email ="The email format is incorrect. Please provide correct one";
     }
-    if (validator.isEmpty(data.Email)){
-        errors.Email ="Please enter the email adress";
+    if (validator.isEmpty(data.email)){
+        errors.email ="Please enter the email adress";
     }
-    if (validator.isEmpty(data.Username)){
-        errors.Username ="Please enter the username";
+    if (validator.isEmpty(data.username)){
+        errors.username ="Please enter the username";
     }
-    if (validator.isEmpty(data.Password)){
-        errors.Password ="Please enter the password";
+    if (validator.isEmpty(data.password)){
+        errors.password ="Please enter the password";
     }
-    if (validator.isEmpty(data.Role)){
-        errors.Role ="Please enter the user role at the company";
+    if (validator.isEmpty(data.occupation)){
+        errors.occupation ="Please enter the user's occupation at the TALAN";
+    }
+    if (validator.isEmpty(data.role)){
+        errors.role ="Please enter the user's role";
     }
 
     return {

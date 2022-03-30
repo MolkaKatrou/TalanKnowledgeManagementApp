@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function RowUsers({Email, Username, Password, Role, Id, OnDelete}) {
+function RowUsers({email, username, password, occupation, Id, OnDelete}) {
   return (
     <tr>
-    <th scope="row">{Email}</th>
-    <td scope="row">{Username}</td>
-    <td scope="row">{Role}</td>
+    <th scope="row">{email}</th>
+    <td scope="row">{username}</td>
+    <td scope="row">{occupation}</td>
     <td className='gap_actions'>
     <span className="badge bg-secondary">
         <Link to={`/updateUser/${Id}`} className="text-white">

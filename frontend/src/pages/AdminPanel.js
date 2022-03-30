@@ -68,33 +68,33 @@ function AdminPanel() {
           
         <form onSubmit={onSubmitHandler} autocomplete="off">
           <AdminInput
-            label="Email"
+            label="email"
             type="text"
-            name="Email"
+            name="email"
             onChangeHandler={onChangeHandler}
-            errors={errors.Email}
+            errors={errors.email}
           />
           <AdminInput
-            label="Username"
+            label="username"
             type="text"
-            name="Username"
+            name="username"
             onChangeHandler={onChangeHandler}
-            errors={errors.Username}
+            errors={errors.username}
           />
           <AdminInput
-            label="Password"
+            label="password"
             type="text"
-            name="Password"
+            name="password"
             onChangeHandler={onChangeHandler}
-            errors={errors.Password}
+            errors={errors.password}
           />
 
           <AdminRoleOption
-            label="Role"
+            label="occupation"
             type="text"
-            name="Role"
+            name="occupation"
             onChangeHandler={onChangeHandler}
-            errors={errors.Role}
+            errors={errors.occupation}
           />
 
           <button className="btn btn-primary" type="submit"> ADD COLLABORATOR </button>     
@@ -108,16 +108,16 @@ function AdminPanel() {
             <tr>
               <th scope="col" className="col">Email</th>
               <th scope="col" className="col">Username</th>
-              <th scope="col" className="col">Role</th>
+              <th scope="col" className="col">Occupation</th>
               <th scope="col" className="col">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map(({ Email, Username, Role, _id }) => (
+            {users.map(({ email, username, occupation, _id }) => (
               <RowUsers
-                Email={Email}
-                Username={Username}
-                Role={Role}
+                email={email}
+                username={username}
+                occupation={occupation}
                 Id={_id}
                 OnDelete={OnDelete}
               />

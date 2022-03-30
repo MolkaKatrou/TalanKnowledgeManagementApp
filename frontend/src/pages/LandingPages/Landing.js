@@ -3,12 +3,14 @@ import { Button } from '../../Components/Button';
 import image1 from '../../images/home1.png';
 import '../../App.css';
 import "../../assets/home.css";
+import Navbar from "../../Common/Navbar";
 
 
 
-
-export default function Home () {
+export default function Landing () {
   return (
+    <>
+    <Navbar/>
     <section class="home-container">
       <div className="home-wrapper">
       <img src={image1}/>
@@ -29,6 +31,7 @@ export default function Home () {
   
        </div>
     </section>
+    </>
   );
 };
 

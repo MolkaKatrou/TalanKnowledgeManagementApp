@@ -3,6 +3,7 @@ import bg from '../../images/login.png';
 import user from '../../images/iconuser.jpg';
 import logo from '../../images/logo2.png'
 import "../../assets/Login.css";
+import Navbar from '../../Common/Navbar';
 
 export default function Login() {
   const [UserDetails, SetUserDetails] = useState({
@@ -21,6 +22,8 @@ export default function Login() {
     e.preventDefault()
   }
   return (
+    <>
+    <Navbar/>
 
     <section class="login-container">
       <div className="login-wrapper">
@@ -72,6 +75,7 @@ export default function Login() {
         </div>
       </div>
     </section>
+    </>
   )
 }
 

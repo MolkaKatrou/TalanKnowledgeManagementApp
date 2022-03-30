@@ -40,39 +40,39 @@ function Details() {
     <div className="container mt-4 col-12 col-lg-4">
         <form onSubmit={onSubmitHandler} autocomplete="off">
           <AdminInput
-            label="Email"
+            label="email"
             type="text"
-            name="Email"
+            name="email"
             onChangeHandler={onChangeHandler}
-            errors={errors.Email}
-            value={form.Email}
+            errors={errors.email}
+            value={form.email}
 
           />
           <AdminInput
-            label="Username"
+            label="username"
             type="text"
-            name="Username"
+            name="username"
             onChangeHandler={onChangeHandler}
-            errors={errors.Username}
-            value={form.Username}
+            errors={errors.username}
+            value={form.username}
 
           />
           <AdminInput
-            label="Password"
+            label="password"
             type="text"
-            name="Password"
+            name="password"
             onChangeHandler={onChangeHandler}
-            errors={errors.Password}
-            value={form.Password}
+            errors={errors.password}
+            value={form.password}
 
           />
           <AdminRoleOption
-            label="Role"
+            label="occupation"
             type="text"
-            name="Role"
+            name="occupation"
             onChangeHandler={onChangeHandler}
-            errors={errors.Role}
-            value={form.Role}
+            errors={errors.occupation}
+            value={form.occupation}
           />
           <button className="btn btn-primary" type="submit">Update Collaborator</button>
         </form>

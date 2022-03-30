@@ -13,7 +13,7 @@ function AdminRoleOption({ name, onChangeHandler, errors, value, label }) {
                 onChange={onChangeHandler}
                 name={name}
             >
-                <option disabled selected>Select A Role</option>
+                <option disabled selected>Select the job</option>
                 <option >Fullstack Developer</option>
                 <option>BI consultant</option>
                 <option >Devops Developer</option>
