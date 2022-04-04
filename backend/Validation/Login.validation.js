@@ -11,7 +11,7 @@ module.exports = function ValidateLogin(data){
         errors.email ="The email format is incorrect. Please provide correct one";
     }
     if (validator.isEmpty(data.email)){
-        errors.email ="Please enter the email adress";
+        errors.email ="Please enter the email address";
     }
     if (validator.isEmpty(data.password)){
         errors.password ="Please enter the password";

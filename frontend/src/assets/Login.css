@@ -81,6 +81,7 @@
 
 input::placeholder{
   color: rgb(56, 50, 50);
+  font-size: 14px;
 }
 
 
@@ -105,6 +106,8 @@ input::placeholder{
 .btn svg {
   margin-right: 8px;
 }
+
+
 
 .btn-reverse {
   background: #fff;

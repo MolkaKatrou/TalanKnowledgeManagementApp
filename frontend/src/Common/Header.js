@@ -1,9 +1,16 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { Logout } from "../Redux/Actions/authActions";
 
-function Header() {
+function Header({user }) {
+  const dispatch = useDispatch()
+  const LogoutHandler =() =>{
+     dispatch(Logout())
+  }
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <>
+    <nav className="navbar navbar-expand-lg navbar-light bg-light  py-0 ">
       <div className="container-fluid">
         <Link className="navbar-brand" to="#">
           Home
@@ -21,27 +28,31 @@ function Header() {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            
+          {user.role === "ADMIN" ? (
               <li className="nav-item">
                 <Link className="nav-link active" aria-current="page" to="/admin">
                   Admin
                 </Link>
               </li>
- 
+            ) : (
+              ""
+            )}
+
           </ul>
           <div className="d-flex">
             <div className="mx-4">
-               
-                <Link className="btn btn-outline-primary"  to="#" >
+
+              <Link className="btn btn-outline-primary" to="#" onClick={LogoutHandler} >
                 Logout
               </Link>
 
-              
+
             </div>
           </div>
         </div>
       </div>
     </nav>
+    </>
   );
 }
 

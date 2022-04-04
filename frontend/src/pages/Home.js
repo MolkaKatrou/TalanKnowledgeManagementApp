@@ -3,7 +3,7 @@ import Header from '../Common/Header'
 
 function Home() {
   return (
-    <Header/>
+    <></>
   )
 }
 

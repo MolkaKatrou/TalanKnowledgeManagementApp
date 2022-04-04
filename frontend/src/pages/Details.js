@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, {useState, useEffect } from 'react'
 import {useNavigate, useParams } from 'react-router-dom';
-import AdminInput from '../Components/AdminInput'
-import AdminRoleOption from '../Components/AdminRoleOption';
+import AdminInput from '../Components/inputs/AdminInput'
+import AdminRoleOption from '../Components/inputs/AdminRoleOption';
 
 function Details() {
   const [form, setForm] = useState({});
@@ -37,10 +37,37 @@ function Details() {
 
  
   return (
-    <div className="container mt-4 col-12 col-lg-4">
-        <form onSubmit={onSubmitHandler} autocomplete="off">
+  
+       <div class="container mt-5">
+        <div class="row">
+          <div class="col-md-6 offset-md-3">
+            <div class="signup-form">
+        <form onSubmit={onSubmitHandler}>
+        <div class="row">
+                  <div class="mb-3 col-md-6">
+                    <AdminInput
+                      label="Last Name"
+                      type="text"
+                      name="lastname"
+                      onChangeHandler={onChangeHandler}
+                      errors={errors.lastname}
+                      value={form.lastname}
+                    />
+                  </div>
+                  <div class="mb-3 col-md-6">
+                    <AdminInput
+                      label="First Name"
+                      type="text"
+                      name="firstname"
+                      onChangeHandler={onChangeHandler}
+                      errors={errors.firstname}
+                      value={form.firstname}
+                    />
+                  </div>
+
+        
           <AdminInput
-            label="email"
+            label="Email"
             type="text"
             name="email"
             onChangeHandler={onChangeHandler}
@@ -49,7 +76,7 @@ function Details() {
 
           />
           <AdminInput
-            label="username"
+            label="Username"
             type="text"
             name="username"
             onChangeHandler={onChangeHandler}
@@ -57,15 +84,28 @@ function Details() {
             value={form.username}
 
           />
-          <AdminInput
-            label="password"
-            type="text"
-            name="password"
-            onChangeHandler={onChangeHandler}
-            errors={errors.password}
-            value={form.password}
 
-          />
+
+                  <div class="mb-3 col-md-6">
+                    <AdminInput
+                      label="Role : ADMIN/USER"
+                      type="text"
+                      name="role"
+                      onChangeHandler={onChangeHandler}
+                      errors={errors.role}
+                      value={form.role}
+                    />
+                  </div>
+                  <div class="mb-3 col-md-6">
+                  <AdminInput
+                      label="Phone Number"
+                      type="text"
+                      name="phone"
+                      onChangeHandler={onChangeHandler}
+                      errors={errors.phone}
+                      value={form.phone}
+                    />
+                </div>
           <AdminRoleOption
             label="occupation"
             type="text"
@@ -74,9 +114,18 @@ function Details() {
             errors={errors.occupation}
             value={form.occupation}
           />
-          <button className="btn btn-primary" type="submit">Update Collaborator</button>
+
+
+
+          <button className="btn btn-primary mt-5" type="submit">Update Collaborator</button>
+       </div>
         </form>
+
       </div>
+      </div>
+      </div>
+      </div>
+      
   )
 }
 
