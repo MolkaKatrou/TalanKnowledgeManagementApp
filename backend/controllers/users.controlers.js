@@ -148,7 +148,7 @@ const Login = async(req, res)=>{
 
 
 
-const Resetpassword = async (req, res) => {
+const Resetpassword = (req, res) => {
   crypto.randomBytes(32, (err, buffer)=>{
     if (err){
       console.log(err)
@@ -180,17 +180,17 @@ const Resetpassword = async (req, res) => {
 )
 
 }
-const Newpassword = (req, res) => {
+const Newpassword = async (req, res) => {
   const newPassword = req.body.password
   const sentToken = req.body.token
-  const { errors, isValid } = ValidateReset(req.body);
+
   UserModel.findOne({resetToken:sentToken})
   .then(user=>{
       if(!user){
           return res.status(422).json({error:"Try again session expired"})
       }
-      bcrypt.hash(req.body.password,12).then(hashedpassword=>{
-         req.body.password = hashedpassword
+      bcrypt.hash(newPassword,12).then(hashedpassword=>{
+         user.password = hashedpassword
          user.resetToken = undefined
          user.expireToken = undefined
          user.save().then((saveduser)=>{
