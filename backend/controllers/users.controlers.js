@@ -1,8 +1,5 @@
 const UserModel = require("../models/users.model");
-const ValidateUser = require("../Validation/users.validation");
-const ValidateLogin = require("../Validation/Login.validation");
-const ValidateReset = require("../Validation/reset.validation");
-
+const {ValidateUser, ValidateLogin, ValidatePassword, ValidateEmail} = require('../Validation/users.validation')
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto')
@@ -13,7 +10,7 @@ const usersModel = require("../models/users.model");
 
 const transporter = nodemailer.createTransport(sendgridTransport({
   auth:{
-    api_key: "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"
+    api_key: ""
   }
   }))
 
@@ -32,6 +29,7 @@ const transporter = nodemailer.createTransport(sendgridTransport({
           const hash = bcrypt.hashSync(req.body.password, 10); //hashed password
           password = req.body.password
           req.body.password = hash;
+          req.body.role="USER"
           await UserModel.create(req.body);
           transporter.sendMail({
             to: req.body.email,
@@ -110,7 +108,7 @@ const Login = async(req, res)=>{
       UserModel.findOne({email: req.body.email})
     .then(user=>{
       if(!user){
-        errors.email = "The user does not not exist!"
+        errors.email = "The user does not exist!"
         res.status(404).json(errors)
       }else{
         bcrypt.compare(req.body.password, user.password)
@@ -148,7 +146,12 @@ const Login = async(req, res)=>{
 
 
 
-const Resetpassword = (req, res) => {
+const Resetpassword = async (req, res) => {
+  const {errors, isValid, success} = ValidateEmail(req.body)
+  try {
+    if(!isValid){
+     res.status(404).json(errors)
+    }else{
   crypto.randomBytes(32, (err, buffer)=>{
     if (err){
       console.log(err)
@@ -157,9 +160,11 @@ const Resetpassword = (req, res) => {
     usersModel.findOne({email:req.body.email})
     .then(user =>{
       if(!user){
-        return res.status(422).json({error: "user don't exist "})
-      }
-
+        errors.email = "The user does not exist!"
+        res.status(404).json(errors)
+      }else{
+      success.email = "ok"
+      res.status(201).json(success)
       user.resetToken = token
       user.expireToken = Date.now() + 36000
       user.save().then((result) => {
@@ -168,18 +173,18 @@ const Resetpassword = (req, res) => {
           from :"molka.katrou@ensi-uma.tn",
           subject: "Password Reset",
           html: `<p>Your requested for password reset</p>
-          <h5>Click in this link <a href="http://localhost:3000/resetpassword/${token}">Link<a/>to reset your password</h5>
+          <h5>Click in this link \n<a href="http://localhost:3000/resetpassword/${token}">\n Reset_Password \n<a/>to reset your password</h5>
           ` 
 
-        })
-        res.json({message:"check your email"})
+        })     
       })
-
-    })
+    }})
   }
-)
-
+)}}catch (error) {
+  res.status(404).json(error.message);
+ }
 }
+
 const Newpassword = async (req, res) => {
   const newPassword = req.body.password
   const sentToken = req.body.token
@@ -201,6 +206,7 @@ const Newpassword = async (req, res) => {
       console.log(err)
   })
 }
+
 
 const Test = (req, res) => {
   res.send("user")
