@@ -8,6 +8,7 @@ require('dotenv').config();
 
 const RouterUsers = require('./Routes/users.route.js');
 const RouterCategories = require('./Routes/categories.route.js');
+const RouterNotes = require('./Routes/notes.route.js');
 
 const app = express();
 
@@ -15,6 +16,9 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
+
+
 
 /*passport*/
 app.use(passport.initialize());
@@ -35,6 +39,7 @@ connection.once('open', () => {
 
 app.use('/Api', RouterUsers);
 app.use('/Api', RouterCategories);
+app.use('/Api', RouterNotes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

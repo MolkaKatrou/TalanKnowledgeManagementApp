@@ -28,6 +28,7 @@ export default function AddNote() {
     const classes = Styles();
     const [open, setOpen] = useState(false);
     const [content, setContent] = useState("")
+    const [title, setTitle]=useState("")
     const [category, setCategory] = useState("")
     const [files, setFiles] = useState([])
     const categoriesList = useSelector(state => state.categories)
@@ -42,18 +43,6 @@ export default function AddNote() {
     }
 
 
-    const onSubmit = (e) => {
-        e.preventDefault()
-        setContent("")
-        const variables = {
-            content: content,
-            userID: auth.user._id
-        }
-
-        axios.post('/notes', variables)
-            .then()
-
-    }
 
     const createCategoryList = (categories, options = []) => {
         for (let category of categories) {
@@ -69,6 +58,26 @@ export default function AddNote() {
         }
 
         return options;
+    }
+
+    const onSubmit = (e) => {
+        e.preventDefault()
+        setContent("")
+        const variables = {
+            createdby: auth.user.id,
+            category:category,
+            title: title,
+            content: content,            
+        }
+        
+      console.log(variables)
+      axios.post('/Api/notes', variables)
+      .then(res => {
+          console.log(res)
+      }
+
+      )
+
     }
 
     return (
@@ -103,7 +112,10 @@ export default function AddNote() {
                     </div>
                     <div className="form-group col-md-12 mt-3">
                         <label className="font-weight-bold"> Title <span className="required"> <span class="text-danger">*</span> </span> </label>
-                        <input type="text" name="title" className="form-control" placeholder="Title" style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }} required />
+                        <input type="text" name="title" className="form-control" placeholder="Title" style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }} required
+                              onChange={(e)=>{setTitle(e.target.value)}}
+                
+                                 />
                     </div>
                     <div className="form-group col-md-12 editor mt-3">
                         <label className="font-weight-bold"> Note <span className="required"> <span class="text-danger">*</span> </span> </label>

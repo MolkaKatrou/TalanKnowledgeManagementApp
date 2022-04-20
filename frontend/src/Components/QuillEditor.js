@@ -245,17 +245,112 @@ class QuillEditor extends React.Component {
     insertImage = (e) => {
         e.stopPropagation();
         e.preventDefault();
+        if (e.currentTarget && e.currentTarget.files && e.currentTarget.files.length > 0) {
+            const file = e.currentTarget.files[0];
+            console.log(file);
+
+            let formData = new FormData();
+            const config = {
+                header: { 'content-type': 'multipart/form-data' }
+            }
+            formData.append("file", file);
+
+            axios.post('/Api/notes/uploadfiles', formData, config)
+                .then(response => {
+                    if (response.data.success) {
+
+                        const quill = this.reactQuillRef.getEditor();
+                        quill.focus();
+
+                        let range = quill.getSelection();
+                        let position = range ? range.index : 0;
+
+                        quill.insertEmbed(position, "image", { src: "http://localhost:4000/" + response.data.url, alt: response.data.fileName });
+                        quill.setSelection(position + 1);
+
+                        if (this._isMounted) {
+                            this.setState({
+                                files: [...this.state.files, file]
+                            }, () => { this.props.onFilesChange(this.state.files) });
+                        }
+                    } else {
+                        return alert('failed to upload file')
+                    }
+                })
+        }
     };
 
     insertVideo = (e) => {
         e.stopPropagation();
         e.preventDefault();
+        if (e.currentTarget && e.currentTarget.files && e.currentTarget.files.length > 0) {
+            const file = e.currentTarget.files[0];
+
+            let formData = new FormData();
+            const config = {
+                header: { 'content-type': 'multipart/form-data' }
+            }
+            formData.append("file", file);
+
+            axios.post('/Api/notes/uploadfiles', formData, config)
+                .then(response => {
+                    if (response.data.success) {
+
+                        const quill = this.reactQuillRef.getEditor();
+                        quill.focus();
+
+                        let range = quill.getSelection();
+                        let position = range ? range.index : 0;
+                        quill.insertEmbed(position, "video", { src: "http://localhost:4000/" + response.data.url, title: response.data.fileName });
+                        quill.setSelection(position + 1);
+
+                        if (this._isMounted) {
+                            this.setState({
+                                files: [...this.state.files, file]
+                            }, () => { this.props.onFilesChange(this.state.files) });
+                        }
+                    } else {
+                        return alert('failed to upload file')
+                    }
+                })
+        }
                
     }
 
     insertFile = (e) => {
         e.stopPropagation();
         e.preventDefault();
+        
+        if (e.currentTarget && e.currentTarget.files && e.currentTarget.files.length > 0) {
+            const file = e.currentTarget.files[0];
+            console.log(file);
+
+            let formData = new FormData();
+            const config = {
+                header: { 'content-type': 'multipart/form-data' }
+            }
+            formData.append("file", file);
+
+            axios.post('/Api/notes/uploadfiles', formData, config)
+                .then(response => {
+                    if (response.data.success) {
+
+                        const quill = this.reactQuillRef.getEditor();
+                        quill.focus();
+
+                        let range = quill.getSelection();
+                        let position = range ? range.index : 0;
+                        quill.insertEmbed(position, "file", response.data.fileName);
+                        quill.setSelection(position + 1);
+
+                        if (this._isMounted) {
+                            this.setState({
+                                files: [...this.state.files, file]
+                            }, () => { this.props.onFilesChange(this.state.files) });
+                        }
+                    };
+                })
+        }
     };
 
     render() {

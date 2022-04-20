@@ -2,19 +2,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema; 
 
 const noteModel = new Schema ({
-    
-    category:{
-        type: mongoose.Schema.Types.ObjectId, ref: 'category'
-    },
 
     createdby:{
-        type: mongoose.Schema.Types.ObjectId, ref: 'users'
+        type: Schema.Types.ObjectId,
+        ref: 'users'
     },
     
-    Title: {
+    category:{
+        type: Schema.Types.ObjectId, 
+        ref: 'category'
+    },
+    
+    title: {
         type: String, 
         required: true},
-    Content: {
+    content: {
         type: String, 
         required: true
     },
