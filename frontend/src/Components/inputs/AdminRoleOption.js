@@ -1,4 +1,5 @@
 import React from 'react'
+import classnames from 'classnames'
 
 function AdminRoleOption({ name, onChangeHandler, errors, value, label }) {
     return (
@@ -13,6 +14,7 @@ function AdminRoleOption({ name, onChangeHandler, errors, value, label }) {
                 value={value}
                 onChange={onChangeHandler}
                 name={name}
+                className={(classnames("form-control", { "is-invalid": errors }))}
             >
                 <option disabled selected>Select the job</option>
                 <option >Fullstack Developer</option>
@@ -21,12 +23,13 @@ function AdminRoleOption({ name, onChangeHandler, errors, value, label }) {
                 <option >IT Business Analyst </option>
                 <option >Production support engineer</option>
                 <option >Java Software Engineer</option>
-                {
+
+            </select>
+            {
                     errors && (<div id="validationServer03Feedback" class="invalid-feedback">
                         {errors}
                     </div>)
                 }
-            </select>
         </div>
     )
 }

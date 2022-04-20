@@ -31,7 +31,7 @@ function Navbar() {
             to='/'
             className='navbar-logo'
             onClick={handleClick}>
-            <img style={{ marginRight: '200px', width: "98px" }} src={logo} alt='logo' />
+            <img className='mb-3' style={{marginRight: '200px', width: "98px" }} src={logo} alt='logo' />
           </NavLink>
           <div className='menu-icon' onClick={handleClick}>
             <i className={click ? 'fas fa-times' : 'fas fa-bars'} />

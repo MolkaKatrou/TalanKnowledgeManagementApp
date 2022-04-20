@@ -1,3 +1,4 @@
+import { style } from "@mui/system";
 import classnames from "classnames";
 import { useState } from "react";
 
@@ -19,6 +20,7 @@ function Passwordinput({ onChangeHandler, value, name, placeholder, icon, errors
             <i className={icon}></i>
           </span>
                     <input
+                        style={{fontFamily:'sans-serif'}}
                         type={type}
                         onChange={onChangeHandler}
                         value={value}

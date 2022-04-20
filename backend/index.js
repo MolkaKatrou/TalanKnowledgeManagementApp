@@ -7,6 +7,8 @@ const passport=require('passport');
 require('dotenv').config();
 
 const RouterUsers = require('./Routes/users.route.js');
+const RouterCategories = require('./Routes/categories.route.js');
+
 const app = express();
 
 app.use(cors());
@@ -32,6 +34,7 @@ connection.once('open', () => {
 
 
 app.use('/Api', RouterUsers);
+app.use('/Api', RouterCategories);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

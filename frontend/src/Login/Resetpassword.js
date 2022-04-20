@@ -1,33 +1,35 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../Common/Navbar'
 import Passwordinput from '../Components/inputs/Password'
-import axios from 'axios'
 
 function Resetpassword() {
-    const [password, setPassword] = useState({})
+    const [password, setPassword] = useState("")
     const [errors, setErrors] = useState({});
     const {token}=useParams()
+    const Navigate = useNavigate()
     const [message, setMessage] = useState("");
     const [show, setShow] = useState(false);
 
-
-    function onChangeHandler(e) {
-        setPassword({
-            ...password,
-            [e.target.name]: e.target.value,
-          });
-        };
     
-    const changePassword = ()=>{
-        axios.post('/Api/resetpassword', password, token)
-        .then(res=>{
-          setMessage(res.data.message)
-          setShow(true)
-        })
-        .catch(err=>setErrors(err.response.data))
-    }
-  
+        const changePassword = (e)=>{
+            e.preventDefault();
+            fetch("/Api/resetpassword",{
+                method:"post",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    password,
+                    token
+                })
+            }).then(res=>res.json())
+            .then(data=>{Navigate('/login')
+               
+            }).catch(err=>{
+                console.log(err)
+            })
+        }
     return (
         <>
           <Navbar />
@@ -40,7 +42,7 @@ function Resetpassword() {
                                     <h1 className='h2' style={{ color: 'rgb(8, 8, 126)' }}>Reset password</h1>
                                 </div>
 
-                                <div className='card mt-5'>
+                                <div className='card mt-4'>
                                     <div className='card-body'>
                                         <div className='m-sm-4'>
                                             <form className='p-5' onSubmit={changePassword}>
@@ -49,7 +51,7 @@ function Resetpassword() {
                                                     name="password"
                                                     placeholder="Enter your new password"
                                                     icon="fa fa-key"
-                                                    onChangeHandler={onChangeHandler}
+                                                    onChangeHandler={(e)=>setPassword(e.target.value)}
                                                     errors={errors.password}
                                                 />
                                                 <div className='mt-5'>
@@ -57,7 +59,7 @@ function Resetpassword() {
                                                         name="confirm"
                                                         placeholder="Confirm your password"
                                                         icon="fa fa-key"
-                                                        onChangeHandler={onChangeHandler}
+                                                        onChangeHandler={(e)=>setPassword(e.target.value)}
                                                         errors={errors.confirm}
                                                     />
                                                 </div>

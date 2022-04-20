@@ -17,6 +17,7 @@ export const AddProfile = (form, setShow, setMessage, e)=>dispatch=>{
         setTimeout(() => {
             setShow(false)
         }, 4000);
+        
       })
       .catch(err => {
           dispatch({
@@ -26,7 +27,7 @@ export const AddProfile = (form, setShow, setMessage, e)=>dispatch=>{
       });
 }
 
-export const LoginAction = (form, navigate)=>dispatch=>{
+export const LoginAction = (form, setLoading)=>dispatch=>{
     axios.post('/api/login', form) 
     .then(res=>{
       const {token} = res.data
@@ -38,7 +39,9 @@ export const LoginAction = (form, navigate)=>dispatch=>{
         type: ERRORS,
         payload: {}
     })
+    setLoading(true)
     })
+    
     .catch(err=>{
         dispatch({
             type: ERRORS,

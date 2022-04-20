@@ -1,5 +1,5 @@
 .navbar {
-  background-color: #1D1666;
+  background-color: rgb(44, 34, 92);
   border-bottom: 0.5px ;
   height: 80px;
   display: flex;
@@ -162,7 +162,7 @@
   }
 
   .nav-menu.active {
-    background: #1D1666;
+    background: rgb(44, 34, 92);
     left: 0;
     opacity: 1;
     transition: all 0.5s ease;
@@ -186,7 +186,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    transform: translate(25%, 50%);
+    transform: translate(5%, 50%);
   }
 
   .menu-icon {

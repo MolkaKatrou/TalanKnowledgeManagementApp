@@ -9,22 +9,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { LoginAction } from '../../Redux/Actions/authActions';
 import Passwordinput from '../../Components/inputs/Password';
+import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
+
 
 export default function Login() {
   const [form, setForm] = useState({});
   const dispatch = useDispatch()
   const errors = useSelector(state=>state.errors)
-  const navigate = useNavigate()
-
   const [type, setType] = useState("password");
-  const togglePassword = () => {
-      if (type === "password") {
-          setType("text")
-          return;
-      }
-      setType("password")
-  }
-
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false);
+  
+  const handleClose = () => {
+    setOpen(!open);
+  };
 
   const onChange = (e) => {
     setForm({
@@ -35,13 +34,17 @@ export default function Login() {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    dispatch(LoginAction(form))
+    dispatch(LoginAction(form, setLoading))
+   
+    
   }
 
   return (
     <>
       <Navbar />
-
+      <Backdrop open={open}>
+        {loading ? <CircularProgress/> : ""}
+      </Backdrop>
       <section class="login-container">
         <div className="login-wrapper">
           <div className='left-login'>
@@ -49,7 +52,6 @@ export default function Login() {
             <h2>Welcome To Our Knowledge Management Platform  </h2>
             <h3> Increase productivity, social interaction, and trust among the team</h3>
           </div>
-
           <div className='form-login'>
             <form onSubmit={onSubmit} >
               <div className='heading1'>
@@ -57,6 +59,8 @@ export default function Login() {
               </div>
               <div className='heading2'>
                 <img style={{ width: "131px" }} src={user} alt='login' />
+                
+
               </div>
               <Logininput
                 type="text"

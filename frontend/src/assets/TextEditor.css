@@ -1,0 +1,19 @@
+.ql-editor {
+  min-height: 37vh; 
+  font-size: 17px;
+  font-family: 'Segoe UI'
+ }
+
+
+.slidingpane{
+    background-color:rgb(233, 233, 227)
+}
+
+  .ql-picker.ql-header .ql-picker-label[data-value=""]::before, 
+  .ql-picker.ql-header .ql-picker-item[data-value=""]::before
+  {
+      font-family: 'Segoe UI'
+  }
+  
+ 
+  

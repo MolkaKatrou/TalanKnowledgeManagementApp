@@ -6,36 +6,39 @@ const { ROLES, inRole } = require('../security/Rolemidlleware');
 
 /* Add user */
 router.post('/users',
+passport.authenticate('jwt', { session: false }), 
 AddUser);
 
 /* Find all users */
 router.get('/users', 
+passport.authenticate('jwt', { session: false }), 
 FindAllUsers
 );
 
 /* Find single user */
 router.get('/users/:id', 
-
+passport.authenticate('jwt', { session: false }), 
 FindSingleUser);
 
 /* Update user  */
 router.put('/users/:id', 
-
+passport.authenticate('jwt', { session: false }), 
 UpdateUser)
 
 /* Delete user */
 router.delete('/users/:id', 
-
+passport.authenticate('jwt', { session: false }), 
 DeleteUser)
 
 /* users Login */
 router.post('/login', Login);
 
-router.post('/forgotpassword', Resetpassword);
+router.post('/forgotpassword',Resetpassword);
 
 router.post('/resetpassword', Newpassword)
 
 
+//Testing
 
 router.get(
         '/test',
@@ -44,14 +47,11 @@ router.get(
          Test
         );
 
-router.get(
-        
+router.get(    
          '/admin' ,
         Admin);
 
 
-router.post('/profile' , 
-Admin);
 
 
 module.exports = router;

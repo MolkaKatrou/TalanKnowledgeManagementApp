@@ -1,61 +1,40 @@
 import React from 'react';
 import '../../assets/About.css';
 import CardItem from './CardItem';
-import cloud from '../../images/cloud.png';
-import blockchain from '../../images/blockchain.png';
-import rpa from '../../images/rpaa.png';
-import webphone from '../../images/webweb.png';
-import ai from '../../images/ai.png';
-import BI from '../../images/rpa.png';
+import msg from '../../images/msg.png';
+import post from '../../images/post.jpg';
+import qanda from '../../images/qanda.jpg';
+
 
 
 
 function Cards() {
   return (
     <div className='cards'>
-      <h1 className='h1'>Innovative Technologies</h1>
+      <h1 className='h1'>What do we offer?</h1>
       <div className='cards__container'>
         <div className='cards__wrapper'>
           <ul className='cards__items'>
             <CardItem
-              src={cloud}
-              text='A vast network of remote servers around the globe hooked together and meant to operate as a single ecosystem'
-              label='Cloud Computing'
+              src={msg}
+              text='An online Chat and social interaction to give employees a faster and more convenient way to get in touch with each team and boost agent productivity, help you get to know the team better and share ideas and feedback'
+              
 
             />
             <CardItem
-              src={rpa}
-              text='Build, deploy, and manage software robots that emulate humans actions interacting with digital systems and software'
-              label='RPA & Smart Automation'
+              src={post}
+              text='Build categorized knowledge among the company to apply each other best practices and reduce loss of knwoledge and know how of each department to assure that knowledges are easily found'
+             
 
             />
             <CardItem
-              src={BI}
-              text='Analyzing data and delivering actionable information that helps making informed business decisions'
-              label='Business Intelligence'
+              src={qanda}
+              text='Help developers find answers on a wide range of programming topics and get feedback from other collaborators at Talan by building out categorized questions that contain all the information that someone would need to get up-to-speed'
+           
 
             />
           </ul>
-          <ul className='cards__items'>
-            <CardItem
-              src={blockchain}
-              text='A digital ledger of transactions duplicated and distributed across the entire network of computer systems on the blockchain'
-              label='Blockchain Technologies'
 
-            />
-            <CardItem
-              src={webphone}
-              text='A set of software products and technologies used to accomplish a particular platform for applications'
-              label='Web and mobile development'
-
-            />
-            <CardItem
-              src={ai}
-              text='Machine learning, Deep learning, Reinforcement learning and Computer vision'
-              label='Artificial Intelligence'
-
-            />
-          </ul>
         </div>
       </div>
     </div>

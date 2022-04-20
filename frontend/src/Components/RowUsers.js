@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function RowUsers({ email, username, role, fullname, phone, occupation, Id, OnDelete }) {
+function RowUsers({ index, email, username, role, fullname, phone, occupation, Id, OnDelete }) {
 
   return (
     <tr style={{color:'#5F5B5A'}}>
-      <th scope="row">{role}</th>
+      <td scope="row">{index}</td>
       <td scope="row">{fullname}</td>
       <th scope="row">{email}</th>
       <td scope="row">{username}</td>

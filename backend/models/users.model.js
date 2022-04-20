@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema; 
 
 const UserModel = new Schema ({
-
-    user : {
-        type: Schema.Types.ObjectId
-    },
     lastname: {type: String, required: true},
     firstname: {type: String, required: true},
     email: {type: String, required: true},
@@ -13,7 +9,7 @@ const UserModel = new Schema ({
     password : {type: String, required: true},
     occupation: {type: String, required: true},
     phone: {type: String, required: true},
-    role: {type: String, required: true},
+    role: {type: String},
     resetToken : String,
     expireToken: Date
 }, {timestamps: true})

@@ -4,18 +4,17 @@ import './App.css';
 import Landing from './pages/Landing/Landing';
 import About from "./pages/Landing/About";
 import Login from './pages//Landing/Login';
-import AdminPanel from './pages/AdminPanel';
-import Details from './pages/Details';
-import Home from './pages/Home';
+import AdminPanel from './pages/admin/AdminPanel';
+import Details from './pages/admin/Details';
+import Home from './pages/home/Home';
 import NotFound from './pages/Error/NotFound';
 import NoAccess from './pages/Error/NoAccess';
 import Privaterouter from './Login/Privaterouter';
 import Adminrouter from './Login/Adminrouter';
 import Redirect from './Login/redirect';
 import Forgotpassword from './Login/Forgotpassword';
-import Header from './Common/Header';
 import AdminHeader from './Common/AdminHeader';
-import Add from './pages/Add';
+import Add from './pages/admin/Add';
 import jwt_decode from 'jwt-decode';
 import store from './Redux/store'
 import { Logout, setUser } from './Redux/Actions/authActions';
@@ -47,8 +46,18 @@ const user = {
     <>
       <Router>
         <Routes>
-          <Route path="/"      element={<Landing/>} />
-          <Route path="/about" element={<About/>} />
+          <Route path="/"      element={
+          <Redirect user={user}>
+          <Landing/>
+          </Redirect>}
+         />
+          
+          <Route path="/about" element={
+             <Redirect user={user}>
+             <About/>
+             </Redirect>}
+           />
+          
           <Route path="/login" element={
               <Redirect user={user}>
               <Login/>
@@ -61,8 +70,7 @@ const user = {
             </Adminrouter>} />
           <Route path='/updateUser/:id' element={<Details/>} />
           <Route path='/Home' element={
-            <Privaterouter user ={user}>
-            <Header user={user}/>
+            <Privaterouter user ={user}>          
             <Home/>
             </Privaterouter>} />
             <Route path='/Add' element={ 
