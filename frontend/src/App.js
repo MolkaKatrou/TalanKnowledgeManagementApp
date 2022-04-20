@@ -21,6 +21,7 @@ import { Logout, setUser } from './Redux/Actions/authActions';
 import { useSelector } from 'react-redux';
 import { setAuth } from './utils/setAuth';
 import Resetpassword from './Login/Resetpassword';
+import Post from './pages/home/Post';
 
 if(window.localStorage.jwt){
   const decode =jwt_decode(window.localStorage.jwt)
@@ -83,7 +84,11 @@ const user = {
           <Route path='/noaccess' element={<NoAccess/>}/>
           <Route path='/forgotpassword' element={<Forgotpassword/>}/>
           <Route path='/resetpassword/:token' element={<Resetpassword/>}/>
-        
+          <Route path='/post/:id' element={ 
+                          <Adminrouter user ={user}> 
+                          <AdminHeader/>
+                          <Post/>
+                          </Adminrouter>}/>
 
         </Routes>
       </Router>
