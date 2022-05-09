@@ -8,15 +8,72 @@ body {
 .alert-success{
   margin-top: 25px;
 }
-.name{
-    text-transform:capitalize;
-}
 
 .form-control:focus {
   border-color: #247883;
   box-shadow: 0 0 5px rgb(206, 212, 212) !important;
 }
+.textarea:focus {
+  border-color: #247883;
+  box-shadow: 0 0 5px rgb(206, 212, 212) !important;
+}
+
+
+.checkbox{
+  opacity:0;
+}
+.checkbox:hover{ 
+  display: block;
+  opacity:3 
+}
+.textarea {
+  font-family: inherit;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  resize: none;
+  border-radius: 2px;
+  background: #bdc2c7;
+  padding: 12px;
+  color: #302929;
+  border: none;
+  max-width: 100%;
+  min-width: 100%;
+}
 
 
 
-.hideMe .checkbox-item { display: none; }
+
+.panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #63707a;
+  border-radius: 2px;
+  padding: 2px;
+}
+.box {
+  background: #3d4953;
+  border-radius: 5px;
+  padding: 2px;
+}
+
+  .comment_as {
+    font-size: 14px;
+    color: #cccccc;
+    margin-left: 10px;
+  }
+    .username {
+      display: inline-block;
+      color: #4f9eed;
+    }
+
+    .comments,
+  .comments_count {
+    font-weight: 400;
+    font-size: 17px;
+    display: inline-block;
+    margin-right: 4px;
+    margin-bottom: 8px;
+    color: #53626f;
+  }

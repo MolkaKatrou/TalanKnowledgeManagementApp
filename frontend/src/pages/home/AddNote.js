@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Fab, Tooltip } from '@material-ui/core'
 import { Add } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core'
 import SlidingPane from "react-sliding-pane";
-import axios from 'axios';
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import QuillEditor from '../../Components/QuillEditor';
 import '../../assets/TextEditor.css';
+import { createPost, updatePost } from '../../Redux/Actions/postsActions';
+import { useContext } from 'react';
+import { HomeContext } from '../../Context/HomeContext';
 
 const Styles = makeStyles((theme) => ({
     fab: {
@@ -24,25 +26,35 @@ const Styles = makeStyles((theme) => ({
 }));
 
 export default function AddNote() {
+    const dispatch = useDispatch()
     const auth = useSelector(state => state.auth)
     const classes = Styles();
-    const [open, setOpen] = useState(false);
-    const [content, setContent] = useState("")
     const [title, setTitle]=useState("")
     const [category, setCategory] = useState("")
     const [files, setFiles] = useState([])
     const categoriesList = useSelector(state => state.categories)
+    const {openNote, setOpenNote, currentId, setCurrentId, content, setContent} = useContext(HomeContext)
+
+    const { posts, loading } = useSelector((state) => state.posts);
+
+    const post = useSelector((state) => (currentId ? posts.find((p) => p._id === currentId) : null));
+    //console.log(post)
 
     const onEditorChange = (value) => {
         setContent(value)
-        console.log(content)
     }
 
     const onFilesChange = (files) => {
         setFiles(files)
     }
 
-
+    useEffect(() => {
+        if (post) {
+            setContent(post.content);
+            setTitle(post.title);
+            setCategory(post.category.name);    
+        }     
+      },[currentId]);
 
     const createCategoryList = (categories, options = []) => {
         for (let category of categories) {
@@ -60,9 +72,16 @@ export default function AddNote() {
         return options;
     }
 
+    const Clear = () => { 
+        setOpenNote(false); 
+        setContent("")
+        setTitle("")
+        setCategory("")
+        setCurrentId(0)
+    }
+
     const onSubmit = (e) => {
         e.preventDefault()
-        setContent("")
         const variables = {
             createdby: auth.user.id,
             category:category,
@@ -70,19 +89,20 @@ export default function AddNote() {
             content: content,            
         }
         
-      console.log(variables)
-      axios.post('/Api/notes', variables)
-      .then(res => {
-          console.log(res)
+      if (currentId === 0) {
+        dispatch(createPost(variables));
+        Clear()
       }
-
-      )
-
+      else{
+          dispatch(updatePost(currentId, variables))
+          Clear()
+      }
     }
 
     return (
         <>
-            <Tooltip title='Add' onClick={() => setOpen(true)}>
+        
+            <Tooltip title='Add' onClick={() => setOpenNote(true)}>
                 <Fab color='primary' className={classes.fab}>
                     <Add></Add>
                 </Fab>
@@ -90,9 +110,9 @@ export default function AddNote() {
 
             <SlidingPane
                 className="slidingpane"
-                isOpen={open}
+                isOpen={openNote}
                 width={window.innerWidth < 600 ? "100%" : "42%"}
-                onRequestClose={() => { setOpen(false); }}
+                onRequestClose={() => { setOpenNote(false); }}
             >
 
                 <form>
@@ -101,7 +121,7 @@ export default function AddNote() {
                         <select
                             className="form-control" placeholder="Title" style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }}
                             value={category}
-                            onChange={(e) => setCategory(e.target.value)}>
+                            onChange={(e) => setCategory({...category, category: e.target.value})}>
                                 <option disabled value="">Select a category</option>
                             {
                                 createCategoryList(categoriesList.categories).map(option =>
@@ -113,7 +133,7 @@ export default function AddNote() {
                     <div className="form-group col-md-12 mt-3">
                         <label className="font-weight-bold"> Title <span className="required"> <span class="text-danger">*</span> </span> </label>
                         <input type="text" name="title" className="form-control" placeholder="Title" style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }} required
-                              onChange={(e)=>{setTitle(e.target.value)}}
+                              onChange={(e)=>{setTitle(e.target.value)}} value={title}
                 
                                  />
                     </div>
@@ -124,14 +144,15 @@ export default function AddNote() {
                             placeholder={"Add knowledge"}
                             onEditorChange={onEditorChange}
                             onFilesChange={onFilesChange}
+                                                
                         />
 
                         <div className="d-flex mt-4"  >
-                            <Button variant='outlined' style={{ fontFamily: 'PT Sans' }} color="secondary" className='me-5' onClick={() => { setOpen(false) }}  >
+                            <Button variant='outlined' style={{ fontFamily: 'PT Sans' }} color="secondary" className='me-5' onClick={Clear}  >
                                 Cancel
                             </Button>
                             <Button variant='outlined' style={{ fontFamily: 'PT Sans' }} color="primary" type='submit' onClick={onSubmit}>
-                                Create
+                            {currentId ? 'Edit' : 'Create'}
                             </Button>
                         </div>
                     </div>

@@ -7,7 +7,6 @@ import { getAllPosts } from '../../Redux/Actions/postsActions';
 import { useDispatch, useSelector } from 'react-redux';
 import Home from './Home';
 import { Grid } from '@mui/material';
-import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
 import { HomeContext } from '../../Context/HomeContext';
 
 

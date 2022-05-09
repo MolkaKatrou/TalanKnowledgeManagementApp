@@ -15,7 +15,9 @@ function createCategories(categories, parentId = null){
             _id:cat._id,
             name:cat.name,
             slug: cat.slug,
+            color:cat.color,
             parentId: cat.parentId,
+            followers:cat.followers,
             children:createCategories(categories, cat._id)
         })
 
@@ -26,7 +28,8 @@ function createCategories(categories, parentId = null){
 const Addcategory = async (req, res) => {
     const categoryObj = {
         name: req.body.name,
-        slug: slugify(req.body.name)
+        slug: slugify(req.body.name),
+        color: req.body.color
     }
 
     if (req.body.parentId){
@@ -72,6 +75,29 @@ const Deletecategory = async (req, res) => {
   }
 };
 
+const Delete = async (req, res) => {
+  try {
+    await categoryModel.findOneAndDelete({ _id: req.params.id });
+    res.status(201).json({ message: "User deleted with success!" });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const Update = async (req, res) => {
+  try {
+    
+      const data = await categoryModel.findOneAndUpdate(
+        { _id: req.params.id },
+        req.body,
+        { new: true }
+      );
+      res.status(201).json(data);
+  
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 const Updatecategory = async (req, res) => {
     const { _id, name, parentId } = req.body;
@@ -87,7 +113,7 @@ const Updatecategory = async (req, res) => {
   
         const updatedCategory = await categoryModel.findOneAndUpdate(
           { _id: _id[i] },
-          category,
+          category, 
           { new: true }
         );
         updatedCategories.push(updatedCategory);
@@ -106,15 +132,33 @@ const Updatecategory = async (req, res) => {
       
       return res.status(201).json({ updatedCategory });
     }
-
-
 }
 
+const FollowCategory = async (req, res) => {
+    const { id } = req.params;
+    if (!req.userId) {
+        return res.json({ message: "Unauthenticated" });
+      }
+    const category = await categoryModel.findById(id);
+    const index = category.followers.findIndex((id) => id ===String(req.userId));
+
+    if (index === -1) {
+      category.followers.push(req.userId);
+    } else {
+      category.followers = category.followers.filter((id) => id !== String(req.userId));
+    }
+    const updatedCategory = await categoryModel.findByIdAndUpdate(id, category, { new: true });
+
+    res.status(200).json(updatedCategory);
+}
 
 module.exports = {
     Getcategories,
     Deletecategory,
     Addcategory,
-    Updatecategory
+    Updatecategory, 
+    Delete,
+    Update,
+    FollowCategory
   };
   

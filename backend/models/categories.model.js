@@ -12,8 +12,16 @@ const categoryModel = new Schema ({
         unique:true
     },
     parentId: {
-        type: String, 
-        
+        type: String,      
+    },
+
+    color:{
+        type:String,
+    },
+
+    followers: { 
+        type: [String], 
+        default: [] 
     },
  
 }, {timestamps: true})

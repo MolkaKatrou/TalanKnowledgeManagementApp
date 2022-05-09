@@ -21,6 +21,25 @@ const noteModel = new Schema ({
         required: true
     },
 
+    date:{
+        type: Date,
+        default: new Date(),
+    },
+
+    comments: [{ 
+        type: Schema.Types.ObjectId, 
+        ref:'comments'  
+    }],
+
+    likes: { 
+        type: [String], 
+        default: [] 
+    }, 
+
+    bookmarks: { 
+        type: [String], 
+        default: [] 
+    },
 
 
  }, {timestamps: true})

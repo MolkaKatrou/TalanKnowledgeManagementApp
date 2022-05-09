@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import logo from '../images/logo.png'
-import { alpha, AppBar, Avatar, Badge, Box, InputBase, makeStyles, Menu, MenuItem, Tooltip, Typography } from "@material-ui/core"
+import { alpha, AppBar, Avatar,Button, Badge, Box, InputBase, makeStyles, Menu, MenuItem, Tooltip, Typography } from "@material-ui/core"
 import { Divider, Toolbar } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import Mail from '@mui/icons-material/Mail';
 import Notifications from '@mui/icons-material/Notifications';
-import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LockOpen from '@mui/icons-material/LockOpen';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -13,6 +12,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { useDispatch } from 'react-redux';
 import { Logout } from "../Redux/Actions/authActions";
 import { useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getPostsBySearch } from '../Redux/Actions/postsActions';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,16 +34,21 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function HomeNavbar() {
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+
+export default function HomeNavbar({searchPost, handleKeyPress, search, setSearch}) {
   const [userMenu, setUserMenu] = useState(null);
   const dispatch = useDispatch()
+  const navigate=useNavigate()
  
   function stringAvatar(name) {
     return {
       children: `${name.split(' ')[0][0].toUpperCase()}${name.split(' ')[1][0].toUpperCase()}`,
     };
   }
-  
   
   const LogoutHandler =() =>{
      dispatch(Logout())
@@ -55,16 +62,32 @@ export default function HomeNavbar() {
   };
   const classes = useStyles()
   const auth = useSelector(state => state.auth)
+  
 
   return (
-    <AppBar position='fixed'>
+    <AppBar position='fixed' >
       <Toolbar className="d-flex justify-content-between" style={{ backgroundColor: '#8084ac' }}>
-        <Typography variant="h6">
-          <img style={{ marginRight: '200px', width: "90px" }} src={logo} alt='logo' />
+        <Typography variant="h6" onClick={()=>{navigate('/Home')}}>
+          <img style={{cursor: 'pointer', marginRight: '200px', width: "90px" }} src={logo} alt='logo' />
         </Typography>
         <div className={classes.search}>
           <Search className='mx-3' />
-          <InputBase placeholder='Search' className='me-2' />
+          <InputBase 
+            onKeyDown={handleKeyPress}
+            placeholder='Search' 
+            className='me-2' 
+            name="search" 
+            variant="outlined" 
+            fullWidth 
+            value={search} 
+            onChange={setSearch}          
+          />
+          <Button 
+            className='justify-content-end' 
+            color='primary'
+            onClick={searchPost} 
+            variant="contained"         
+          >search</Button>
         </div>
         <div className="d-flex align-items-center">
 

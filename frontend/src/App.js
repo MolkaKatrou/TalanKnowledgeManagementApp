@@ -21,74 +21,88 @@ import { Logout, setUser } from './Redux/Actions/authActions';
 import { useSelector } from 'react-redux';
 import { setAuth } from './utils/setAuth';
 import Resetpassword from './Login/Resetpassword';
-import Post from './pages/home/Post';
+import Category from './pages/home/Category';
+import Feed from './pages/home/Feed';
+import Bookmark from './pages/home/Bookmark';
+import PostDetails from './Components/posts/PostDetails';
 
-if(window.localStorage.jwt){
-  const decode =jwt_decode(window.localStorage.jwt)
+if (window.localStorage.jwt) {
+  const decode = jwt_decode(window.localStorage.jwt)
   store.dispatch(setUser(decode))
   setAuth(window.localStorage.jwt)
-  const currentDate = Date.now/1000
-  if(decode.exp > currentDate){
+  const currentDate = Date.now / 1000
+  if (decode.exp > currentDate) {
     store.dispatch(Logout())
-
   }
 }
 
+
 function App() {
-const auth = useSelector(state =>state.auth)
-const user = {
-  isConnected:auth.isConnected,
-  role: auth.user.role
-  
-} 
+  const auth = useSelector(state => state.auth)
+  const user = {
+    isConnected: auth.isConnected,
+    role: auth.user.role
+
+  }
 
 
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/"      element={
-          <Redirect user={user}>
-          <Landing/>
-          </Redirect>}
-         />
-          
+          <Route path="/" element={
+            <Redirect user={user}>
+              <Landing />
+            </Redirect>}
+          />
+
           <Route path="/about" element={
-             <Redirect user={user}>
-             <About/>
-             </Redirect>}
-           />
-          
+            <Redirect user={user}>
+              <About />
+            </Redirect>}
+          />
+
           <Route path="/login" element={
-              <Redirect user={user}>
-              <Login/>
-              </Redirect>} />
-             
+            <Redirect user={user}>
+              <Login />
+            </Redirect>} />
+
           <Route path="/admin" element={
-            <Adminrouter user ={user}> 
-            <AdminHeader/>
-            <AdminPanel/>
+            <Adminrouter user={user}>
+              <AdminHeader />
+              <AdminPanel />
             </Adminrouter>} />
-          <Route path='/updateUser/:id' element={<Details/>} />
+          <Route path='/updateUser/:id' element={<Details />} />
           <Route path='/Home' element={
-            <Privaterouter user ={user}>          
-            <Home/>
+            <Privaterouter user={user}>
+              <Feed />
             </Privaterouter>} />
-            <Route path='/Add' element={ 
-                          <Adminrouter user ={user}> 
-                          <AdminHeader/>
-                          <Add/>
-                          </Adminrouter>} />
-            
-          <Route path='/notfound' element={<NotFound/>}/>
-          <Route path='/noaccess' element={<NoAccess/>}/>
-          <Route path='/forgotpassword' element={<Forgotpassword/>}/>
-          <Route path='/resetpassword/:token' element={<Resetpassword/>}/>
-          <Route path='/post/:id' element={ 
-                          <Adminrouter user ={user}> 
-                          <AdminHeader/>
-                          <Post/>
-                          </Adminrouter>}/>
+            <Route path='/Home/search' element={
+            <Privaterouter user={user}>
+              <Feed />
+            </Privaterouter>} />
+            <Route path='/Bookmarks' element={
+            <Privaterouter user={user}>
+              <Bookmark/>
+            </Privaterouter>} />
+          <Route path='/Add' element={
+            <Adminrouter user={user}>
+              <AdminHeader />
+              <Add />
+            </Adminrouter>} />
+
+          <Route path='/notfound' element={<NotFound />} />
+          <Route path='/noaccess' element={<NoAccess />} />
+          <Route path='/forgotpassword' element={<Forgotpassword />} />
+          <Route path='/resetpassword/:token' element={<Resetpassword />} />
+          <Route path='/category/:id' element={
+            <Privaterouter user={user}>
+              <Category />
+            </Privaterouter>} />
+          <Route path='/post/:id' element={
+            <Privaterouter user={user}>
+              <PostDetails />
+            </Privaterouter>} />
 
         </Routes>
       </Router>

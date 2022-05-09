@@ -3,6 +3,7 @@ import ReactQuill, { Quill } from 'react-quill';
 import "react-quill/dist/quill.snow.css";
 import axios from 'axios';
 import '../assets/TextEditor.css';
+import { HomeContext } from '../Context/HomeContext';
 
 const __ISMSIE__ = navigator.userAgent.match(/Trident/i) ? true : false;
 
@@ -27,7 +28,6 @@ class Clipboard extends QuillClipboard {
             urlMatches.forEach(link => {
                 axios.get(link)
                     .then(payload => {
-                        // let title, image, url, description;
                         let title, image, url;
                         for (let node of this.getMetaTagElements(payload)) {
                             if (node.getAttribute("property") === "og:title") {
@@ -39,9 +39,7 @@ class Clipboard extends QuillClipboard {
                             if (node.getAttribute("property") === "og:url") {
                                 url = node.getAttribute("content");
                             }
-                            // if (node.getAttribute("property") === "og:description") {
-                            //     description = node.getAttribute("content");
-                            // }
+                          
                         }
 
                         const rendered = `<a href=${url} target="_blank"><div><img src=${image} alt=${title} width="20%"/><span>${title}</span></div></a>`;
@@ -55,7 +53,7 @@ class Clipboard extends QuillClipboard {
             });
 
         } else {
-            //console.log('when to use this') 보통 다른 곳에서  paste 한다음에  copy하면 이쪽 걸로 한다. 
+           
             super.onPaste(e);
         }
     }
@@ -128,7 +126,6 @@ class FileBlot extends BlockEmbed {
         prefixTag.innerText = "첨부파일 - ";
 
         const bTag = document.createElement('b');
-        //위에 첨부파일 글자 옆에  파일 이름이 b 태그를 사용해서 나온다.
         bTag.innerText = value;
 
         const linkTag = document.createElement('a');
@@ -196,16 +193,16 @@ class QuillEditor extends React.Component {
     onPollsChange;
     _isMounted;
 
+    static contextType = HomeContext
+
     constructor(props) {
         super(props);
-
         this.state = {
             editorHtml: __ISMSIE__ ? "<p>&nbsp;</p>" : "",
             files: [],
         };
 
         this.reactQuillRef = null;
-
         this.inputOpenImageRef = React.createRef();
         this.inputOpenVideoRef = React.createRef();
         this.inputOpenFileRef = React.createRef();
@@ -220,8 +217,7 @@ class QuillEditor extends React.Component {
     }
 
     handleChange = (html) => {
-        console.log('html', html)
-
+        console.log('content', html)     
         this.setState({
             editorHtml: html
         }, () => {
@@ -354,6 +350,8 @@ class QuillEditor extends React.Component {
     };
 
     render() {
+        const {currentId, content} =this.context;
+        console.log(currentId, content)
         return (
             <div>
                 <div id="toolbar">
@@ -397,7 +395,7 @@ class QuillEditor extends React.Component {
                     onChange={this.handleChange}
                     modules={this.modules}
                     formats={this.formats}
-                    value={this.state.editorHtml}
+                    value={ currentId ?  content : this.state.editorHtml}
                     placeholder={this.props.placeholder}
                 />
                 
@@ -432,3 +430,6 @@ class QuillEditor extends React.Component {
 }
 
 export default QuillEditor;
+
+
+

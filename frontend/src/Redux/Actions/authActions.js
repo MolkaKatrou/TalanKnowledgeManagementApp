@@ -31,7 +31,7 @@ export const LoginAction = (form, setLoading)=>dispatch=>{
     axios.post('/api/login', form) 
     .then(res=>{
       const {token} = res.data
-      localStorage.setItem('jwt', token)
+      localStorage.setItem('jwt', JSON.stringify(token))
       const decode = jwt_decode(token)
       dispatch(setUser(decode))
       setAuth(token)

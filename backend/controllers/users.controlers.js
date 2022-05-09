@@ -125,7 +125,7 @@ const Login = async(req, res)=>{
               occupation: user.occupation,
               lastname: user.lastname,
               firstname: user.firstname,
-              phone: user.phone
+              phone: user.phone 
              }, 
                process.env.PRIVATE_KEY,  { expiresIn: '10d' });
                const {_id,username,email,role,occupation,lastname,firstname,phone} = user

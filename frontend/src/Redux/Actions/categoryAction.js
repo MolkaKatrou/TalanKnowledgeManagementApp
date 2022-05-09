@@ -1,4 +1,4 @@
-import {GET_CATEGORIES, ERRORS, SET_CATEGORIES, categoryConstansts} from '../types'
+import {GET_CATEGORIES,FOLLOW, ERRORS} from '../types'
 
 import axios from 'axios'
 
@@ -33,10 +33,18 @@ export const deleteCategories = (ids) => {
             payload: {
                 ids
             }
-        });
-      
-        
+        });          
     }
 }
+
+export const FollowCategory = (id) => async dispatch => {
+    try {
+      const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
+      const { data } = await axios.patch(`/Api/categories/${id}/follow`, token)
+      dispatch({ type: FOLLOW, payload: data });
+    } catch (error) {
+      console.log(error.message);
+    }
+};
 
 
