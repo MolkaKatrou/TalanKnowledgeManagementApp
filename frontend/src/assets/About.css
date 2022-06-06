@@ -11,12 +11,14 @@
     align-items: center;
     box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.2);
     object-fit: contain;
+    margin-bottom: 25px;
   }
   
   .hero-container > h1 {
     color: #fff;
     font-size: 60px;
     margin-top: -230px;
+    font-family: 'PT Sans', sans-serif;
   }
   
 
@@ -84,9 +86,9 @@
   .h1 {
     text-align: center;
     font-size: 40px;
-    margin-top: 20px;
+    margin-top: 30px;
     color:rgb(115, 115, 134);
-    ;
+    font-family: 'PT Sans', sans-serif;
   }
   
   .cards__container {
@@ -112,6 +114,7 @@
     flex: 1;
     margin: 0 1rem;
     border-radius: 10px;
+    font-family: 'PT Sans', sans-serif;
   }
   
   .cards__item__link {
@@ -167,6 +170,7 @@
     font-size: 18px;
     line-height: 24px;
     text-align: center;
+    font-family: 'PT Sans', sans-serif;
   }
   
   @media only screen and (min-width: 1200px) {

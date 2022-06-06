@@ -16,7 +16,7 @@ function Passwordinput({ onChangeHandler, value, name, placeholder, icon, errors
   return (
         <div className="mb-3">
         <div className="input-group">
-          <span className="input-group-text" >
+          <span style={{ backgroundColor: 'transparent'}}  className="input-group-text" >
             <i className={icon}></i>
           </span>
                     <input
@@ -28,12 +28,12 @@ function Passwordinput({ onChangeHandler, value, name, placeholder, icon, errors
                         className={(classnames("form-control", {"is-invalid" : errors}))}                        
                         placeholder={placeholder} />
                     
-                        <span className="input-group-text" onClick={togglePassword}>
-                            {type === "password" ? <i class="fa fa-eye-slash" aria-hidden="true"></i> : <i className="fa fa-eye"></i>}
+                        <span style={{ backgroundColor: 'transparent'}} className="input-group-text" onClick={togglePassword}>
+                            {type === "password" ? <i className="fa fa-eye-slash" aria-hidden="true"></i> : <i className="fa fa-eye"></i>}
                         </span>
                    
                     {
-        errors && (<div id="validationServer03Feedback" class="invalid-feedback">
+        errors && (<div id="validationServer03Feedback" className="invalid-feedback">
         {errors}
       </div> )
     }

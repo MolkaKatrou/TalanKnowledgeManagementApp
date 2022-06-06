@@ -4,8 +4,8 @@ import '../../App.css'
 
 function AdminInput({ label, type,success, labelclass, name, icon, onChangeHandler, errors, value, placeholder }) {
   return (
-    <div class="mb-3 col-md-19">
-      <label className={labelclass}>{label}<span class="text-danger">*</span></label>
+    <div className="mb-3 col-md-19">
+      <label className={labelclass} style={{fontWeight:'bold'}}>{label}<span className="text-danger">*</span></label>
       <div className="input-group">
         <span className="input-group-text" >
           <i className={icon}></i>
@@ -20,7 +20,7 @@ function AdminInput({ label, type,success, labelclass, name, icon, onChangeHandl
           onChange={onChangeHandler}
           autocapitalize="words" />
         {
-          errors && (<div id="validationServer03Feedback" class="invalid-feedback">
+          errors && (<div id="validationServer03Feedback" className="invalid-feedback">
             {errors}
           </div>)
 

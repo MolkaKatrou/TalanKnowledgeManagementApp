@@ -38,13 +38,13 @@ function Details() {
  
   return (
   
-       <div class="container mt-5">
-        <div class="row">
-          <div class="col-md-6 offset-md-3">
-            <div class="signup-form">
+       <div className="container mt-5">
+        <div className="row">
+          <div className="col-md-6 offset-md-3">
+            <div className="signup-form">
         <form onSubmit={onSubmitHandler}>
-        <div class="row">
-                  <div class="mb-3 col-md-6">
+        <div className="row">
+                  <div className="mb-3 col-md-6">
                     <AdminInput
                       label="Last Name"
                       type="text"
@@ -54,7 +54,7 @@ function Details() {
                       value={form.lastname}
                     />
                   </div>
-                  <div class="mb-3 col-md-6">
+                  <div className="mb-3 col-md-6">
                     <AdminInput
                       label="First Name"
                       type="text"
@@ -86,7 +86,7 @@ function Details() {
           />
 
 
-                  <div class="mb-3 col-md-6">
+                  <div className="mb-3 col-md-6">
                     <AdminInput
                       label="Role : ADMIN/USER"
                       type="text"
@@ -96,7 +96,7 @@ function Details() {
                       value={form.role}
                     />
                   </div>
-                  <div class="mb-3 col-md-6">
+                  <div className="mb-3 col-md-6">
                   <AdminInput
                       label="Phone Number"
                       type="text"

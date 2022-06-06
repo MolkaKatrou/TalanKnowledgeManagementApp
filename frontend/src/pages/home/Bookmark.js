@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Container, makeStyles,CircularProgress } from "@material-ui/core"
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -38,29 +38,18 @@ const useStyles = makeStyles((theme) => ({
 function Bookmark() {
     const show=true
     const classes = useStyles()
-    const dispatch = useDispatch()
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
-    const { post, posts, loading } = useSelector((state) => state.posts);
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const menu = Boolean(anchorEl);
-    const [openNote, setOpenNote] = useState(false);
-    const bookmarkedPosts = posts.filter(post => post.bookmarks == userId)
-    console.log(bookmarkedPosts)
-    const ClickMenu = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-    const CloseMenu = () => {
-      setAnchorEl(null);
-    };
+    const {posts, loading } = useSelector((state) => state.posts);
+    const bookmarkedPosts = posts.filter(post => post.bookmarks.includes(userId))
+    const {showAlert, openNote, setOpenNote, dispatch, liked} = useContext(HomeContext)
 
     useEffect(() => {
         dispatch(getAllPosts())
-      })
+      },[dispatch, openNote, liked])
    
 
-
-    const renderPosts = bookmarkedPosts.map((post, index) => (
+    const renderPosts = bookmarkedPosts.reverse().map((post, index) => (
       <div >
         <Post
             post ={post}      
@@ -72,7 +61,6 @@ function Bookmark() {
     ))
 
     return (
-      <HomeContext.Provider value={{openNote, setOpenNote}}>
         <Home>      
         <Container className={classes.container}>
         {loading ? 
@@ -92,7 +80,6 @@ function Bookmark() {
    
          </Container>
         </Home>
-        </HomeContext.Provider>
     )
 }
 

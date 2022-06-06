@@ -38,7 +38,7 @@
 .nav-menu {
   display: grid;
   grid-template-columns: repeat(4, auto);
-  grid-gap: 10px;
+  grid-gap: 1px;
   list-style: none;
   text-align: center;
   width: 60vw;
@@ -57,6 +57,8 @@
   margin-right: 1rem;
   margin: 15px;
   font-size: large;
+  font-family: 'PT Sans', sans-serif;
+
 
 }
 
@@ -117,6 +119,8 @@
   padding: 0.5rem 1rem;
   height: 100%;
   border-bottom: 3px solid transparent;
+  font-family: 'PT Sans', sans-serif;
+
 }
 
 .nav-links:hover {
@@ -130,6 +134,7 @@
 
 .nav-links-mobile {
   display: none;
+  
 }
 
 .menu-icon {
@@ -157,9 +162,9 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 55vh;
+    height: 55vh; 
     position: absolute;
-    top: 80px;
+    top: 60px;
     left: -100%;
     opacity: 1;
     transition: all 0.5s ease;
@@ -167,7 +172,7 @@
 
   .nav-menu.active {
     background: rgb(44, 34, 92);
-    left: 0;
+    left:0;
     opacity: 1;
     transition: all 0.5s ease;
     z-index: 1;
@@ -221,6 +226,7 @@
     padding: 18px 50px;
     border: 1px solid #fff;
     transition: all 0.3s ease-out;
+    font-family: 'PT Sans', sans-serif;
   }
 
   .nav-links-mobile:hover {

@@ -33,8 +33,8 @@ function Resetpassword() {
     return (
         <>
           <Navbar />
-            <div className='main h-100 w-100'>
-                <div className='container h-100'>
+            <div className='main h-100 w-100' >
+                <div className='container h-100' >
                     <div className='row h-100'>
                         <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100'>
                             <div className='d-table-cell align-middle'>

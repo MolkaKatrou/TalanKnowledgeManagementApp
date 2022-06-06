@@ -8,6 +8,7 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import { alpha, Container, makeStyles } from "@material-ui/core"
+import { useSelector } from "react-redux";
 
 
 function AdminPanel() {
@@ -23,6 +24,7 @@ function AdminPanel() {
       },     
     },
 }));
+const auth = useSelector(state => state.auth)
   const classes = useStyles()
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
@@ -72,9 +74,9 @@ function AdminPanel() {
   }, [show]);
 
   return (
-    <div class="container-lg p-5 mt-3">
+    <div className="container-lg p-5 mt-3">
       <Alert message={message} show={show} />
-      <div class="d-flex justify-content-between">
+      <div className="d-flex justify-content-between">
         <div>
           <button type="button"  className={classes.button} onClick={() => navigate('/add')}>
             Add Collaborator
@@ -96,10 +98,10 @@ function AdminPanel() {
 
         </Paper>
       </div>
-      <div class="row justify-content-evenly ">
-        <div class="col-lg-12 col-md-12 mt-4">
-          <div class="shadow-lg p-0 mb-5 " style={{ backgroundColor: 'white' }}>
-            <table class="table table-hover">
+      <div className="row justify-content-evenly ">
+        <div className="col-lg-12 col-md-12 mt-4">
+          <div className="shadow-lg p-0 mb-5 " style={{ backgroundColor: 'white' }}>
+            <table className="table table-hover">
 
               <thead className="thead" style={{ backgroundColor: "#221f3b" }}>
                 <tr style={{ color: "#f2f2f3", fontFamily: "sans-serif" }}>
@@ -114,10 +116,10 @@ function AdminPanel() {
               </thead>
               <tbody>
 
-                {users.map(({ lastname, firstname, email, username, occupation, phone, _id }, id) => (
+                {users.filter(user => user._id !== auth.user.id).map(({ lastname, firstname, email, username, occupation, phone, _id }, id) => (
                   <RowUsers
                     index={id + 1}
-                    fullname={firstname + ' ' + lastname.toUpperCase()}
+                    fullname={firstname + ' ' + lastname}
                     email={email}
                     username={username}
                     occupation={occupation}

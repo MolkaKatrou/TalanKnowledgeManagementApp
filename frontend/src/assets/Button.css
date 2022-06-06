@@ -9,6 +9,8 @@
   outline: none;
   border: none;
   cursor: pointer;
+  font-family: 'PT Sans', sans-serif;
+
 }
 
 .btn--primary {
@@ -29,11 +31,15 @@
 .btn--medium {
   padding: 8px 20px;
   font-size: 18px;
+  font-family: 'PT Sans', sans-serif;
+
 }
 
 .btn--large {
   padding: 12px 80px;
   font-size: 20px;
+  font-family: 'PT Sans', sans-serif;
+
 }
 
 .btn--large:hover {

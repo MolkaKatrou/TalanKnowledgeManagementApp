@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { makeStyles, Box, Card, CardHeader, Avatar, CardContent, CardActions, Typography, IconButton } from "@material-ui/core"
+import React, { useEffect, useContext } from 'react';
+import { makeStyles, Box, Card, CardHeader, CardContent, CardActions, Typography, IconButton } from "@material-ui/core"
 import { red } from '@mui/material/colors';
 import CommentIcon from '@mui/icons-material/ModeCommentOutlined';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -8,18 +8,17 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { likePost, BookmarkPost, deletePost } from '../../Redux/Actions/postsActions';
+import { likePost, BookmarkPost, deletePost, getAllPosts } from '../../Redux/Actions/postsActions';
 import { useState } from 'react';
 import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import moment from 'moment';
-import { useContext } from 'react';
 import { HomeContext } from '../../Context/HomeContext';
-import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Avatar } from "@chakra-ui/react";
 import { ChakraProvider } from '@chakra-ui/react'
 import { Confirm } from 'semantic-ui-react'
-
+import ReactHtmlParser from "react-html-parser";
 
 const ITEM_HEIGHT = 48;
 
@@ -35,23 +34,22 @@ const useStyles = makeStyles((theme) => ({
     width: 'auto',
   },
 
+
   card: {
-    maxWidth: 550,
+    maxWidth: 570,
     display: 'block',
     marginLeft: 'auto',
     marginRight: 'auto',
     cursor: 'pointer',
-    marginBottom: '60px',
+    marginBottom: '40px',
     background: 'rgb(234, 233, 240)'
   }
 
 }));
 export default function Post({ post, show }) {
-  const { setOpenNote, setShowAlert, currentId, setCurrentId } = useContext(HomeContext)
+  const { setOpenNote, setShowAlert, showAlert, currentId, setCurrentId, dispatch, liked, setLiked } = useContext(HomeContext)
   const [open, setOpen] = useState(false)
-
   const navigate = useNavigate()
-  const dispatch = useDispatch()
   const classes = useStyles()
   const [likes, setLikes] = useState(post.likes);
   const [bookmarks, setBookmarks] = useState(post.bookmarks);
@@ -60,29 +58,32 @@ export default function Post({ post, show }) {
   const hasLikedPost = post.likes.find((like) => like === userId);
   const hasBookmarkedPost = post.bookmarks.find((bookmark) => bookmark === userId);
 
+
+  useEffect(() => {
+    setLikes(post.likes)
+    setBookmarks(post.bookmarks)
+  }, [post._id])
+
   const UpdatePost = (e) => {
     e.stopPropagation();
     setCurrentId(post._id);
-    console.log(currentId)
     setOpenNote(true)
   }
 
   const DeletePost = () => {
     dispatch(deletePost(post._id))
     setOpen(false)
-    setTimeout(() => {
-      setShowAlert(true)
-  }, 1000);
+    setShowAlert(true)
     setTimeout(() => {
       setShowAlert(false)
-  }, 4000);
+    }, 4000);
   }
 
   const Bookmarks = () => {
     if (bookmarks.length > 0) {
       return bookmarks.find((bookmark) => bookmark === userId)
         ? (
-          <BookmarkIcon />
+          <BookmarkIcon style={{ color: '#937474' }} />
         ) : (
           <BookmarkOutlinedIcon />
         );
@@ -95,7 +96,7 @@ export default function Post({ post, show }) {
     if (likes.length > 0) {
       return likes.find((like) => like === userId)
         ? (
-          <><FavoriteIcon />&nbsp;<span style={{ fontSize: '16px' }}>{likes.length > 2 ? `You and ${likes.length - 1} others` : `${likes.length} like${likes.length > 1 ? 's' : ''}`}</span></>
+          <><FavoriteIcon style={{ color: '#DA3131' }} />&nbsp;<span style={{ fontSize: '16px' }}>{likes.length > 2 ? `You and ${likes.length - 1} others` : `${likes.length} Like${likes.length > 1 ? 's' : ''}`}</span></>
         ) : (
           <><FavoriteOutlinedIcon />&nbsp;<span style={{ fontSize: '16px' }}>{likes.length} {likes.length === 1 ? 'Like' : 'Likes'}</span></>
         );
@@ -108,9 +109,12 @@ export default function Post({ post, show }) {
     dispatch(likePost(post._id));
     if (hasLikedPost) {
       setLikes(post.likes.filter((id) => id !== userId));
+      setLiked(!liked)
     } else {
       setLikes([...post.likes, userId]);
+      setLiked(!liked)
     }
+    dispatch(getAllPosts())
     console.log(likes)
   };
 
@@ -118,118 +122,99 @@ export default function Post({ post, show }) {
     dispatch(BookmarkPost(post._id));
     if (hasBookmarkedPost) {
       setBookmarks(post.bookmarks.filter((id) => id !== userId));
+      setLiked(!liked)
     } else {
       setBookmarks([...post.bookmarks, userId]);
+      setLiked(!liked)
+
     }
+    dispatch(getAllPosts())
+
   };
 
 
 
   return (
     <ChakraProvider>
-      <Box>
-        <Card className={classes.card}>
-          <CardHeader
-            avatar={
-              <Avatar style={{ background: red[500] }}>
+      <Card className={classes.card}>
+        <CardHeader
+          avatar={
+            <ChakraProvider>
+              <Avatar name={post.createdby.fullname} src={post.createdby.pic} />
 
-              </Avatar>
-            }
-            action={
-              <>
+            </ChakraProvider>
 
-                <Menu>
-                  <MenuButton><MoreVertIcon /></MenuButton>
-                  <MenuList>
-                    <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
-                      onClick={() => {setOpen(true)}}
-                    >
-                      Delete
-                    </MenuItem>
-                    <MenuItem icon={<EditIcon style={{ marginRight: '30px', color: 'gray' }} />}
-                      onClick={UpdatePost}
-                    >
-                      Edit
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
-                <Confirm
-                  open={open}
-                  onCancel={() => {setOpen(false)}}
-                  onConfirm={DeletePost}
-                  style={{height:'20%'}}
-                />
-                {/*<IconButton aria-label="settings">
+          }
+          action={
+            <>
 
-                
-                  aria-haspopup="true"
-                  onClick={ClickMenu} />
-              </IconButton>
-              <Menu
-                id="long-menu"
-                MenuListProps={{
-                  'aria-labelledby': 'long-button',
-                }}
-                anchorEl={anchorEl}
-                open={menu}
-                onClose={CloseMenu}
-                PaperProps={{
-                  style: {
-                    maxHeight: ITEM_HEIGHT * 4.5,
-                    width: '20ch',
+              {
+                auth.user.email === post.createdby.email ? (
+                  <Menu isLazy>
+                    <MenuButton><MoreVertIcon /></MenuButton>
+                    <MenuList>
+                      <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
+                        onClick={() => { setOpen(true) }}
+                      >
+                        Delete
+                      </MenuItem>
+                      <MenuItem icon={<EditIcon style={{ marginRight: '30px', color: 'gray' }} />}
+                        onClick={UpdatePost}
+                      >
+                        Edit
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                ) : ('')
+              }
+              <Confirm
+                confirmButton="Delete"
+                content='Are you sure you want to delete this post? '
+                open={open}
+                onCancel={() => { setOpen(false) }}
+                onConfirm={DeletePost}
+                style={{ height: '22%' }}
+              />
+            </>
 
-                  },
-                }}
-              >
-                <MenuItem onClick={() => dispatch(deletePost(post._id))}
-                
-                > <DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />Delete</MenuItem>
-                <MenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentId(post._id);
-                  setOpenNote(true)
-                  setAnchorEl(null);
-                }} ><EditIcon style={{ marginRight: '30px', color: 'gray' }} /> Update</MenuItem>
+          }
+          title={
+          <div className='row'>
+            <div className='col-4'> {post.createdby.fullname} </div>
+            
+              <Typography className='col-7' onClick={() => navigate(`/category/${post.category._id}/notes`)} style={{ color: `${post.category.color}`, textAlign: 'center', fontWeight: '600', display: show ? "flex" : "none" }}>
+                {`  ${post.category.name} `}
 
-              </Menu>*/}
-              </>
+              </Typography> 
+              
+          </div>
+          }
+          subheader={moment(post.createdAt).fromNow()}
+        >
+        </CardHeader>
+        <CardContent onClick={() => navigate(`/post/${post._id}`)} >
 
-            }
-            title={post.createdby.firstname + ' ' + post.createdby.lastname.toUpperCase()}
-            subheader={moment(post.date).fromNow()}
-          >
-          </CardHeader>
+          <Typography color="text.secondary" style={{ fontWeight: '550', fontFamily: 'Raleway,sans-serif', fontSize: '16px' }}>
+            {post.title}
+          </Typography>
+          <div className='card-content mt-3'>{ReactHtmlParser(post.content)}</div>
+        </CardContent>
+        <CardActions disableSpacing>
+          <IconButton onClick={handleLike} className="MyCustomButton">
+            <Likes />
+          </IconButton>
+          <IconButton onClick={() => navigate(`/post/${post._id}`)} className="MyCustomButton" >
+            <CommentIcon fontSize="small" />&nbsp;
+            <span style={{ fontSize: '16px' }}>{post.comments.length} Comments</span>
+          </IconButton>
+          <IconButton onClick={handleBookmark} className="MyCustomButton">
+            <Bookmarks />
+          </IconButton>
 
-          <CardContent >
-            <Typography>
-              <Typography className={classes.category} style={{ color: `${post.category.color}`, boxShadow: `0 1px 1px 1px ${post.category.color}`, display: show ? "flex" : "none" }}>
-                {post.category.name}
-              </Typography>
-              <Typography noWrap='true' color="text.secondary" style={{ marginTop: show ? "20px" : "0px", fontWeight: '550', fontFamily: 'Raleway,sans-serif', fontSize: '16px' }}>
-                {post.title}
-              </Typography>
-            </Typography>
-            <Typography variant="body2" color="text.secondary" style={{ marginTop: '20px' }}>
-              <div dangerouslySetInnerHTML={{ __html: post.content }} />
-            </Typography>
-          </CardContent>
-          <CardActions disableSpacing>
-            <IconButton onClick={handleLike}>
-              <Likes />
-            </IconButton>
-            <IconButton onClick={() => navigate(`/post/${post._id}`)} >
-              <CommentIcon fontSize="small" />&nbsp;
-              <span style={{ fontSize: '16px' }}>{post.comments.length} Comments</span>
-            </IconButton>
-            <IconButton onClick={handleBookmark} >
-              <Bookmarks />
-            </IconButton>
-
-          </CardActions>
+        </CardActions>
 
 
-        </Card>
-      </Box>
+      </Card>
     </ChakraProvider>
   );
 }

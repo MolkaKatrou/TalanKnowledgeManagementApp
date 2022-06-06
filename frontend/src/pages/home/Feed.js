@@ -1,26 +1,29 @@
-import React, { useState, useEffect } from 'react'
-import { Container, makeStyles,CircularProgress } from "@material-ui/core"
+import React, { useState, useEffect, useContext } from 'react'
+import { Container, makeStyles, CircularProgress, Grid } from "@material-ui/core"
 import Post from '../../Components/posts/Post'
 import { getAllPosts, getPostsBySearch } from '../../Redux/Actions/postsActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Home from './Home';
+import Question from "../../Components/Questions&Answers/Question";
 import { HomeContext } from '../../Context/HomeContext';
 import Alert from '@mui/material/Alert';
+import { getAllQuestions } from '../../Redux/Actions/questionsActions';
+import { Button, Divider } from 'semantic-ui-react';
 
 const useStyles = makeStyles((theme) => ({
-    container: {
-        paddingTop: theme.spacing(10),
-        height:'100%',
-        backgroundColor:'rgb(225, 228, 232)'
-    },
-    loadingPaper: {
-        display: 'flex',
-        justifyContent: 'center',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginTop:'250px'
-      },
+  container: {
+    paddingTop: theme.spacing(10),
+    height: '100%',
+    backgroundColor: 'rgb(225, 228, 232)'
+  },
+  loadingPaper: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '250px'
+  },
 }));
 
 function useQuery() {
@@ -29,76 +32,133 @@ function useQuery() {
 
 
 function Feed() {
-    const show=true
-    const classes = useStyles()
-    const dispatch = useDispatch()
-    const postsList = useSelector(state => state.posts)
-    const {loading, create } = useSelector((state) => state.posts);
-    const [currentId, setCurrentId] = useState(0);
-    const [openNote, setOpenNote] = useState(false);
-    const [showAlert, setShowAlert] = useState(false);
-    const [search, setSearch] = useState('');
-    const [content, setContent] = useState("");
-    const auth = useSelector(state => state.auth)
-    const userId = auth.user.id
-    const posts = postsList.posts
-    const FollowedPosts = posts.filter(post => post.category.followers == userId)
-  
-    const navigate=useNavigate()
-    const query = useQuery();
+  const show = true
+  const classes = useStyles()
+  const postsList = useSelector(state => state.posts)
+  const QuestionsList = useSelector(state => state.questions)
+  const auth = useSelector(state => state.auth)
+  const userId = auth.user.id
+  const posts = postsList.posts
+  const questions = QuestionsList.questions
+  const FollowedPosts = posts.filter(post => post.category.followers.includes(userId))
+  const FollowedQuestions = questions.filter(question => question.category.followers.includes(userId))
+  const navigate = useNavigate()
+  const query = useQuery();
+  const [notes, setNotes] = useState(true)
+  const [qa, setQa] = useState(true)
+  const FollowedNotesAndQuestions = FollowedPosts.concat(FollowedQuestions);
+  const { showAlert, dispatch, openNote, liked, search, setSearch } = useContext(HomeContext)
+
+  useEffect(() => {
+    dispatch(getAllPosts())
+    dispatch(getAllQuestions())
+  }, [dispatch, openNote, liked])
+
+  const searchPost = async () => {
+    if (search.trim()) {
+      dispatch(getPostsBySearch({ search }));
+      /*data.then(function(result) {
+        console.log(result) 
+     })*/
+      navigate(`/Home/search?searchQuery=${search || 'none'}`);
+    }
+    else {
+      navigate('/Home');
+      dispatch(getAllPosts())
+
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.keyCode === 13) {
+      searchPost();
+    }
+  };
 
 
 
-    useEffect(() => {
-        dispatch(getAllPosts())
-      }) 
 
-      const handleKeyPress = (e) => {
-        if (e.keyCode === 13) {
-          searchPost();
+  const handleAll = () => {
+    setNotes(true)
+    setQa(true)
+  }
+
+  const handleQa = () => {
+    setNotes(false)
+    setQa(true)
+  }
+  const handleNotes = () => {
+    setNotes(true)
+    setQa(false)
+  }
+
+  const renderLatestPosts = FollowedPosts.reverse().map((post, index) => (
+    <Grid key={post._id}>
+      <Post
+        post={post}
+        show={show}
+      />
+    </Grid>
+  )
+  )
+
+  const renderLatestQuestions = FollowedQuestions.reverse().map((question, index) => (
+
+    <Grid key={question._id}>
+      <Question
+        question={question}
+      />
+    </Grid>
+  )
+  )
+
+  const renderLatestAll = FollowedNotesAndQuestions.sort(function (a, b) {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  }).map((item, index) => (
+    <>
+      {item.content ?
+        <Grid key={item._id}>
+          <Post post={item} show={show} />
+        </Grid>
+        :
+        <Grid key={item._id}>
+          <Question question={item} />
+        </Grid>
+      }
+    </>
+  )
+  )
+
+
+
+  return (
+    <Home
+      handleKeyPress={handleKeyPress}
+      searchPost={searchPost}
+      search={search}
+      setSearch={(e) => setSearch(e.target.value)}
+    >
+      <Container className={classes.container}>
+        <div className="main-tabs-home mt-3">
+          <Button.Group widths='3'>
+            <Button onClick={handleAll}>All</Button>
+            <Button onClick={handleNotes}>Notes</Button>
+            <Button onClick={handleQa}>Questions/Answers</Button>
+          </Button.Group>
+        </div>
+
+        <Divider className='mb-4' />
+        {showAlert ? <Alert style={{ marginBottom: '15px' }} variant="filled" severity="success">The post has been successfully deleted!</Alert> : ""}
+
+        {postsList.loading ?
+
+          < CircularProgress size="3em" elevation={4} className={classes.loadingPaper} />
+          :
+          notes && qa ? renderLatestAll : notes && !qa ? renderLatestPosts : renderLatestQuestions
         }
-      };
-    
-      const searchPost = () => {
-        if (search.trim()) {
-          dispatch(getPostsBySearch({search}));
-          navigate(`/Home/search?searchQuery=${search || 'none'}`);
-        }
-        else {
-          navigate('/Home');
-        }
-      };
-
-    const renderPosts = FollowedPosts.reverse().map((post, index) => (
-        <Post
-            post = {post}      
-            show={show}
-        /> 
-      )
-    )
-
-
-    return (
-      <HomeContext.Provider value={{openNote, setOpenNote, showAlert, setShowAlert, currentId, setCurrentId, content, setContent}}>
-        <Home 
-          handleKeyPress={handleKeyPress} 
-          searchPost={searchPost}
-          search={search}
-          setSearch={(e) => setSearch(e.target.value)}
-        >
-        <Container className={classes.container}>
-        { showAlert ? <Alert style={{marginBottom:'15px'}} variant="filled" severity="success">The post has been successfully deleted!</Alert> : ""}
-
-        { postsList.loading? 
-                 
-                 < CircularProgress size="3em" elevation={4} className={classes.loadingPaper} />
-                :
-         renderPosts
-         }
-        </Container>
-        </Home>
-      </HomeContext.Provider>
-    )
+      </Container>
+    </Home>
+  )
 }
 
 export default Feed

@@ -2,64 +2,20 @@ import React from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import "react-quill/dist/quill.snow.css";
 import axios from 'axios';
-import '../assets/TextEditor.css';
-import { HomeContext } from '../Context/HomeContext';
+import MagicUrl from 'quill-magic-url'
+import { CircularProgress } from '@material-ui/core';
+import hljs from 'highlight.js'
+import 'highlight.js/styles/stackoverflow-light.css'
+import AttachmentIcon from '@mui/icons-material/Attachment';
+import ImageIcon from '@mui/icons-material/ImageOutlined';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+
+
+hljs.configure({
+    languages: ['javascript', 'ruby', 'python', 'rust'],
+})
 
 const __ISMSIE__ = navigator.userAgent.match(/Trident/i) ? true : false;
-
-
-const QuillClipboard = Quill.import('modules/clipboard');
-
-class Clipboard extends QuillClipboard {
-
-    getMetaTagElements = (stringContent) => {
-        const el = document.createElement('div');
-        el.innerHTML = stringContent;
-        return el.getElementsByTagName('meta');
-    };
-
-    async onPaste(e) {
-        let clipboardData = e.clipboardData || window.clipboardData;
-        let pastedData = await clipboardData.getData('Text');
-
-        const urlMatches = pastedData.match(/\b(http|https)?:\/\/\S+/gi) || [];
-        if (urlMatches.length > 0) {
-            e.preventDefault();
-            urlMatches.forEach(link => {
-                axios.get(link)
-                    .then(payload => {
-                        let title, image, url;
-                        for (let node of this.getMetaTagElements(payload)) {
-                            if (node.getAttribute("property") === "og:title") {
-                                title = node.getAttribute("content");
-                            }
-                            if (node.getAttribute("property") === "og:image") {
-                                image = node.getAttribute("content");
-                            }
-                            if (node.getAttribute("property") === "og:url") {
-                                url = node.getAttribute("content");
-                            }
-                          
-                        }
-
-                        const rendered = `<a href=${url} target="_blank"><div><img src=${image} alt=${title} width="20%"/><span>${title}</span></div></a>`;
-
-                        let range = this.quill.getSelection();
-                        let position = range ? range.index : 0;
-                        this.quill.pasteHTML(position, rendered, 'silent');
-                        this.quill.setSelection(position + rendered.length);
-                    })
-                    .catch(error => console.error(error));
-            });
-
-        } else {
-           
-            super.onPaste(e);
-        }
-    }
-
-}
-Quill.register('modules/clipboard', Clipboard, true);
 
 const BlockEmbed = Quill.import('blots/block/embed');
 
@@ -110,7 +66,6 @@ class VideoBlot extends BlockEmbed {
         } else {
             return node.getAttribute('src');
         }
-        // return { src: node.getAttribute('src'), alt: node.getAttribute('title') };
     }
 
 }
@@ -123,20 +78,22 @@ class FileBlot extends BlockEmbed {
 
     static create(value) {
         const prefixTag = document.createElement('span');
-        prefixTag.innerText = "첨부파일 - ";
+        prefixTag.innerText = "";
 
         const bTag = document.createElement('b');
         bTag.innerText = value;
 
         const linkTag = document.createElement('a');
         linkTag.setAttribute('href', value);
+        linkTag.download = value;
+        console.log(value)
         linkTag.setAttribute("target", "_blank");
         linkTag.setAttribute("className", "file-link-inner-post");
         linkTag.appendChild(bTag);
-
         const node = super.create();
         node.appendChild(prefixTag);
         node.appendChild(linkTag);
+        //document.body.removeChild(linkTag);
 
         return node;
     }
@@ -157,7 +114,7 @@ class PollBlot extends BlockEmbed {
 
     static create(value) {
         const prefixTag = document.createElement('span');
-        prefixTag.innerText = "투표 - ";
+        prefixTag.innerText = " ";
 
         const bTag = document.createElement('b');
         bTag.innerText = value.title;
@@ -183,6 +140,7 @@ PollBlot.blotName = 'poll';
 PollBlot.tagName = 'p';
 PollBlot.className = 'poll-inner-post';
 Quill.register(PollBlot);
+Quill.register('modules/magicUrl', MagicUrl)
 
 class QuillEditor extends React.Component {
 
@@ -193,7 +151,6 @@ class QuillEditor extends React.Component {
     onPollsChange;
     _isMounted;
 
-    static contextType = HomeContext
 
     constructor(props) {
         super(props);
@@ -217,7 +174,6 @@ class QuillEditor extends React.Component {
     }
 
     handleChange = (html) => {
-        console.log('content', html)     
         this.setState({
             editorHtml: html
         }, () => {
@@ -270,7 +226,9 @@ class QuillEditor extends React.Component {
                             }, () => { this.props.onFilesChange(this.state.files) });
                         }
                     } else {
-                        return alert('failed to upload file')
+                        return < CircularProgress size="3em" elevation={4} />
+
+
                     }
                 })
         }
@@ -306,17 +264,17 @@ class QuillEditor extends React.Component {
                             }, () => { this.props.onFilesChange(this.state.files) });
                         }
                     } else {
-                        return alert('failed to upload file')
+                        return < CircularProgress size="3em" elevation={4} />
                     }
                 })
         }
-               
+
     }
 
     insertFile = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        
+
         if (e.currentTarget && e.currentTarget.files && e.currentTarget.files.length > 0) {
             const file = e.currentTarget.files[0];
             console.log(file);
@@ -344,14 +302,12 @@ class QuillEditor extends React.Component {
                                 files: [...this.state.files, file]
                             }, () => { this.props.onFilesChange(this.state.files) });
                         }
-                    };
+                    }
                 })
         }
     };
 
     render() {
-        const {currentId, content} =this.context;
-        console.log(currentId, content)
         return (
             <div>
                 <div id="toolbar">
@@ -360,33 +316,34 @@ class QuillEditor extends React.Component {
                         <option value="2" >Heading 2</option>
                         <option value="3" >Heading 3</option>
                         <option value="4" >Heading 4</option>
-                        <option value="" >Normal </option> 
+                        <option value="" >Normal </option>
                     </select>
-                   
+
+
                     <button className="ql-bold" />
                     <button className="ql-italic" />
                     <button className="ql-underline" />
                     <button className="ql-strike" />
+                    <button class="ql-script" value="sub"></button>
+                    <button class="ql-script" value="super"></button>
                     <button className="ql-insertImage">
-                        I
+                        <ImageIcon/>
                     </button>
                     <button className="ql-insertVideo">
-                        V
+                        <OndemandVideoIcon/>
                     </button>
                     <button className="ql-insertFile">
-                        F
+                        <AttachmentIcon/>
                     </button>
-                    
-                    <button class="ql-list" value="ordered"></button>
-                    <button class="ql-list" value="bullet"></button>
-    
-                    <button className="ql-link" />
+
+                    <button className="ql-list" value="ordered"></button>
+                    <button className="ql-list" value="bullet"></button>
+                   
                     <button className="ql-code-block" />
                     <button className="ql-video" />
                     <button className="ql-blockquote" />
                     <button className="ql-clean" />
 
-                    
 
                 </div>
                 <ReactQuill
@@ -395,21 +352,23 @@ class QuillEditor extends React.Component {
                     onChange={this.handleChange}
                     modules={this.modules}
                     formats={this.formats}
-                    value={ currentId ?  content : this.state.editorHtml}
+                    value={this.state.editorHtml}
                     placeholder={this.props.placeholder}
                 />
-                
-                
+
+
                 <input type="file" accept="image/*" ref={this.inputOpenImageRef} style={{ display: "none" }} onChange={this.insertImage} />
                 <input type="file" accept="video/*" ref={this.inputOpenVideoRef} style={{ display: "none" }} onChange={this.insertVideo} />
                 <input type="file" accept="*" ref={this.inputOpenFileRef} style={{ display: "none" }} onChange={this.insertFile} />
             </div>
-            
+
         )
     }
 
     modules = {
-        //syntax: true,
+        syntax: true,
+        magicUrl: true,
+        clipboard: true,
         toolbar: {
             container: "#toolbar",
             handlers: {
@@ -424,8 +383,8 @@ class QuillEditor extends React.Component {
 
     formats = [
         'header', 'font',
-        'bold', 'italic', 'underline', 'strike', 'list',
-        'image', 'video', 'file', 'link',"code-block", "video", "blockquote", "clean"
+        'bold', 'italic', 'underline', 'strike', 'script',
+       'image',  'video','file', 'list',  "code-block", 'link', "blockquote", "clean"
     ];
 }
 

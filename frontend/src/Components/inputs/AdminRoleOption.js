@@ -7,9 +7,8 @@ function AdminRoleOption({ name, onChangeHandler, errors, value, label }) {
             <label for="Email" className="form-label">
             {label}
             </label>
-            <span class="text-danger">*</span>
+            <span className="text-danger">*</span>
             <select
-                class="form-select"
                 aria-label="Default select example"
                 value={value}
                 onChange={onChangeHandler}
@@ -26,7 +25,7 @@ function AdminRoleOption({ name, onChangeHandler, errors, value, label }) {
 
             </select>
             {
-                    errors && (<div id="validationServer03Feedback" class="invalid-feedback">
+                    errors && (<div id="validationServer03Feedback" className="invalid-feedback">
                         {errors}
                     </div>)
                 }

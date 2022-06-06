@@ -5,8 +5,8 @@ export default function Logininput({ placeholder, value, type, name, icon, onCha
   return (
     <div className="mb-3">
       <div className="input-group">
-        <span className="input-group-text" >
-          <i className={icon}></i>
+        <span style={{ backgroundColor: 'transparent'}} className="input-group-text" >
+          <i  className={icon}></i>
         </span>
         <input className={(classnames("form-control ", { "is-invalid": errors }))}
           style={{ fontFamily:'Segoe UI' }}
@@ -17,7 +17,7 @@ export default function Logininput({ placeholder, value, type, name, icon, onCha
           placeholder={placeholder}
         />
         {
-          errors && (<div id="validationServer03Feedback" class="invalid-feedback">
+          errors && (<div id="validationServer03Feedback" className="invalid-feedback">
             {errors}
           </div>)
         }

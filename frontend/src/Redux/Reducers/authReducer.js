@@ -1,5 +1,5 @@
 import isEmpty from "../../utils/isEmpty";
-import { SET_USER } from "../types";
+import { SET_USER, UPDATE_USER } from "../types";
 
 const initialState = {
   isConnected: false,
@@ -14,6 +14,11 @@ export default function (state = initialState, action) {
         user: action.payload,
       };
 
+      case UPDATE_USER:
+        return {
+          ...state,
+          
+        };
     default:
       return state;
   }

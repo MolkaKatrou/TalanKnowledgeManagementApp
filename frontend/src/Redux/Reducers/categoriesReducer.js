@@ -1,4 +1,4 @@
-import { GET_CATEGORIES} from "../types";
+import { GET_CATEGORIES, FOLLOW, CREATE_CATEGORY} from "../types";
 
 const initialState = {
   categories:  [],
@@ -12,6 +12,25 @@ export default function (state = initialState, action) {
         categories: action.payload,
         loading:false
       };
+
+      case CREATE_CATEGORY:
+        return {
+          ...state,
+          categories: [...state.categories, action.payload.data],
+        };
+  
+
+      
+    case FOLLOW:
+      return {
+        ...state,
+        categories: state.categories.map((category) => {
+        if (category._id == +action.payload._id) {
+          return action.payload;
+        }
+        return category;
+      }),
+    };
 
     default:
       return state;

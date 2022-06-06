@@ -11,3 +11,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+* {
+   font-family: 'Segoe UI'; 
+}
+
+*:focus {box-shadow : none !important}
+
+.box-scroll{
+  overflow-y: scroll;
+}
+
+.box-scroll::-webkit-scrollbar {
+  width: 0px;
+}
+
+.box-scroll::-webkit-scrollbar-thumb {
+  background: rgba(136, 136, 136, 0.281);
+}
+
+/* Handle on hover */
+.box-scroll::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

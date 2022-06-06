@@ -1,5 +1,5 @@
 const express = require('express');
-const {Getcategories, Addcategory, FollowCategory, Delete, Update, Updatecategory, Deletecategory} = require('../controllers/categories.controllers');
+const {Getcategories, Addcategory, FollowCategory, Delete, Update, Updatecategory, GetSinglecategory,DeleteAndUpdateNotes, Deletecategory} = require('../controllers/categories.controllers');
 const router = express.Router();
 const multer = require("multer");
 const shortid= require("shortid");
@@ -19,12 +19,15 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get('/categories',auth, Getcategories)
+router.get('/categories/:id',auth, GetSinglecategory)
 router.post('/categories',auth, Addcategory)
 router.post('/categories/delete',auth, Deletecategory)
 router.delete('/categories/:id',auth, Delete)
+router.delete('/categories/notes/:id',auth, DeleteAndUpdateNotes)
 router.put('/categories/:id',auth, Update)
 router.post('/categories/update',auth,upload.array('categoryImage'), Updatecategory)
 router.patch('/categories/:id/follow', auth, FollowCategory);
+
 
 
 

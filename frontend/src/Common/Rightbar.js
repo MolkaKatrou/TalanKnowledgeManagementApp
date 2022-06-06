@@ -1,8 +1,15 @@
-import React, {useEffect} from 'react'
-import {Avatar,AvatarGroup,Box,Divider,List,ListItem,ListItemAvatar,ListItemText,Typography} from "@mui/material";
+import React, { useContext, useEffect, useState } from 'react'
+import { Box, Typography } from "@mui/material";
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllCategory } from '../Redux/Actions/categoryAction';
 import { Container, makeStyles } from "@material-ui/core"
+import { Avatar, AvatarGroup, AvatarBadge, Button, ChakraProvider } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import Following from '../Components/Following';
+import { HomeContext } from '../Context/HomeContext';
+import io from "socket.io-client";
+import { getAllUsers } from '../Redux/Actions/authActions';
+import { getAllCategories } from '../Redux/Actions/categoryAction';
+import { createCategoryList } from '../utils/functions';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -17,145 +24,87 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const ENDPOINT = "http://localhost:4000";
+var socket;
+
 const Rightbar = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const categoriesList = useSelector(state => state.categories)
+  const navigate = useNavigate()
   const auth = useSelector(state => state.auth)
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const usersList = useSelector(state => state.users)
+  const users = usersList.users
   const userId = auth.user.id
-  const categories = categoriesList.categories
-  const FollowedCategories = categories.filter(cat => cat.followers == userId)
-  
-  const createCategoryList = (categories, options = []) => {
-    for (let category of categories) {
-      options.push({
-        value: category._id,
-        name: category.name,
-        parentId: category.parentId,
-      });
-      if (category.children.length > 0) {
-        createCategoryList(category.children, options)
-      }
-    }
-    return options;
-  }
+
+  const categoriesList = useSelector(state => state.categories)
+  const hasFollowedCategory = createCategoryList(categoriesList.categories).filter(cat => cat.followers.includes(userId))
+
+console.log(hasFollowedCategory)
+
+
+
 
   useEffect(() => {
-    dispatch(getAllCategory())
-  })
+    socket = io(ENDPOINT);
+    socket.emit("login", auth.user);
+    //socket.emit("offline", auth.user);
+
+    socket.emit("getrooms", (rooms) => {
+      const roomsValues = Object.values(rooms);
+      const ids = roomsValues.map(o => o.id)
+      const filtered = roomsValues.filter(({ id }, index) => !ids.includes(id, index + 1))
+      setOnlineUsers(filtered)
+    })
+
+
+  }, [])
+
+
+  useEffect(() => {
+    dispatch(getAllCategories())
+    dispatch(getAllUsers())
+  }, [dispatch])
 
   return (
     <Container className={classes.container}>
       <Box position="fixed" width={300}>
-        <Typography variant="h6" fontWeight={100}>
+
+        <ChakraProvider>
+          <Button
+            size='lg'
+            height={{ base: "48px", md: "40px", lg: "48px", sm: '38px' }}
+            width={{ base: "200px", md: "150px", lg: "200px", sm: "110px" }}
+            fontSize={{ base: "16px", md: "15px", lg: "16px", sm: "13px" }}
+            colorScheme='facebook'
+            variant='solid'
+            onClick={() => navigate('/Add-Question')}>
+            Ask Question
+          </Button>
+        </ChakraProvider>
+
+        <Typography fontWeight={100} style={{ marginTop: '20px' }} fontSize={{ lg: '18px', md: '18px', sm: '16px' }} >
           Online Friends
         </Typography>
-        <AvatarGroup max={7}>
-          <Avatar
-            alt="Remy Sharp"
-            src="https://material-ui.com/static/images/avatar/1.jpg"
-          />
-          <Avatar
-            alt="Travis Howard"
-            src="https://material-ui.com/static/images/avatar/2.jpg"
-          />
-          <Avatar
-            alt="Cindy Baker"
-            src="https://material-ui.com/static/images/avatar/3.jpg"
-          />
-          <Avatar alt="Agnes Walker" src="" />
-          <Avatar
-            alt="Trevor Henderson"
-            src="https://material-ui.com/static/images/avatar/6.jpg"
-          />
-          <Avatar
-            alt="Trevor Henderson"
-            src="https://material-ui.com/static/images/avatar/7.jpg"
-          />
-          <Avatar
-            alt="Trevor Henderson"
-            src="https://material-ui.com/static/images/avatar/8.jpg"
-          />
-          <Avatar
-            alt="Trevor Henderson"
-            src="https://material-ui.com/static/images/avatar/7.jpg"
-          />
-          <Avatar
-            alt="Trevor Henderson"
-            src="https://material-ui.com/static/images/avatar/8.jpg"
-          />
-        </AvatarGroup>
+        <ChakraProvider>
+          <AvatarGroup size='md' max={8}>
 
-        <Typography variant="h6" fontWeight={100} mt={2}>
+            {
+              onlineUsers?.filter((user) => user.id !== auth.user.id).map((user, index) => (
+
+                <Avatar name={user?.fullname} src={user?.pic}  >
+                  <AvatarBadge bg='green.500' boxSize='1em' />
+                </Avatar>
+
+
+              ))}
+          </AvatarGroup>
+        </ChakraProvider>
+        <Typography fontWeight={100} className='mb-3 mt-3' fontSize={{ lg: '18px', md: '18px', sm: '16px' }}>
           My Following
         </Typography>
-        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-          <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/3.jpg" />
-            </ListItemAvatar>
-            <ListItemText
-              primary="Brunch this weekend?"
-              secondary={
-                <React.Fragment>
-                  <Typography
-                    sx={{ display: 'inline' }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    Ali Connors
-                  </Typography>
-                  {" — I'll be in your neighborhood doing errands this…"}
-                </React.Fragment>
-              }
-            />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-              <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-            </ListItemAvatar>
-            <ListItemText
-              primary="Summer BBQ"
-              secondary={
-                <React.Fragment>
-                  <Typography
-                    sx={{ display: 'inline' }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    to Scott, Alex, Jennifer
-                  </Typography>
-                  {" — Wish I could come, but I'm out of town this…"}
-                </React.Fragment>
-              }
-            />
-          </ListItem>
-          <Divider variant="inset" component="li" />
-          <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-              <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-            </ListItemAvatar>
-            <ListItemText
-              primary="Oui Oui"
-              secondary={
-                <React.Fragment>
-                  <Typography
-                    sx={{ display: 'inline' }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    Sandra Adams
-                  </Typography>
-                  {' — Do you have Paris recommendations? Have you ever…'}
-                </React.Fragment>
-              }
-            />
-          </ListItem>
-        </List>
+        { (hasFollowedCategory.length>0) ?
+          <Following/> : ''}
       </Box>
     </Container>
   )

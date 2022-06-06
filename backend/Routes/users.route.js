@@ -1,41 +1,24 @@
 const express = require('express');
-const { AddUser, FindAllUsers, FindSingleUser, UpdateUser, DeleteUser, Login, Test, Admin, Resetpassword, Newpassword } = require('../controllers/users.controlers');
+const { AddUser, FindAllUsers, FindSingleUser, UpdateUser, DeleteUser,updateProfilePicture, Login, Test, Admin, Resetpassword, Newpassword, SearchUsers } = require('../controllers/users.controlers');
 const router = express.Router();
 const passport=require('passport');
 const { ROLES, inRole } = require('../security/Rolemidlleware');
+const { auth } = require('../security/auth');
 
-/* Add user */
-router.post('/users',
-passport.authenticate('jwt', { session: false }), 
-AddUser);
 
-/* Find all users */
-router.get('/users', 
-passport.authenticate('jwt', { session: false }), 
-FindAllUsers
-);
-
-/* Find single user */
-router.get('/users/:id', 
-passport.authenticate('jwt', { session: false }), 
-FindSingleUser);
-
-/* Update user  */
-router.put('/users/:id', 
-passport.authenticate('jwt', { session: false }), 
-UpdateUser)
-
-/* Delete user */
-router.delete('/users/:id', 
-passport.authenticate('jwt', { session: false }), 
-DeleteUser)
+router.post('/users', AddUser);
+router.get('/users', auth, FindAllUsers);
+router.get('/users/:id', auth, FindSingleUser);
+router.put('/users/:id', auth, UpdateUser)
+router.put('/users/update/updatePicture', auth, updateProfilePicture)
+router.delete('/users/:id', auth,  DeleteUser)
 
 /* users Login */
 router.post('/login', Login);
-
-router.post('/forgotpassword',Resetpassword);
-
+router.post('/forgotpassword', Resetpassword);
 router.post('/resetpassword', Newpassword)
+router.get('/searchUsers',auth, SearchUsers)
+
 
 
 //Testing

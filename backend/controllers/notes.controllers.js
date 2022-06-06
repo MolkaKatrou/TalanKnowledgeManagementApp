@@ -1,9 +1,11 @@
 const noteModel = require("../models/notes.model");
 const commentModel = require("../models/comment.model");
+const { ValidateNote } = require("../Validation/notes.validation");
+const QuestionModel = require("../models/questions.model");
+
+
 const multer = require("multer");
 const path = require("path");
-
-
 
 
 
@@ -12,25 +14,33 @@ const filesStorage = multer.diskStorage({
         cb(null, "./uploads");
     },
     filename: (req, file, cb) => {
-        cb(null, `${Date.now()}_${file.originalname}`);
+        cb(null, `${file.originalname}`);
     },
-    /*fileFilter: (req, file, cb) => {
+    fileFilter: (req, file, cb) => {
         const ext = path.extname(file.originalname)
         if (ext !== '.jpg' && ext !== '.png' && ext !== '.mp4') {
             return cb(res.status(400).end('only jpg, png, mp4 is allowed'), false);
         }
         cb(null, true)
-    }*/
+    }
+});
+
+const filesStorageB = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "./../frontend/public");
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${file.originalname}`);
+    },
 });
 
 const upload = multer({ storage: filesStorage }).single('file');
-
-
+const uploadB = multer({ storage: filesStorageB }).single('file');
 
 
 const Getnotes = async (req, res) => {
     try {
-        const note = await noteModel.find().populate('createdby').populate('category').populate('comments');
+        const note = await noteModel.find().populate('createdby').populate('category').populate('comments').sort({date: 1});
         res.status(201).json(note);
     } catch (error) {
         console.log(error.message);
@@ -38,21 +48,28 @@ const Getnotes = async (req, res) => {
 }
 
 const Addnote = async (req, res) => {
-    req.body.date = new Date().toISOString()
-    const note = new noteModel(req.body)
+    req.body.createdAt = new Date().toISOString()
+    const { errors, isValid } = ValidateNote(req.body)
     try {
-        await note.save();
-        res.status(201).json(note);
-    } catch (error) {
-        res.status(409).json({ message: error.message });
-    } 
+        if (!isValid) {
+            res.status(404).json(errors);
+        } else {
+            const note = new noteModel(req.body)
+            await note.save();
+            res.status(201).json(note);
+        }
+    }   
+    catch (error) {
+        console.log(error.message);
+        }
 }
 
 const Commentnote = async (req, res) => {
     const {id} = req.params;
     const newComment = new commentModel ({
         user: req.body.user,
-        comment: req.body.comment 
+        comment: req.body.comment,
+        createdAt: new Date().toISOString()
     })
 
     const note = await noteModel.findById(id);
@@ -60,23 +77,26 @@ const Commentnote = async (req, res) => {
         note.comments = [];
     }
     note.comments.push(newComment);
-    newComment.save().then(savedcomment => {
-        console.log(note.comments);
-    }      
-        )
-    const updatedNote = await noteModel.findByIdAndUpdate(id, note, { new: true }).populate('comments')
-    res.status(201).json(updatedNote);
-
+    newComment.save()
+    const updatedNote = await noteModel.findByIdAndUpdate(id, note, { new: true }) .populate({
+        path: 'comments',
+        model:'comment',
+        populate: {
+          path: 'user',
+          model: 'user'
+        }
+      })
+    res.status(201).json(updatedNote); 
 };
 
 const getPostsBySearch = async (req, res) => {
     const { searchQuery } = req.query;
     try {
-
         const title = new RegExp(searchQuery, "i");
         const content = new RegExp(searchQuery, "i");
 
         const posts = await noteModel.find({title}).populate('category').populate('createdby');
+        const questions = await QuestionModel.find({title}).populate('category').populate('createdby');
         res.status(201).json(posts);
     } catch (error) {    
         res.status(404).json({ message: error.message });
@@ -155,7 +175,15 @@ const Uploadfiles = (req, res) => {
 const GetSinglenote = async (req, res) => { 
     const { id } = req.params;
     try {
-        const post = await noteModel.findById(id).populate('createdby').populate('category').populate('comments');       
+        const post = await noteModel.findById(id).populate('createdby').populate('category').populate({
+            path: 'comments',
+            model:'comment',
+            populate: {
+              path: 'user',
+              model: 'user'
+            }
+          });       
+          
         res.status(200).json(post);
     } catch (error) {
         res.status(404).json({ message: error.message });

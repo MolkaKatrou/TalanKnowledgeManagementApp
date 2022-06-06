@@ -4,14 +4,12 @@ import axios from 'axios'
 axios.interceptors.request.use((req) => {
     if (localStorage.getItem('jwt')) {
       req.headers.Authorization = JSON.parse(localStorage.getItem('jwt'));
-    }
-  
+    } 
     return req;
   });
 
 export const getAllPosts = () => async dispatch => {    
-    try{
-        
+    try{      
         const {data} = await axios.get('/Api/notes')
         dispatch( {
             type: GET_POSTS,
@@ -56,7 +54,6 @@ export const likePost = (id) => async dispatch => {
       const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
       const { data } = await axios.patch(`/Api/notes/${id}/like`, token)
       dispatch({ type: LIKE, payload: data });
-      dispatch(getAllPosts);
       }
      catch (error) {
       console.log(error.message);
@@ -76,8 +73,8 @@ export const BookmarkPost = (id) => async dispatch => {
 
 export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   try {
-    const { data }  = await axios.get(`/Api/search?searchQuery=${searchQuery.search || 'none'}`)
-    dispatch({ type: FETCH_BY_SEARCH, payload: { data } });
+    const res  = await axios.get(`/Api/search?searchQuery=${searchQuery.search || 'none'}`)
+    dispatch({ type: FETCH_BY_SEARCH, payload: {data : res.data } });
   } catch (error) {
     console.log(error);
   }
@@ -87,9 +84,14 @@ export const createPost = (post) => async (dispatch) => {
   try {
     const { data } = await axios.post('/Api/notes', post);
     dispatch({ type: CREATE_POST, payload: data });
-  } catch (error) {
-    console.log(error.message);
-  }
+    
+  } catch (error) { 
+    dispatch({
+        type: ERRORS,
+        payload: error,
+       
+    })
+}
 };
 
 export const deletePost = (id) => async (dispatch) => {

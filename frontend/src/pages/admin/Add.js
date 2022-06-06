@@ -13,7 +13,6 @@ function Add() {
   const [form, setForm] = useState({});
   const dispatch = useDispatch()
   const errors = useSelector(state => state.errors)
-  const navigate = useNavigate()
   const [message, setMessage] = useState("");
   const [show, setShow] = useState(false);
 
@@ -39,15 +38,15 @@ function Add() {
 
   return (
     <section >
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 offset-md-3">
-            <div class="signup-form mt-5">
+      <div className="container">
+        <div className="row">
+          <div className="col-md-6 offset-md-3">
+            <div className="signup-form mt-5">
             { show ? <Alert severity="success">The user is successfully added!</Alert> : ""}
-              <form onSubmit={onSubmitHandler} class="mt-3 border p-4 bg-light shadow">
+              <form onSubmit={onSubmitHandler} className="mt-3 border p-4 bg-light shadow">
 
-                <div class="row">
-                  <div class="mb-3 col-md-6">
+                <div className="row">
+                  <div className="mb-3 col-md-6">
                     <AdminInput
                       label="First Name"
                       type="text"
@@ -57,7 +56,7 @@ function Add() {
                       errors={errors.firstname}
                     />
                   </div>
-                  <div class="mb-3 col-md-6">
+                  <div className="mb-3 col-md-6">
                     <AdminInput
                       label="Last Name"
                       type="text"
@@ -76,7 +75,7 @@ function Add() {
                     errors={errors.email}
                     icon="fa fa-envelope"
                   />
-                 <div class="mb-3 col-md-6">
+                 <div className="mb-3 col-md-6">
                   <AdminInput
                     label="Username"
                     type="text"
@@ -86,7 +85,7 @@ function Add() {
                     icon="fa fa-user"
                   />
                   </div>
-                  <div class="mb-3 col-md-6">
+                  <div className="mb-3 col-md-6">
                   <AdminInput
                     label="Password"
                     type="text"

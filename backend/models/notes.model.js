@@ -2,10 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema; 
 
 const noteModel = new Schema ({
-
     createdby:{
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'user'
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now(),
     },
     
     category:{
@@ -15,20 +18,15 @@ const noteModel = new Schema ({
     
     title: {
         type: String, 
-        required: true},
+        required: true
+    },
     content: {
         type: String, 
         required: true
     },
-
-    date:{
-        type: Date,
-        default: new Date(),
-    },
-
     comments: [{ 
         type: Schema.Types.ObjectId, 
-        ref:'comments'  
+        ref:'comment'  
     }],
 
     likes: { 

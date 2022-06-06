@@ -24,37 +24,37 @@ function NotFound() {
 
 
   return (
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="signup-form">
-                <form action="" class="mt-5 border p-4 bg-light shadow">
-                    <h4 class="mb-5 text-secondary">Create an account</h4>
-                    <div class="row">
-                        <div class="mb-3 col-md-6">
-                            <label>First Name<span class="text-danger">*</span></label>
-                            <input type="text" name="fname" class="form-control" placeholder="Enter First Name"/>
+<div className="container">
+    <div className="row">
+        <div className="col-md-6 offset-md-3">
+            <div className="signup-form">
+                <form action="" className="mt-5 border p-4 bg-light shadow">
+                    <h4 className="mb-5 text-secondary">Create an account</h4>
+                    <div className="row">
+                        <div className="mb-3 col-md-6">
+                            <label>First Name<span className="text-danger">*</span></label>
+                            <input type="text" name="fname" className="form-control" placeholder="Enter First Name"/>
                         </div>
 
-                        <div class="mb-3 col-md-6">
-                            <label>Last Name<span class="text-danger">*</span></label>
-                            <input type="text" name="Lname" class="form-control" placeholder="Enter Last Name"/>
+                        <div className="mb-3 col-md-6">
+                            <label>Last Name<span className="text-danger">*</span></label>
+                            <input type="text" name="Lname" className="form-control" placeholder="Enter Last Name"/>
                         </div>
 
-                        <div class="mb-3 col-md-12">
-                            <label>Password<span class="text-danger">*</span></label>
-                            <input type="password" name="password" class="form-control" placeholder="Enter Password"/>
+                        <div className="mb-3 col-md-12">
+                            <label>Password<span className="text-danger">*</span></label>
+                            <input type="password" name="password" className="form-control" placeholder="Enter Password"/>
                         </div>
-                        <div class="mb-3 col-md-12">
-                            <label>Confirm Password<span class="text-danger">*</span></label>
-                            <input type="password" name="confirmpassword" class="form-control" placeholder="Confirm Password"/>
+                        <div className="mb-3 col-md-12">
+                            <label>Confirm Password<span className="text-danger">*</span></label>
+                            <input type="password" name="confirmpassword" className="form-control" placeholder="Confirm Password"/>
                         </div>
-                        <div class="col-md-12">
-                           <button class="btn btn-primary float-end">Signup Now</button>
+                        <div className="col-md-12">
+                           <button className="btn btn-primary float-end">Signup Now</button>
                         </div>
                     </div>
                 </form>
-                <p class="text-center mt-3 text-secondary">If you have account, Please <a href="#">Login Now</a></p>
+                <p className="text-center mt-3 text-secondary">If you have account, Please <a href="#">Login Now</a></p>
             </div>
         </div>
     </div>

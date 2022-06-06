@@ -6,12 +6,17 @@ import AddNote from './AddNote';
 import Rightbar from '../../Common/Rightbar';
 import { useSelector } from 'react-redux';
 import { CategoryContext } from '../../Context/CategoryContext';
+import {Helmet} from "react-helmet";
+
 
 
 const Home = ({children, searchPost, handleKeyPress, search, setSearch}) => {
   const [categoryId, setCategoryId] = useState(0);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [updateCategory, setUpdateCategory] = useState(false)
+  const [parentCategoryIdName, setParentCategoryIdName] = useState('')
+  const [categoryIdName, setCategoryIdName] = useState('')
+  const [open, setOpen] = useState(false)
 
   const auth = useSelector(state => state.auth)
   const user = {
@@ -20,8 +25,8 @@ const Home = ({children, searchPost, handleKeyPress, search, setSearch}) => {
   }
 
   return (
-    <div>
-      <CategoryContext.Provider value={{categoryId, setCategoryId, setUpdateCategory, updateCategory, anchorEl, setAnchorEl}}>
+    
+      <CategoryContext.Provider value={{categoryId,categoryIdName, setCategoryIdName,parentCategoryIdName,setParentCategoryIdName, setCategoryId, setUpdateCategory, updateCategory, anchorEl, setAnchorEl, open,setOpen}}>
       <HomeNavbar searchPost={searchPost}
                   handleKeyPress={handleKeyPress}
                   search={search}    
@@ -33,6 +38,7 @@ const Home = ({children, searchPost, handleKeyPress, search, setSearch}) => {
         </Grid>
         <Grid item sm={7} xs={10}>
           {children}
+ 
         </Grid>
         <Grid item sm={3} className="d-none d-sm-block">
           <Rightbar/>
@@ -40,7 +46,7 @@ const Home = ({children, searchPost, handleKeyPress, search, setSearch}) => {
       </Grid>
       <AddNote/>
       </CategoryContext.Provider> 
-    </div>
+    
   )
 }
 

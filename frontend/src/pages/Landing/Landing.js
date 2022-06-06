@@ -11,7 +11,7 @@ export default function Landing () {
   return (
     <>
     <Navbar/>
-    <section class="home-container">
+    <section className="home-container">
       <div className="home-wrapper">
       <img src={image1}/>
       <div className="Left-wrapper">

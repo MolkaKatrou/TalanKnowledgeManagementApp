@@ -1,23 +1,31 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import logo from '../images/logo.png'
-import { alpha, AppBar, Avatar,Button, Badge, Box, InputBase, makeStyles, Menu, MenuItem, Tooltip, Typography } from "@material-ui/core"
-import { Divider, Toolbar } from '@mui/material';
+import { alpha, AppBar, Button, Badge, Box, InputBase, makeStyles, Typography, IconButton } from "@material-ui/core"
+import { Toolbar } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import Mail from '@mui/icons-material/Mail';
 import Notifications from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LockOpen from '@mui/icons-material/LockOpen';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import { useDispatch } from 'react-redux';
 import { Logout } from "../Redux/Actions/authActions";
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getPostsBySearch } from '../Redux/Actions/postsActions';
-
+import { Menu, MenuButton, MenuList, MenuItem, ChakraProvider, Divider, Avatar, AvatarBadge } from "@chakra-ui/react";
+import { HomeContext } from '../Context/HomeContext';
+import { getSender } from '../Components/Chats/ChatLogic';
+import NotificationBadge from "react-notification-badge";
+import { Effect } from "react-notification-badge";
 
 
 const useStyles = makeStyles((theme) => ({
+  message: {
+    cursor: 'pointer',
+    "&:hover": {
+      color: "#565CAA"
+    }
+  },
   search: {
     display: "flex",
     alignItems: "center",
@@ -39,99 +47,108 @@ function useQuery() {
 }
 
 
-export default function HomeNavbar({searchPost, handleKeyPress, search, setSearch}) {
-  const [userMenu, setUserMenu] = useState(null);
+export default function HomeNavbar({ searchPost, handleKeyPress, search, setSearch }) {
   const dispatch = useDispatch()
-  const navigate=useNavigate()
- 
-  function stringAvatar(name) {
-    return {
-      children: `${name.split(' ')[0][0].toUpperCase()}${name.split(' ')[1][0].toUpperCase()}`,
-    };
-  }
-  
-  const LogoutHandler =() =>{
-     dispatch(Logout())
-  }
-  const handleOpenUserMenu = (e) => {
-    setUserMenu(e.target);
-  };
-
-  const handleCloseUserMenu = () => {
-    setUserMenu(null);
-  };
-  const classes = useStyles()
+  const navigate = useNavigate()
+  const { notification, setNotification,selectedChat, setSelectedChat, notificationChat, setNotificationChat } = useContext(HomeContext)
   const auth = useSelector(state => state.auth)
-  
+
+
+  const LogoutHandler = () => {
+    dispatch(Logout())
+  }
+  const classes = useStyles()
+
 
   return (
     <AppBar position='fixed' >
       <Toolbar className="d-flex justify-content-between" style={{ backgroundColor: '#8084ac' }}>
-        <Typography variant="h6" onClick={()=>{navigate('/Home')}}>
-          <img style={{cursor: 'pointer', marginRight: '200px', width: "90px" }} src={logo} alt='logo' />
+        <Typography variant="h6" onClick={() => { navigate('/Home') }}>
+          <img style={{ cursor: 'pointer', marginRight: '200px', width: "90px" }} src={logo} alt='logo' />
         </Typography>
         <div className={classes.search}>
-          <Search className='mx-3' />
-          <InputBase 
+          <Search className='mx-3' onClick={searchPost} />
+          <InputBase
             onKeyDown={handleKeyPress}
-            placeholder='Search' 
-            className='me-2' 
-            name="search" 
-            variant="outlined" 
-            fullWidth 
-            value={search} 
-            onChange={setSearch}          
+            placeholder='Search'
+            className='me-2'
+            name="search"
+            variant="outlined"
+            fullWidth
+            value={search}
+            onChange={setSearch}
           />
-          <Button 
-            className='justify-content-end' 
-            color='primary'
-            onClick={searchPost} 
-            variant="contained"         
-          >search</Button>
         </div>
         <div className="d-flex align-items-center">
 
-          <Badge className="mx-5">
-            <Mail />
-          </Badge>
-          <Badge className="me-4">
-            <Notifications />
-          </Badge >
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title='profile'>
-              <Button onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar {...stringAvatar(auth.user.firstname +' ' + auth.user.lastname)} />
-              </Button>
-            </Tooltip>
-            <Menu
-              style={{ marginTop: '37px' }}
-              id="menu-appbar"
-              anchorEl={userMenu}
-              open={Boolean(userMenu)}
-              onClose={handleCloseUserMenu}
-            >
-              <Box className="d-flex">
-                 <Avatar {...stringAvatar(auth.user.firstname +' ' + auth.user.lastname)} className='mx-3' />
-                 <h6 className='mt-2 text-secondary'>{auth.user.firstname +' ' + auth.user.lastname.toUpperCase()}</h6>
-              </Box>
-              <Divider component="li" className='mt-3 mb-3'/>
-              <MenuItem>
-                <ListItemIcon>
-                  <AccountCircle />
-                </ListItemIcon> Profile
-              </MenuItem>
-              <MenuItem>
-                <ListItemIcon>
-                  <LockOpen />
-                </ListItemIcon> Change password
-              </MenuItem>
-             <Divider component="li" className='mt-2 mb-2'/>
-              <MenuItem onClick={LogoutHandler}>      
-                <ListItemIcon>
-                  <LogoutIcon />
-                </ListItemIcon> Logout         
-              </MenuItem>
+          <ChakraProvider>
+            <Menu >
+              <MenuButton
+                className={classes.message}
+                mx={5}
+                onClick={() => { 
+                  navigate('/chats');
+                  setNotificationChat(false)
+                }}
+              >
+                <NotificationBadge
+                  count={notificationChat? notification.length : 0 }
+                  effect={Effect.SCALE}
+                  style={{ width: '10px', height:'18px', paddingLeft:'4px', paddingRight:'10px' }}
+                />
+                <Mail />
+              </MenuButton>
             </Menu>
+            <Menu >
+              <MenuButton className={classes.message} mx={10}><Notifications /></MenuButton>
+              <MenuList pl={2}>
+                {!notification.length && "No New Messages"}
+                {notification.map((notif) => (
+                  <MenuItem
+                    key={notif._id}
+                    onClick={() => {
+                      setSelectedChat(notif.chat);
+                      setNotification(notification.filter((n) => n !== notif));
+                    }}
+                  >
+                    {notif.chat.isGroupChat
+                      ? `New Message in ${notif.chat.chatName}`
+                      : `New Message from ${getSender(auth.user, notif.chat.users)}`}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </ChakraProvider>
+          <Box sx={{ flexGrow: 0 }}>
+            <ChakraProvider>
+              <Menu isLazy>
+                <MenuButton> <Avatar p={0} name={auth.user.fullname} src={auth.user.pic} /></MenuButton>
+                <MenuList className='text-secondary' >
+                  <Box className="d-flex">
+                    <Avatar name={auth.user.fullname} src={auth.user.pic}  className='mx-3' >  <AvatarBadge bg='green.500' boxSize='1em' /></Avatar>
+                    <div>
+                    <h1 style={{ fontFamily: 'PT sans', fontSize: '15px' }} className='mt-2 text-secondary'>{auth.user.fullname}</h1>
+                    <h6 style={{ fontFamily: 'Segoe UI', fontSize: '10px' , color:'gray' , marginTop:'2px' }}>{auth.user.email}</h6>
+                    </div>
+                  </Box>
+                  <Divider className='mt-3 mb-3' />
+
+                  <MenuItem icon={<AccountCircle />} onClick={() => { navigate(`/Profile/${auth.user.id}`) }}>
+                    Profile
+                  </MenuItem>
+
+                  <MenuItem icon={<LockOpen />} >
+                    Change Password
+                  </MenuItem>
+                  <Divider className='mt-2 mb-2' />
+                  <MenuItem icon={<LogoutIcon />} onClick={LogoutHandler} >
+                    Logout
+                  </MenuItem>
+
+                </MenuList>
+              </Menu>
+            </ChakraProvider>
+
           </Box>
         </div>
       </Toolbar>

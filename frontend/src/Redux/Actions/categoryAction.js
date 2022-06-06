@@ -1,8 +1,7 @@
-import {GET_CATEGORIES,FOLLOW, ERRORS} from '../types'
-
+import {GET_CATEGORIES, FOLLOW, CREATE_CATEGORY, ERRORS} from '../types'
 import axios from 'axios'
 
-export const getAllCategory = () => async dispatch => {    
+export const getAllCategories = () => async dispatch => {    
     try{
         const res = await axios.get('/Api/categories')
         dispatch( {
@@ -19,23 +18,26 @@ export const getAllCategory = () => async dispatch => {
 
 }
 
-export const updateCategories = (formcategory) => {
-    return dispatch => {
+export const updateCategories = (formcategory) => async dispatch => {
         const res = axios.post('/Api/categories/update', formcategory);
-
     }
-}
 
 
-export const deleteCategories = (ids) => {
-    return async dispatch => {
-        const res = await axios.post('/Api/categories/delete', {
-            payload: {
-                ids
-            }
-        });          
+export const createCategory = (form) => async dispatch => {
+    try  {
+        const res = axios.post('/Api/categories', form);
+        dispatch( {
+            type: CREATE_CATEGORY,
+            payload: res.data
+        })
     }
-}
+        catch(error){
+            console.log(error.response.data)
+        }
+    }
+
+
+
 
 export const FollowCategory = (id) => async dispatch => {
     try {

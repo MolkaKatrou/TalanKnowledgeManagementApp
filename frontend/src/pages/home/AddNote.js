@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import classnames from 'classnames'
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Fab, Tooltip } from '@material-ui/core'
 import { Add } from '@material-ui/icons'
@@ -6,16 +7,21 @@ import { makeStyles } from '@material-ui/core'
 import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import QuillEditor from '../../Components/QuillEditor';
-import '../../assets/TextEditor.css';
 import { createPost, updatePost } from '../../Redux/Actions/postsActions';
 import { useContext } from 'react';
 import { HomeContext } from '../../Context/HomeContext';
+import { createCategoryList } from '../../utils/functions';
+import toast from 'react-hot-toast';
 
 const Styles = makeStyles((theme) => ({
     fab: {
         position: 'fixed',
         bottom: 15,
         right: 10,
+    },
+
+    SlidingPane: {
+        backgroundColor:'#E9E6EA'
     },
 
     buttons: {
@@ -26,19 +32,18 @@ const Styles = makeStyles((theme) => ({
 }));
 
 export default function AddNote() {
-    const dispatch = useDispatch()
+    const [content, setContent] = useState("");
     const auth = useSelector(state => state.auth)
     const classes = Styles();
-    const [title, setTitle]=useState("")
+    const [title, setTitle] = useState("")
     const [category, setCategory] = useState("")
     const [files, setFiles] = useState([])
     const categoriesList = useSelector(state => state.categories)
-    const {openNote, setOpenNote, currentId, setCurrentId, content, setContent} = useContext(HomeContext)
-
+    const { openNote, setOpenNote, currentId, setCurrentId, dispatch } = useContext(HomeContext)
     const { posts, loading } = useSelector((state) => state.posts);
-
     const post = useSelector((state) => (currentId ? posts.find((p) => p._id === currentId) : null));
-    //console.log(post)
+ 
+
 
     const onEditorChange = (value) => {
         setContent(value)
@@ -52,28 +57,12 @@ export default function AddNote() {
         if (post) {
             setContent(post.content);
             setTitle(post.title);
-            setCategory(post.category.name);    
-        }     
-      },[currentId]);
-
-    const createCategoryList = (categories, options = []) => {
-        for (let category of categories) {
-            options.push({
-                value: category._id,
-                name: category.name,
-                parentId: category.parentId,
-                type: category.type
-            });
-            if (category.children.length > 0) {
-                createCategoryList(category.children, options)
-            }
+            setCategory(post.category.name);
         }
+    }, [currentId]);
 
-        return options;
-    }
-
-    const Clear = () => { 
-        setOpenNote(false); 
+    const Clear = () => {
+        setOpenNote(false);
         setContent("")
         setTitle("")
         setCategory("")
@@ -81,27 +70,34 @@ export default function AddNote() {
     }
 
     const onSubmit = (e) => {
+        setCurrentId(0)
         e.preventDefault()
         const variables = {
             createdby: auth.user.id,
-            category:category,
+            category: category,
             title: title,
-            content: content,            
+            content: content,
         }
-        
-      if (currentId === 0) {
-        dispatch(createPost(variables));
-        Clear()
-      }
-      else{
-          dispatch(updatePost(currentId, variables))
-          Clear()
-      }
+
+        if (currentId === 0) {
+            if (title && category && content) {          
+                dispatch(createPost(variables));
+                toast.success('Post successfully created');
+                Clear()
+            }
+            else if (!title || !category || !content){
+                toast.error('Fill all the fields to create your post')
+            }
+        }
+        else {
+            dispatch(updatePost(currentId, variables))
+            Clear()
+        }
     }
 
     return (
         <>
-        
+
             <Tooltip title='Add' onClick={() => setOpenNote(true)}>
                 <Fab color='primary' className={classes.fab}>
                     <Add></Add>
@@ -109,50 +105,59 @@ export default function AddNote() {
             </Tooltip>
 
             <SlidingPane
-                className="slidingpane"
+                className={classes.SlidingPane}
                 isOpen={openNote}
-                width={window.innerWidth < 600 ? "100%" : "42%"}
-                onRequestClose={() => { setOpenNote(false); }}
+                width={window.innerWidth < 600 ? "100%" : "45%"}
+                onRequestClose={Clear}
             >
 
                 <form>
                     <div className="form-group col-md-12">
-                    <label className="font-weight-bold"> Category <span className="required"> <span class="text-danger">*</span> </span> </label>
+                        <label style={{ fontWeight: 'bold' }}> Category <span className="required"> <span className="text-danger">*</span> </span> </label>
                         <select
-                            className="form-control" placeholder="Title" style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }}
+                            className="form-control"
+                            placeholder="Title"
+                            style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }}
                             value={category}
-                            onChange={(e) => setCategory({...category, category: e.target.value})}>
-                                <option disabled value="">Select a category</option>
+                            onChange={(e) => setCategory(e.target.value)}>
+
+                            <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} disabled value="">Select a category</option>
                             {
                                 createCategoryList(categoriesList.categories).map(option =>
-                                    <option value={option.value}>{option.name}</option>)
+                                    <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value={option.value}>{option.name}</option>)
                             }
 
                         </select>
                     </div>
                     <div className="form-group col-md-12 mt-3">
-                        <label className="font-weight-bold"> Title <span className="required"> <span class="text-danger">*</span> </span> </label>
-                        <input type="text" name="title" className="form-control" placeholder="Title" style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }} required
-                              onChange={(e)=>{setTitle(e.target.value)}} value={title}
-                
-                                 />
+                        <label style={{ fontWeight: 'bold' }}> Title <span className="required"> <span className="text-danger">*</span> </span> </label>
+                        <input
+                            type="text"
+                            name="title"
+                            className='form-control'
+                            placeholder="Title"
+                            style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }}
+                            required
+                            onChange={(e) => { setTitle(e.target.value) }}
+                            value={title}
+
+                        />
                     </div>
                     <div className="form-group col-md-12 editor mt-3">
-                        <label className="font-weight-bold"> Note <span className="required"> <span class="text-danger">*</span> </span> </label>
+                        <label style={{ fontWeight: 'bold' }}> Note <span className="required"> <span className="text-danger">*</span> </span> </label>
 
                         <QuillEditor
-                            placeholder={"Add knowledge"}
+                            placeholder={"Share your knowledge"}
                             onEditorChange={onEditorChange}
                             onFilesChange={onFilesChange}
-                                                
                         />
 
                         <div className="d-flex mt-4"  >
-                            <Button variant='outlined' style={{ fontFamily: 'PT Sans' }} color="secondary" className='me-5' onClick={Clear}  >
+                            <Button variant='outlined' style={{ fontFamily: 'PT Sans', fontWeight: 'bold' }} color="secondary" className='me-5' onClick={Clear}  >
                                 Cancel
                             </Button>
-                            <Button variant='outlined' style={{ fontFamily: 'PT Sans' }} color="primary" type='submit' onClick={onSubmit}>
-                            {currentId ? 'Edit' : 'Create'}
+                            <Button variant='outlined' style={{ fontFamily: 'PT Sans', fontWeight: 'bold' }} color="primary" type='submit' onClick={onSubmit}>
+                                {currentId ? 'Edit' : 'Create'}
                             </Button>
                         </div>
                     </div>

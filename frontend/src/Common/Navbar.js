@@ -37,7 +37,7 @@ function Navbar() {
             <i className={click ? 'fas fa-times' : 'fas fa-bars'} />
           </div>
 
-          <ul className={click ? 'nav-menu active' : 'nav-menu'}>
+          <div className={click ? 'nav-menu active' : 'nav-menu'}>
             <li className='nav-item'>
               <NavLink
                 to="/"
@@ -64,7 +64,7 @@ function Navbar() {
                 Sign In
               </NavLink>
             </li>
-          </ul>
+          </div>
 
           {button && <Button buttonStyle='btn--outline'>SIGN IN</Button>}
           

@@ -40,14 +40,14 @@ function Forgotpassword() {
     return (
         <>
         <Navbar/>
-        <div className='main h-100 w-100'>
-            <div className='container h-100'>
+        <div className='main h-100 w-100' >
+            <div className='container h-100' >
                 <div className='row h-100'>
                     <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100'>
                         <div className='d-table-cell align-middle'>
                             <div className='text-center mt-5'>
-                                <h1 className='h2' style={{color :'rgb(8, 8, 126)'}}>Reset password</h1>
-                                <p  style={{color:'grey'}}> Enter your email to reset your password</p>
+                                <h1 className='h2' style={{color :'rgb(8, 8, 126)', fontFamily:'PT Sans'}}>Reset password</h1>
+                                <p  style={{color:'grey', fontFamily:'PT Sans'}}> Enter your email to reset your password</p>
                             </div>
                            { show ? <Alert severity="success">We sent you the link — Check your Email!</Alert> : ""}
                             <div className='card mt-5'>

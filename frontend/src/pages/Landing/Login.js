@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import bg from '../../images/login.png';
-import user from '../../images/iconuser.jpg';
 import logo from '../../images/logo2.png'
 import "../../assets/Login.css";
 import Navbar from '../../Common/Navbar';
@@ -35,8 +34,6 @@ export default function Login() {
   const onSubmit = (e) => {
     e.preventDefault()
     dispatch(LoginAction(form, setLoading))
-   
-    
   }
 
   return (
@@ -45,7 +42,7 @@ export default function Login() {
       <Backdrop open={open}>
         {loading ? <CircularProgress/> : ""}
       </Backdrop>
-      <section class="login-container">
+      <section className="login-container">
         <div className="login-wrapper">
           <div className='left-login'>
             <img src={bg} />
@@ -58,7 +55,7 @@ export default function Login() {
                 <img src={logo} style={{ marginLeft: "-65px", width: "350px" }} alt='login' />
               </div>
               <div className='heading2'>
-                <img style={{ width: "131px" }} src={user} alt='login' />
+              <i className="fa fa-users fa-6x"  aria-hidden="true"></i>
                 
 
               </div>
@@ -84,7 +81,7 @@ export default function Login() {
               <div className='form-input'>
                 <button type="submit" className='button btn-login'>LOGIN</button>
                 <h6 style={{color:'grey'}}> forgot your password?   
-                  <Link to='/forgotpassword' style={{ textDecoration: 'none' }} > Reset it </Link>
+                  <Link to='/forgotpassword' style={{ textDecoration: 'none', fontFamily:'PT Sans' }} > Reset it </Link>
                   </h6>
               </div>
 

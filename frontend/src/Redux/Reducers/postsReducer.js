@@ -1,10 +1,10 @@
-import { GET_POSTS, GET_POST,DELETE_POST, FETCH_BY_SEARCH, CREATE_POST, LIKE, BOOKMARK } from "../types";
+import { GET_POSTS, GET_POST,DELETE_POST, FETCH_BY_SEARCH, LIKE, BOOKMARK } from "../types";
 
 const initialState = {
   posts: [],
   loading: true,
-  create:false
 };
+
 export default function (state = initialState, action) {
   switch (action.type) {
     case GET_POSTS:
@@ -12,8 +12,6 @@ export default function (state = initialState, action) {
         ...state,
         posts: action.payload.data,
         loading: false,
-        create:false
-
       };
 
     case GET_POST:
@@ -28,13 +26,6 @@ export default function (state = initialState, action) {
         ...state,
         posts: action.payload.data,
         loading: false
-      };
-
-    case CREATE_POST:
-      return {
-        ...state,
-        posts: [...state.posts, action.payload],
-        create:true
       };
 
     case LIKE:
@@ -63,6 +54,7 @@ export default function (state = initialState, action) {
         ...state, 
         posts: state.posts.filter((post) => post._id !== action.payload) 
       };
+      
 
 
     default:

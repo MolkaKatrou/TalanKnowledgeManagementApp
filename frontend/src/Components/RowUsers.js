@@ -13,14 +13,14 @@ function RowUsers({ index, email, username, role, fullname, phone, occupation, I
       <th scope="row">{phone}</th>
 
       <td>
-        <span class="btn border-shadow update">
-          <Link to={`/updateUser/${Id}`} class="text-gradient">
+        <span className="btn border-shadow update">
+          <Link to={`/updateUser/${Id}`} className="text-gradient">
             <i className="fas fa-pencil-alt"></i>
           </Link>
         </span>
 
         <span className="btn border-shadow delete" >
-          <span class="text-gradient" onClick={() => OnDelete(Id)}>
+          <span className="text-gradient" onClick={() => OnDelete(Id)}>
             <i className="fas fa-trash-alt"></i>
           </span>
         </span>
