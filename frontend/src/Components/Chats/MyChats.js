@@ -125,7 +125,6 @@ const MyChats = ({ fetchAgain }) => {
 
                 </Box>
                 <Box
-
                     d="flex"
                     flexDir="column"
                     p={3}
@@ -151,7 +150,8 @@ const MyChats = ({ fetchAgain }) => {
                                     py={2}
                                     borderRadius="lg"
                                     key={chat._id}
-                                > <div style={{ display: "flex" }}>
+                                > 
+                                <div style={{ display: "flex" }}>
                                      <Avatar    
                                            
                                         mr={3}

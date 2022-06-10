@@ -8,7 +8,7 @@ import Home from './Home';
 import Question from "../../Components/Questions&Answers/Question";
 import { HomeContext } from '../../Context/HomeContext';
 import Alert from '@mui/material/Alert';
-import { getAllQuestions } from '../../Redux/Actions/questionsActions';
+import { getAllAnswers, getAllQuestions } from '../../Redux/Actions/questionsActions';
 import { Button, Divider } from 'semantic-ui-react';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,7 +32,6 @@ function useQuery() {
 
 
 function Feed() {
-  const show = true
   const classes = useStyles()
   const postsList = useSelector(state => state.posts)
   const QuestionsList = useSelector(state => state.questions)
@@ -52,6 +51,7 @@ function Feed() {
   useEffect(() => {
     dispatch(getAllPosts())
     dispatch(getAllQuestions())
+    dispatch(getAllAnswers())
   }, [dispatch, openNote, liked])
 
   const searchPost = async () => {
@@ -96,7 +96,6 @@ function Feed() {
     <Grid key={post._id}>
       <Post
         post={post}
-        show={show}
       />
     </Grid>
   )
@@ -118,7 +117,7 @@ function Feed() {
     <>
       {item.content ?
         <Grid key={item._id}>
-          <Post post={item} show={show} />
+          <Post post={item} />
         </Grid>
         :
         <Grid key={item._id}>

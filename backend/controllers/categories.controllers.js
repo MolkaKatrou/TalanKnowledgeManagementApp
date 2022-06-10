@@ -3,6 +3,8 @@ const slugify = require("slugify");
 const noteModel = require("../models/notes.model");
 const categoryModel = require("../models/categories.model");
 const QuestionModel = require("../models/questions.model");
+const messageModel = require("../models/message.model");
+
 const { ValidateCategory } = require("../Validation/categories.validation");
 var mongoose = require('mongoose');
 const isEmpty = require("../Validation/IsEmpty");
@@ -20,6 +22,7 @@ function createCategories(categories, parentId = null) {
   }
   for (let cat of category) {
     categoryList.push({
+      createdby:cat.createdby,
       _id: cat._id,
       name: cat.name,
       slug: cat.slug,
@@ -46,6 +49,7 @@ const Addcategory = async (req, res) => {
             return res.status(400).send("The category already exist");
           } else {
             const categoryObj = {
+              createdby: req.userId,
               name: req.body.name,
               slug: slugify(req.body.name),
               color: req.body.color,
@@ -69,8 +73,9 @@ const Addcategory = async (req, res) => {
 }
 
 const Getcategories = async (req, res) => {
+  //await messageModel.deleteMany({})
   try {
-    const categories = await categoryModel.find();
+    const categories = await categoryModel.find().populate('createdby');
     const categoryList = createCategories(categories)
     res.status(201).json(categoryList);
   } catch (error) {

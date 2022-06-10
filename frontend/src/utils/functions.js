@@ -30,6 +30,7 @@ function stringToColor(string) {
   export const createCategoryList = (categories, options = []) => {
     for (let category of categories) {
         options.push({
+          createdby : category.createdby,
           value: category._id,
           name: category.name,
           parentId: category.parentId,

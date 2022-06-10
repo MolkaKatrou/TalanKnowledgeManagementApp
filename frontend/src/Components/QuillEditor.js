@@ -207,7 +207,7 @@ class QuillEditor extends React.Component {
             }
             formData.append("file", file);
 
-            axios.post('/Api/notes/uploadfiles', formData, config)
+            axios.post('/Api/uploadfiles', formData, config)
                 .then(response => {
                     if (response.data.success) {
 
@@ -246,7 +246,7 @@ class QuillEditor extends React.Component {
             }
             formData.append("file", file);
 
-            axios.post('/Api/notes/uploadfiles', formData, config)
+            axios.post('/Api/uploadfiles', formData, config)
                 .then(response => {
                     if (response.data.success) {
 
@@ -285,7 +285,7 @@ class QuillEditor extends React.Component {
             }
             formData.append("file", file);
 
-            axios.post('/Api/notes/uploadfiles', formData, config)
+            axios.post('/Api/uploadfiles', formData, config)
                 .then(response => {
                     if (response.data.success) {
 

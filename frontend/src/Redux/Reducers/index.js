@@ -6,6 +6,7 @@ import postsReducer from './postsReducer'
 import questionsReducer from './questionsReducer';
 import answersReducer from './answersReducer';
 import usersReducer from './usersReducer';
+import AllPostsQuestions from './AllPostsQuestions';
 
 
 export default combineReducers({
@@ -15,6 +16,7 @@ export default combineReducers({
     posts: postsReducer,
     questions:questionsReducer,
     answers: answersReducer,
+    all: AllPostsQuestions,
     errors: errorsReducer,
 
 })

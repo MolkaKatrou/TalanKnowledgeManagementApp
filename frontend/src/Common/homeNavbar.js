@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import logo from '../images/logo.png'
-import { alpha, AppBar, Button, Badge, Box, InputBase, makeStyles, Typography, IconButton } from "@material-ui/core"
+import { alpha, AppBar, Badge, Box, InputBase, makeStyles, Typography, IconButton } from "@material-ui/core"
 import { Toolbar } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import Mail from '@mui/icons-material/Mail';
@@ -9,14 +9,15 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import LockOpen from '@mui/icons-material/LockOpen';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useDispatch } from 'react-redux';
-import { Logout } from "../Redux/Actions/authActions";
+import { ChangePasswordAction, Logout } from "../Redux/Actions/authActions";
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, MenuButton, MenuList, MenuItem, ChakraProvider, Divider, Avatar, AvatarBadge } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, Button, MenuItem, ChakraProvider, Divider, Avatar, AvatarBadge, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormLabel, Input } from "@chakra-ui/react";
 import { HomeContext } from '../Context/HomeContext';
 import { getSender } from '../Components/Chats/ChatLogic';
 import NotificationBadge from "react-notification-badge";
 import { Effect } from "react-notification-badge";
+import Passwordinput from '../Components/inputs/Password';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -48,16 +49,68 @@ function useQuery() {
 
 
 export default function HomeNavbar({ searchPost, handleKeyPress, search, setSearch }) {
+  const [form, setForm] = useState({});
+  const errors = useSelector(state => state.errors)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { notification, setNotification,selectedChat, setSelectedChat, notificationChat, setNotificationChat } = useContext(HomeContext)
+  const { setSocketConnected, notification, socket, notifications, setNotifications, setNotification, selectedChat, setSelectedChat, notificationChat, setNotificationChat } = useContext(HomeContext)
   const auth = useSelector(state => state.auth)
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const onChangeHandler = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const ChangepasswordHandler = () => {
+    dispatch(ChangePasswordAction(form))
+  }
 
   const LogoutHandler = () => {
     dispatch(Logout())
   }
   const classes = useStyles()
+
+
+  const displayNotification = ({ sender, type }) => {
+    let action;
+
+    if (type === 1) {
+      action = "liked your post.";
+    } else if (type === 2) {
+      action = "bookmarked your post";
+    } else if (type === 3) {
+      action = "commented on your post";
+    }
+    else if (type === 4) {
+      action = "upvoted your question";
+
+    } else if (type === 5) {
+      action = "downvoted your question";
+    }
+    else if (type === 6) {
+      action = "commented on your question";
+    }
+    else if (type === 7) {
+      action = "upvoted your answer";
+    }
+    else if (type === 8) {
+      action = "downvoted your answer";
+    }
+    else {
+      action = "answered your question"
+    }
+    return (
+      <span className="d-flex" style={{ color: 'black' }}>
+        <ChakraProvider>
+          <Avatar size='sm' p={0} name={sender.fullname} src={sender.pic} />
+        </ChakraProvider>
+        <div className='mt-1 mx-2'> {`${sender.fullname} ${action}`}</div>
+      </span>
+    );
+  };
 
 
   return (
@@ -86,34 +139,44 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
               <MenuButton
                 className={classes.message}
                 mx={5}
-                onClick={() => { 
+                onClick={() => {
                   navigate('/chats');
                   setNotificationChat(false)
                 }}
               >
                 <NotificationBadge
-                  count={notificationChat? notification.length : 0 }
+                  count={notificationChat ? notification.length : 0}
                   effect={Effect.SCALE}
-                  style={{ width: '10px', height:'18px', paddingLeft:'4px', paddingRight:'10px' }}
+                  style={{ width: '10px', height: '18px', paddingLeft: '4px', paddingRight: '10px' }}
                 />
                 <Mail />
               </MenuButton>
             </Menu>
             <Menu >
-              <MenuButton className={classes.message} mx={10}><Notifications /></MenuButton>
+              <MenuButton className={classes.message} mx={10}>
+                <NotificationBadge
+                  count={notifications.length}
+                  effect={Effect.SCALE}
+                  style={{ width: '10px', height: '18px', paddingLeft: '4px', paddingRight: '10px' }}
+                />
+                <Notifications />
+              </MenuButton>
               <MenuList pl={2}>
-                {!notification.length && "No New Messages"}
-                {notification.map((notif) => (
+                {notifications.map((notif) => (
                   <MenuItem
                     key={notif._id}
                     onClick={() => {
-                      setSelectedChat(notif.chat);
-                      setNotification(notification.filter((n) => n !== notif));
+                      if (notif.post === 'post') {
+                        navigate(`/post/${notif.postId}`)
+                      }
+                      else if (notif.post === 'question') {
+                        navigate(`/Main-Question/${notif.postId}`)
+                      }
+                      setNotifications(notifications.filter((n) => n !== notif));
+
                     }}
                   >
-                    {notif.chat.isGroupChat
-                      ? `New Message in ${notif.chat.chatName}`
-                      : `New Message from ${getSender(auth.user, notif.chat.users)}`}
+                    {displayNotification(notif)}
                   </MenuItem>
                 ))}
               </MenuList>
@@ -121,14 +184,14 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
           </ChakraProvider>
           <Box sx={{ flexGrow: 0 }}>
             <ChakraProvider>
-              <Menu isLazy>
+              <Menu>
                 <MenuButton> <Avatar p={0} name={auth.user.fullname} src={auth.user.pic} /></MenuButton>
                 <MenuList className='text-secondary' >
                   <Box className="d-flex">
-                    <Avatar name={auth.user.fullname} src={auth.user.pic}  className='mx-3' >  <AvatarBadge bg='green.500' boxSize='1em' /></Avatar>
+                    <Avatar name={auth.user.fullname} src={auth.user.pic} className='mx-3' >  <AvatarBadge bg='green.500' boxSize='1em' /></Avatar>
                     <div>
-                    <h1 style={{ fontFamily: 'PT sans', fontSize: '15px' }} className='mt-2 text-secondary'>{auth.user.fullname}</h1>
-                    <h6 style={{ fontFamily: 'Segoe UI', fontSize: '10px' , color:'gray' , marginTop:'2px' }}>{auth.user.email}</h6>
+                      <h1 style={{ fontFamily: 'PT sans', fontSize: '15px' }} className='mt-2 text-secondary'>{auth.user.fullname}</h1>
+                      <h6 style={{ fontFamily: 'Segoe UI', fontSize: '10px', color: 'gray', marginTop: '2px' }}>{auth.user.email}</h6>
                     </div>
                   </Box>
                   <Divider className='mt-3 mb-3' />
@@ -137,9 +200,61 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
                     Profile
                   </MenuItem>
 
-                  <MenuItem icon={<LockOpen />} >
-                    Change Password
+                  <MenuItem icon={<LockOpen />} onClick={onOpen} >
+                    Manage Account
                   </MenuItem>
+                  <Modal size='full' isOpen={isOpen}>
+                    <ModalOverlay />
+                    <ModalContent style={{ width: '60%' }}>
+                      <ModalHeader>Change Password</ModalHeader>
+                      <ModalCloseButton />
+                      <ModalBody pb={6}>
+
+                        <div className='mx-5 mt-5'>
+                          <FormControl>
+                            <FormLabel>Old Password</FormLabel>
+                            < Passwordinput
+                              name="old_password"
+                              placeholder="Enter your old password"
+                              icon="fa fa-key"
+                              onChangeHandler={onChangeHandler}
+                              errors={errors.old_password}
+                            />
+                          </FormControl>
+
+                          <FormControl mt={4}>
+                            <FormLabel>New Password</FormLabel>
+                            <Passwordinput
+                              name="new_password"
+                              placeholder="Enter your new password"
+                              icon="fa fa-key"
+                              onChangeHandler={onChangeHandler}
+                              errors={errors.new_password}
+                            />
+                          </FormControl>
+
+                          <FormControl mt={4}>
+                            <FormLabel>Confirm New Password</FormLabel>
+                            < Passwordinput
+                              name="confirm_password"
+                              placeholder="Confirm your new password"
+                              icon="fa fa-key"
+                              onChangeHandler={onChangeHandler}
+                              errors={errors.confirm_password}
+                            />
+                          </FormControl>
+                        </div>
+
+
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={ChangepasswordHandler}>
+                          Save
+                        </Button>
+                        <Button onClick={onClose}>Cancel</Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>
                   <Divider className='mt-2 mb-2' />
                   <MenuItem icon={<LogoutIcon />} onClick={LogoutHandler} >
                     Logout

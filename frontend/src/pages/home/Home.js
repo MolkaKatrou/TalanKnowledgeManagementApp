@@ -6,7 +6,6 @@ import AddNote from './AddNote';
 import Rightbar from '../../Common/Rightbar';
 import { useSelector } from 'react-redux';
 import { CategoryContext } from '../../Context/CategoryContext';
-import {Helmet} from "react-helmet";
 
 
 

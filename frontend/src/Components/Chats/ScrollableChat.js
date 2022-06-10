@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import ScrollableFeed from "react-scrollable-feed";
 import { isFirstMessage, isLastMessage, isSameSender, isSameSenderMargin, isSameUser } from './ChatLogic';
+import Linkify from 'react-linkify';
 
 
 export default function ScrollableChat({ messages, user }) {
@@ -19,9 +20,9 @@ export default function ScrollableChat({ messages, user }) {
                                         mr={1}
                                         size="sm"
                                         cursor="pointer"
-                                        name={m.sender?.fullname}  
-                                        src={m.sender?.pic}                                  
-                                                            
+                                        name={m.sender?.fullname}
+                                        src={m.sender?.pic}
+
                                     />
                                 </Tooltip>
                             )}
@@ -34,14 +35,16 @@ export default function ScrollableChat({ messages, user }) {
                                 borderRadius: "13px",
                                 padding: "5px 15px",
                                 maxWidth: "75%",
-                                display: 'flex',                         
+                                display: 'flex',
                                 alignItems: 'center',
-                                fontFamily: 'Helvetica', 
-                                letterSpacing: '0.3px'                    
+                                fontFamily: 'Helvetica',
+                                letterSpacing: '0.3px'
                             }}
                         >
-                            {m.content} 
-                            
+                            <Linkify properties={{ target: '_blank' }}>
+                                {m.content}
+                            </Linkify>
+
                         </span>
                     </div>
                 ))}

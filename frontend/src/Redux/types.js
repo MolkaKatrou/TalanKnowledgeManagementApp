@@ -23,10 +23,14 @@ export const GET_QUESTION ="GET_QUESTION"
 export const DELETE_QUESTION ="DELETE_QUESTION"
 export const VOTE_UP ="VOTE_UP"
 export const VOTE_DOWN ="VOTE_DOWN"
+export const BOOKMARK_QUESTION ="BOOKMARK_QUESTION"
+
 
 export const GET_ANSWERS ="GET_ANSWERS"
 export const DELETE_ANSWER ="DELETE_ANSWER"
 export const VOTE_UP_ANSWER ="VOTE_UP"
 export const VOTE_DOWN_ANSWER ="VOTE_DOWN_ANSWER"
+
+export const GET_All ="GET_All"
 
 

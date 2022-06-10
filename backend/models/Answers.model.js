@@ -31,6 +31,7 @@ const AnswerModel = new mongoose.Schema({
         ref:'comment'  
     }],
 
+
 });
 
 module.exports = mongoose.model("answer", AnswerModel);

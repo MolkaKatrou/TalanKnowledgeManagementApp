@@ -8,18 +8,22 @@ import { getSender, getSenderFull } from './ChatLogic';
 import UpdateChatModal from './UpdateChatModal';
 import ScrollableChat from './ScrollableChat';
 import axios from 'axios';
-import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../../animations/typing.json";
+import animationWelcome from "../../animations/hello.json";
+import AttachmentIcon from '@mui/icons-material/Attachment';
 import SendIcon from '@mui/icons-material/Send';
-
+import Picker from "emoji-picker-react";
+import { BsEmojiSmileFill } from "react-icons/bs";
+import styled from "styled-components";
 
 var selectedChatCompare
 
 export default function SingleChat({ fetchAgain, setFetchAgain }) {
-    const {socket, selectedChat,isTyping, setIsTyping, setSelectedChat, socketConnected, setSocketConnected, notificationChat, setNotificationChat, notification, setNotification, token } = useContext(HomeContext)
+    const { socket, selectedChat, isTyping, setIsTyping, setSelectedChat, socketConnected, setSocketConnected, notificationChat, setNotificationChat, notification, setNotification, token } = useContext(HomeContext)
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [file, setFile] = useState("")
     const [newMessage, setNewMessage] = useState("");
     const toast = useToast();
     const [typing, setTyping] = useState(false);
@@ -35,6 +39,44 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
         },
     };
 
+    const WelcomeOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: animationWelcome,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice",
+        },
+    };
+
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+    const handleEmojiPickerhideShow = () => {
+        setShowEmojiPicker(!showEmojiPicker);
+    };
+
+    const handleEmojiClick = (event, emojiObject) => {
+        let message = newMessage;
+        message += emojiObject.emoji;
+        setNewMessage(message);
+    };
+
+    const ImportAttachement = (file) => {
+        setFile(file)
+        let formData = new FormData();
+        const config = {
+            header: { 'content-type': 'multipart/form-data' }
+        }
+        formData.append("file", file);
+        axios.post('/Api/uploadfiles', formData, config)
+            .then(response => {
+                console.log("http://localhost:4000/" + response.data.url, response.data.fileName);
+                let message = newMessage;
+                message += response.data.fileName ;
+                setNewMessage(message);
+               
+             })
+
+    }
 
     const fetchMessages = async () => {
         if (!selectedChat) return;
@@ -63,53 +105,57 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
         }
 
     }
-    
+
 
     const sendMessage = async (event) => {
-            socket.emit('stop typing', selectedChat._id)
-            try {
-                setNewMessage('')
-                const { data } = await axios.post("/api/message", { content: newMessage, chatId: selectedChat });
-                console.log(data)
-                socket.emit("new message", data)
-                setMessages([...messages, data]);
-            } catch (error) {
-                toast({
-                    title: "Error Occured!",
-                    description: "Failed to send the Message",
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                    position: "bottom",
-                });
+        socket.emit('stop typing', selectedChat._id)
+        try {
+            setNewMessage('')        
+            
+            const { data } = await axios.post("/api/message", { content: newMessage, chatId: selectedChat });
+            console.log(data)
+            socket.emit("new message", data)
+            setMessages([...messages, data]);
+        } catch (error) {
+            toast({
+                title: "Error Occured!",
+                description: "Failed to send the Message",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
 
-            }
         }
-        useEffect(() => {
-            socket.on('typing', () => setIsTyping(true))
-            socket.on('stop typing', () => setIsTyping(false))      
-        }, [])
+    }
 
     useEffect(() => {
         fetchMessages();
         selectedChatCompare = selectedChat;
     }, [selectedChat]);
 
-
     useEffect(() => {
         socket.on("message received", (newMessageReceived) => {
             if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
-                    if (!notification.includes(newMessageReceived)) {
-                      setNotification([newMessageReceived, ...notification]);
-                      setFetchAgain(!fetchAgain);
-                      setNotificationChat(true)
-                    }
+                if (!notification.includes(newMessageReceived)) {
+                    setNotification([newMessageReceived, ...notification]);
+                    setFetchAgain(!fetchAgain);
+                    setNotificationChat(true)
+                }
             }
             else {
-                setMessages([...messages, newMessageReceived])
+                setMessages((prev) => [...prev, newMessageReceived]);
             }
         })
     })
+
+    useEffect(() => {
+        socket.on('typing', () => setIsTyping(true))
+        socket.on('stop typing', () => setIsTyping(false))
+    })
+
+
+
 
     const typingHandler = (e) => {
         setNewMessage(e.target.value)
@@ -130,13 +176,8 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
             }
         }, timerLength);
     }
-    useEffect(() => {
-        socket.emit("setup", auth.user);
-        socket.on('connected', () => setSocketConnected(true))
-        socket.on('typing', () => setIsTyping(true))
-        socket.on('stop typing', () => setIsTyping(false))
-    }, [])
-    
+
+
 
     return (
         <>
@@ -218,21 +259,41 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                             ) : (
                                 <></>
                             )}
+                            <ContainerStyled>
+                                <div className="button-container">
+                                    <div className="emoji">
+                                        <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} />
+                                        {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
+                                    </div>
+                                    <div>
 
+                                        <label htmlFor="attachement">
+                                            <input
+                                                accept="file/*"
+                                                id="attachement"
+                                                type="file"
+                                                style={{ display: 'none' }}
+                                                onChange={(e) => ImportAttachement(e.target.files[0])}
 
-                            <InputGroup>
-                                <Input
-                                    variant="filled"
-                                    bg="#E0E0E0"
-                                    placeholder="Enter a message.."
-                                    value={newMessage}
-                                    onChange={typingHandler}
-                                    autoComplete="off"
+                                            />
+                                            <AttachmentIcon style={{ color: 'gray', cursor: 'pointer' }} />
+                                        </label>
+                                    </div>
+                                    <InputGroup>
 
-                                />
-                                <InputRightElement children={<SendIcon style={{ color: 'blue', cursor: 'pointer' }} onClick={sendMessage} />} />
-                            </InputGroup>
+                                        <Input
+                                            variant="filled"
+                                            bg="#E0E0E0"
+                                            placeholder="Enter a message.."
+                                            value={newMessage}
+                                            onChange={typingHandler}
+                                            autoComplete="off"
 
+                                        />
+                                        <InputRightElement children={<SendIcon style={{ color: 'blue', cursor: 'pointer' }} onClick={sendMessage} />} />
+                                    </InputGroup>
+                                </div>
+                            </ContainerStyled>
 
                         </FormControl>
 
@@ -242,8 +303,16 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                 </>
             ) : (
                 <Box className='d-flex justify-content-center align-items-center' h="100%">
-                    <Text fontSize="3xl" pb={3} fontFamily="Work sans">
-                        Click on a user to start Chatting
+                    <Text fontSize="3xl" pb={3} fontFamily="Work sans" style={{ color: 'gray' }}>
+                        <div>
+                            <Lottie
+                                options={WelcomeOptions}
+                                height={150}
+                                width={180}
+                                style={{ marginBottom: 15, display: 'flex', justifyContent: 'center' }}
+                            />
+                        </div>
+                        Click on a collaborator to start Chatting
                     </Text>
                 </Box>
             )
@@ -254,3 +323,47 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
         </>
     )
 }
+
+const ContainerStyled = styled.div`
+  .button-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    .emoji {
+      position: relative;
+      svg {
+        font-size: 1.5rem;
+        color: #ffff00c8;
+        cursor: pointer;
+      }
+      .emoji-picker-react {
+        position: absolute;
+        top: -350px;
+        background-color: #667193;
+        box-shadow: 0 5px 10px #9a86f3;
+        border-color: #9a86f3;
+        .emoji-scroll-wrapper::-webkit-scrollbar {
+          background-color: #667193;
+          width: 5px;
+          &-thumb {
+            background-color: #9a86f3;
+          }
+        }
+        .emoji-categories {
+            color:black
+          button {
+            filter: contrast(0);
+          }
+        }
+        .emoji-search {
+          background-color: transparent;
+          border-color: white;
+        }
+        .emoji-group:before {
+          background-color: #667193;
+        }
+      }
+    }
+  }
+ 
+`;

@@ -6,7 +6,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditIcon from '@mui/icons-material/EditOutlined';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { likePost, BookmarkPost, deletePost, getAllPosts } from '../../Redux/Actions/postsActions';
 import { useState } from 'react';
@@ -46,22 +46,34 @@ const useStyles = makeStyles((theme) => ({
   }
 
 }));
-export default function Post({ post, show }) {
-  const { setOpenNote, setShowAlert, showAlert, currentId, setCurrentId, dispatch, liked, setLiked } = useContext(HomeContext)
+export default function Post({ post}) {
+  const { setOpenNote, setShowAlert, socket, currentId, setCurrentId, dispatch, liked, setLiked } = useContext(HomeContext)
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const classes = useStyles()
-  const [likes, setLikes] = useState(post.likes);
-  const [bookmarks, setBookmarks] = useState(post.bookmarks);
+  const [likes, setLikes] = useState(post?.likes);
+  const [bookmarks, setBookmarks] = useState(post?.bookmarks);
   const auth = useSelector(state => state.auth)
   const userId = auth.user.id
-  const hasLikedPost = post.likes.find((like) => like === userId);
-  const hasBookmarkedPost = post.bookmarks.find((bookmark) => bookmark === userId);
+  const hasLikedPost = post?.likes?.find((like) => like === userId);
+  const hasBookmarkedPost = post?.bookmarks?.find((bookmark) => bookmark === userId);
+  const location = useLocation()
 
+
+  const handleNotification = (type) => {
+    socket.emit("sendNotification", {
+      sender: auth.user,
+      receiver: post.createdby,
+      type,
+      postId : post._id,
+      post: 'post',
+ 
+    });
+  };
 
   useEffect(() => {
-    setLikes(post.likes)
-    setBookmarks(post.bookmarks)
+    setLikes(post?.likes)
+    setBookmarks(post?.bookmarks)
   }, [post._id])
 
   const UpdatePost = (e) => {
@@ -71,7 +83,7 @@ export default function Post({ post, show }) {
   }
 
   const DeletePost = () => {
-    dispatch(deletePost(post._id))
+    dispatch(deletePost(post?._id))
     setOpen(false)
     setShowAlert(true)
     setTimeout(() => {
@@ -80,8 +92,8 @@ export default function Post({ post, show }) {
   }
 
   const Bookmarks = () => {
-    if (bookmarks.length > 0) {
-      return bookmarks.find((bookmark) => bookmark === userId)
+    if (bookmarks?.length > 0) {
+      return bookmarks?.find((bookmark) => bookmark === userId)
         ? (
           <BookmarkIcon style={{ color: '#937474' }} />
         ) : (
@@ -93,12 +105,12 @@ export default function Post({ post, show }) {
   };
 
   const Likes = () => {
-    if (likes.length > 0) {
-      return likes.find((like) => like === userId)
+    if (likes?.length > 0) {
+      return likes?.find((like) => like === userId)
         ? (
-          <><FavoriteIcon style={{ color: '#DA3131' }} />&nbsp;<span style={{ fontSize: '16px' }}>{likes.length > 2 ? `You and ${likes.length - 1} others` : `${likes.length} Like${likes.length > 1 ? 's' : ''}`}</span></>
+          <><FavoriteIcon style={{ color: '#DA3131' }} />&nbsp;<span style={{ fontSize: '16px' }}>{likes?.length > 2 ? `You and ${likes?.length - 1} others` : `${likes?.length} Like${likes?.length > 1 ? 's' : ''}`}</span></>
         ) : (
-          <><FavoriteOutlinedIcon />&nbsp;<span style={{ fontSize: '16px' }}>{likes.length} {likes.length === 1 ? 'Like' : 'Likes'}</span></>
+          <><FavoriteOutlinedIcon />&nbsp;<span style={{ fontSize: '16px' }}>{likes?.length} {likes?.length === 1 ? 'Like' : 'Likes'}</span></>
         );
     }
 
@@ -113,9 +125,9 @@ export default function Post({ post, show }) {
     } else {
       setLikes([...post.likes, userId]);
       setLiked(!liked)
+      handleNotification(1)
     }
     dispatch(getAllPosts())
-    console.log(likes)
   };
 
   const handleBookmark = async () => {
@@ -126,7 +138,7 @@ export default function Post({ post, show }) {
     } else {
       setBookmarks([...post.bookmarks, userId]);
       setLiked(!liked)
-
+      handleNotification(2)
     }
     dispatch(getAllPosts())
 
@@ -140,7 +152,7 @@ export default function Post({ post, show }) {
         <CardHeader
           avatar={
             <ChakraProvider>
-              <Avatar name={post.createdby.fullname} src={post.createdby.pic} />
+              <Avatar name={post?.createdby?.fullname} src={post?.createdby?.pic} />
 
             </ChakraProvider>
 
@@ -149,7 +161,7 @@ export default function Post({ post, show }) {
             <>
 
               {
-                auth.user.email === post.createdby.email ? (
+                auth.user.email === post?.createdby.email ? (
                   <Menu isLazy>
                     <MenuButton><MoreVertIcon /></MenuButton>
                     <MenuList>
@@ -180,16 +192,16 @@ export default function Post({ post, show }) {
           }
           title={
           <div className='row'>
-            <div className='col-4'> {post.createdby.fullname} </div>
+            <div className='col-4'> {post?.createdby.fullname} </div>
             
-              <Typography className='col-7' onClick={() => navigate(`/category/${post.category._id}/notes`)} style={{ color: `${post.category.color}`, textAlign: 'center', fontWeight: '600', display: show ? "flex" : "none" }}>
-                {`  ${post.category.name} `}
+              <Typography className='col-7' onClick={() => navigate(`/category/${post?.category._id}/notes`)} style={{ color: `${post.category.color}`, textAlign: 'center', fontWeight: '600', display: location.pathname === '/Home' || location.pathname ==='/Bookmarks' ? "flex" : "none" }}>
+                {`  ${post?.category.name} `}
 
               </Typography> 
               
           </div>
           }
-          subheader={moment(post.createdAt).fromNow()}
+          subheader={moment(post?.createdAt).fromNow()}
         >
         </CardHeader>
         <CardContent onClick={() => navigate(`/post/${post._id}`)} >
@@ -197,15 +209,15 @@ export default function Post({ post, show }) {
           <Typography color="text.secondary" style={{ fontWeight: '550', fontFamily: 'Raleway,sans-serif', fontSize: '16px' }}>
             {post.title}
           </Typography>
-          <div className='card-content mt-3'>{ReactHtmlParser(post.content)}</div>
+          <div className='card-content mt-3'>{ReactHtmlParser(post?.content)}</div>
         </CardContent>
         <CardActions disableSpacing>
           <IconButton onClick={handleLike} className="MyCustomButton">
             <Likes />
           </IconButton>
-          <IconButton onClick={() => navigate(`/post/${post._id}`)} className="MyCustomButton" >
+          <IconButton onClick={() => navigate(`/post/${post?._id}`)} className="MyCustomButton" >
             <CommentIcon fontSize="small" />&nbsp;
-            <span style={{ fontSize: '16px' }}>{post.comments.length} Comments</span>
+            <span style={{ fontSize: '16px' }}>{post?.comments?.length} Comments</span>
           </IconButton>
           <IconButton onClick={handleBookmark} className="MyCustomButton">
             <Bookmarks />

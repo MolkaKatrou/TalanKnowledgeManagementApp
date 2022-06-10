@@ -43,9 +43,7 @@ export default function CategoryNotes() {
   const filteredCategories = createCategoryList(categoriesList.categories).filter(cat => cat.value == id)
   const categoryPosts = postsList.posts
   const filteredPosts = categoryPosts.filter(post => post.category._id == id)
-  const [show, setShow] = useState(false)
   const [latest, setLatest] = useState(true)
-
   const {showAlert, openNote, dispatch, liked} = useContext(HomeContext)
 
 
@@ -58,7 +56,6 @@ export default function CategoryNotes() {
     return <div >
       <Post
         post={post}
-        show={show}
       />
     </div>
   }
@@ -69,8 +66,7 @@ export default function CategoryNotes() {
  }).map((post, index) => (
     <Grid key={post._id}>
       <Post
-          post = {post}      
-          show={show}      
+          post = {post}  
       /> 
      </Grid>
     )

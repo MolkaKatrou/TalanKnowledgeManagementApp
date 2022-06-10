@@ -90,6 +90,9 @@ function ValidateUser(data){
     if (validator.isEmpty(data.phone)){
         errors.phone ="Please enter the user's phone number";
     }
+    if (validator.isEmpty(data.role)){
+        errors.role ="Please Choose the user's role";
+    }
 
     return {
         errors,
@@ -116,11 +119,38 @@ function ValidateEmail(data){
     }
 }
 
+function ValidateChangePassword(data){
+    let errors ={};
+    data.old_password = !isEmpty(data.old_password) ? data.old_password :"";
+    data.new_password = !isEmpty(data.new_password) ? data.new_password :"";
+    data.confirm_password = !isEmpty(data.confirm_password) ? data.confirm_password : "";
+
+
+    if (validator.isEmpty(data.old_password)){
+        errors.old_password ="Please enter your old password";
+    }
+    if (validator.isEmpty(data.new_password)){
+        errors.new_password ="Please enter your new password";
+    }
+    if (validator.isEmpty(data.confirm_password)){
+        errors.confirm_password ="Please enter the password to confirm";
+    }
+    if(!validator.equals(data.new_password, data.confirm_password)){
+        errors.confirm_password = "The passwords don't match";
+    }
+
+    return {
+        errors,
+        isValid: isEmpty(errors)
+    }
+}
+
 
 
 module.exports = {
     ValidateUser,
     ValidateLogin,
     ValidatePassword,
-    ValidateEmail
+    ValidateEmail,
+    ValidateChangePassword
   };

@@ -1,15 +1,15 @@
 import { Typography, IconButton } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import BookmarkIcon from "@material-ui/icons/Bookmark";
 import { useDispatch, useSelector } from "react-redux";
-import { DownVoteQuestion, UpVoteQuestion } from "../../Redux/Actions/questionsActions";
+import { BookmarkQuestion, DownVoteQuestion, UpVoteQuestion } from "../../Redux/Actions/questionsActions";
 import { useParams } from "react-router-dom";
 import moment from 'moment';
 import ReactHtmlParser from "react-html-parser";
+import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
+import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 
 
 function QuestionAnswer({ question }) {
-    const {id} = useParams()
     const dispatch = useDispatch()
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
@@ -17,7 +17,32 @@ function QuestionAnswer({ question }) {
     const hasDownvotedquestion = question?.downVotes.find((vote) => vote === userId);
     const [upVotes, setUpVotes] = useState(question?.upVotes);
     const [downVotes, setDownVotes] = useState(question?.downVotes);
-
+    const hasBookmarkedQuestion = question.bookmarks.find((bookmark) => bookmark === userId);
+    const [bookmarks, setBookmarks] = useState(question.bookmarks);
+  
+    const Bookmarks = () => {
+        if (bookmarks.length > 0) {
+          return bookmarks.find((bookmark) => bookmark === userId)
+            ? (
+              <BookmarkIcon style={{ color: '#937474' }} />
+            ) : (
+              <BookmarkOutlinedIcon />
+            );
+        }
+    
+        return <BookmarkOutlinedIcon />
+      };
+    
+      const handleBookmark = async () => {
+        dispatch(BookmarkQuestion(question._id));
+        if (hasBookmarkedQuestion) {
+          setBookmarks(question.bookmarks.filter((id) => id !== userId));
+        } else {
+          setBookmarks([...question.bookmarks, userId]);
+        }
+    
+      };
+    
 
     const UpVote = () => {
         if (upVotes?.length > 0) {
@@ -92,9 +117,12 @@ function QuestionAnswer({ question }) {
                     <div className="all-questions-left">
                         <div className="all-options">
                             <IconButton className="arrow" onClick={handleUpVote}> <UpVote /></IconButton>
-                            <IconButton className="arrow"> <i>{upVotes?.length - downVotes?.length || 0}</i></IconButton>
+                            <p className="arrow"> <i>{upVotes?.length - downVotes?.length || 0}</i></p>
                             <IconButton className="arrow" onClick={handleDownVote}><DownVote /></IconButton>
-                            <BookmarkIcon />
+                            <IconButton onClick={handleBookmark} className="MyCustomButton">
+            <Bookmarks />
+          </IconButton>
+
                         </div>
                     </div>
                     <div className="question-answer">

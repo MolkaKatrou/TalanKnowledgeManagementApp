@@ -36,6 +36,7 @@ const AddQuestion = async (req, res) => {
 const DeleteQuestion = async (req, res) => {
     const { id } = req.params;
     await QuestionModel.findByIdAndRemove(id);
+    await AnswerModel.deleteMany({question : id})
     res.json({ message: "Question deleted successfully." });
 };
 const DeleteComment = async (req, res) => {
@@ -68,11 +69,11 @@ const VoteUp = async (req, res) => {
     if (indexUp === -1 || indexDown !== -1) {
         question.upVotes.push(req.userId);
         question.downVotes = question.downVotes.filter((id) => id !== String(req.userId));
-  
+        
     } else {
-        question.upVotes = question.upVotes.filter((id) => id !== String(req.userId));
+        question.upVotes = question.upVotes.filter((id) => id !== String(req.userId));      
     }
-
+   
     const updatedQuestion = await QuestionModel.findByIdAndUpdate(id, question, { new: true });
 
     res.status(201).json(updatedQuestion);
@@ -90,17 +91,41 @@ const VoteDown = async (req, res) => {
 
     if (indexDown === -1 || indexUp !== -1) {
         question.downVotes.push(req.userId);
-        question.upVotes = question.downVotes.filter((id) => id !== String(req.userId));
+        question.upVotes = question.upVotes.filter((id) => id !== String(req.userId));
+        
     }
      else {
-        question.downVotes = question.upVotes.filter((id) => id !== String(req.userId));
+        question.downVotes = question.downVotes.filter((id) => id !== String(req.userId));
+        
     }
 
+  
     const updatedQuestion = await QuestionModel.findByIdAndUpdate(id, question, { new: true });
 
     res.status(201).json(updatedQuestion);
 }
 
+const BookmarkQuestion = async (req, res) => {
+    const { id } = req.params;
+
+    if (!req.userId) {
+        return res.json({ message: "Unauthenticated" });
+      }
+    
+    const question = await QuestionModel.findById(id);
+    const index = question.bookmarks.findIndex((id) => id ===String(req.userId));
+
+    if (index === -1) {
+      question.bookmarks.push(req.userId);
+    } else {
+      question.bookmarks = question.bookmarks.filter((id) => id !== String(req.userId));
+    }
+
+    const updatedQuestion = await QuestionModel.findByIdAndUpdate(id, question, { new: true });
+
+    res.status(200).json(updatedQuestion);
+   
+}
 const GetAnswers = async (req, res) => {
     try {
         const data = await AnswerModel.find().populate('question').populate('createdby').populate({
@@ -148,9 +173,10 @@ const VoteUpAnswer = async (req, res) => {
     if (indexUp === -1 || indexDown !== -1) {
         answer.upVotes.push(req.userId);
         answer.downVotes = answer.downVotes.filter((id) => id !== String(req.userId));
-  
+      
     } else {
         answer.upVotes = answer.upVotes.filter((id) => id !== String(req.userId));
+        
     }
 
     const updatedAnswer = await AnswerModel.findByIdAndUpdate(id, answer, { new: true });
@@ -170,10 +196,12 @@ const VoteDownAnswer = async (req, res) => {
 
     if (indexDown === -1 || indexUp !== -1) {
         answer.downVotes.push(req.userId);
-        answer.upVotes = answer.downVotes.filter((id) => id !== String(req.userId));
+        answer.upVotes = answer.UpVotes.filter((id) => id !== String(req.userId));
+        
     }
      else {
-        answer.downVotes = answer.upVotes.filter((id) => id !== String(req.userId));
+        answer.downVotes = answer.downVotes.filter((id) => id !== String(req.userId));
+        
     }
 
     const updatedAnswer  = await AnswerModel.findByIdAndUpdate(id, answer, { new: true });
@@ -221,5 +249,6 @@ module.exports = {
     VoteUpAnswer,
     VoteDownAnswer,
     CommentAnswer,
-    DeleteComment
+    DeleteComment,
+    BookmarkQuestion
 };

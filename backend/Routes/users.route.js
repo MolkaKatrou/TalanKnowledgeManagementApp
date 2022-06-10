@@ -1,5 +1,5 @@
 const express = require('express');
-const { AddUser, FindAllUsers, FindSingleUser, UpdateUser, DeleteUser,updateProfilePicture, Login, Test, Admin, Resetpassword, Newpassword, SearchUsers } = require('../controllers/users.controlers');
+const { AddUser, FindAllUsers, FindSingleUser, UpdateUser, DeleteUser,updateProfilePicture, Login, Test, Admin, Resetpassword, Newpassword, SearchUsers, Changepassword } = require('../controllers/users.controlers');
 const router = express.Router();
 const passport=require('passport');
 const { ROLES, inRole } = require('../security/Rolemidlleware');
@@ -18,6 +18,8 @@ router.post('/login', Login);
 router.post('/forgotpassword', Resetpassword);
 router.post('/resetpassword', Newpassword)
 router.get('/searchUsers',auth, SearchUsers)
+router.post('/changepassword',auth, Changepassword)
+
 
 
 

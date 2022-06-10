@@ -12,7 +12,7 @@ import { HomeContext } from '../../Context/HomeContext';
 
 const useStyles = makeStyles((theme) => ({
     container: {
-        paddingTop: theme.spacing(10),
+        paddingTop: theme.spacing(8),
         height:'100%',
         backgroundColor:'rgb(225, 228, 232)'
     },
@@ -41,7 +41,7 @@ function Bookmark() {
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
     const {posts, loading } = useSelector((state) => state.posts);
-    const bookmarkedPosts = posts.filter(post => post.bookmarks.includes(userId))
+    const bookmarkedPosts = posts.filter(post => post?.bookmarks?.includes(userId))
     const {showAlert, openNote, setOpenNote, dispatch, liked} = useContext(HomeContext)
 
     useEffect(() => {

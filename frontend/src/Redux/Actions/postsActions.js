@@ -1,4 +1,4 @@
-import {GET_POSTS, GET_POST,CREATE_POST, UPDATE_POST, DELETE_POST, LIKE, BOOKMARK,FETCH_BY_SEARCH, ERRORS} from '../types'
+import {GET_POSTS, GET_POST,CREATE_POST,GET_All, UPDATE_POST, DELETE_POST, LIKE, BOOKMARK,FETCH_BY_SEARCH, ERRORS} from '../types'
 import axios from 'axios'
 
 axios.interceptors.request.use((req) => {
@@ -23,6 +23,17 @@ export const getAllPosts = () => async dispatch => {
         })
     }
 }
+
+export const getAll = () => async dispatch => {    
+  try{      
+      const {data} = await axios.get('/Api/notesQuestions')
+      dispatch({type: GET_All,payload: {data}})
+  }
+  catch(error){
+      dispatch({type: ERRORS, payload: error,})
+  }
+}
+
 
 export const getPost = (id) => async dispatch => {
     try {  
@@ -65,7 +76,7 @@ export const BookmarkPost = (id) => async dispatch => {
       const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
       const { data } = await axios.patch(`/Api/notes/${id}/bookmark`, token)
       dispatch({ type: BOOKMARK, payload: data });
-      dispatch(getAllPosts);
+      dispatch(getAllPosts());
     } catch (error) {
       console.log(error.message);
     }

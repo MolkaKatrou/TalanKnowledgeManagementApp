@@ -1,13 +1,17 @@
-import { Card, CardContent, CircularProgress, Container, Divider, makeStyles, IconButton, CardActions, Typography } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-import BookmarkIcon from "@material-ui/icons/Bookmark";
+import { Card, CardContent, CircularProgress, Container, Divider, makeStyles, IconButton, CardActions, Typography, Grid } from "@material-ui/core";
+import React, { useEffect, useState, useContext } from "react";
 import CommentSection from "./CommentSection";
-import { getPost } from "../../Redux/Actions/postsActions";
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import { getAllPosts, getPost, likePost, BookmarkPost } from "../../Redux/Actions/postsActions";
 import Home from "../../pages/home/Home";
 import moment from 'moment';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import { HomeContext } from "../../Context/HomeContext";
+import MainPost from "./MainPost";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,18 +38,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 function PostDetails() {
+  const { id } = useParams()
   const classes = useStyles()
-  const [show, setShow] = useState(false);
+  const {posts, loading } = useSelector((state) => state.posts);
+  const post = posts.filter((post) => post._id === id)
+  const [likes, setLikes] = useState([]);
   const auth = useSelector(state => state.auth)
   const userId = auth.user.id
-  const { post, posts, loading } = useSelector((state) => state.posts);
   const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { id } = useParams()
+  const { liked, setLiked } = useContext(HomeContext)
+  console.log(likes)
 
   useEffect(() => {
-    dispatch(getPost(id))
-  }, [post])
+    dispatch(getAllPosts())
+  },[post])
+
+  
 
   if (!post) {
     return (
@@ -64,47 +72,12 @@ function PostDetails() {
 
           <CircularProgress size="1em" elevation={2} className={classes.loadingPaper} />
           :
-          
-          <div className="main">
-            <div className="main-container">
-              <div className="main-top">
-                <h2 className="main-question"> {post?.title} </h2>
-              </div>
-              <Typography variant='subtitle1' gutterBottom style={{ color: `${post?.category?.color}` }}>
-                {post?.category?.name}
-              </Typography>
-              <div className="main-desc">
-                <div className="info">
-                  <p>
-                    Written by
-                    <span> {post?.createdby.fullname} </span>
-                  </p>
-                  <p>
-                    Posted <span>{moment(post.createdAt).fromNow()}</span>
-                  </p>
-                </div>
-              </div>
-              <div className="all-questions">
-                <div className="all-questions-left">
-                </div>
-                <div className="question-answer">
-                <div dangerouslySetInnerHTML={{ __html: post.content }} />
-              </div>
-              </div>
-     
-            
-              <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                  <FavoriteIcon />
-                </IconButton>
 
-              </CardActions>
-              <Divider component='ul' />
-              <CardContent>
-                <CommentSection post={post} />
-              </CardContent>
-            </div>
-          </div>
+          post.map((post, index) => (
+            <Grid key={post._id}>
+              <MainPost post={post} />
+            </Grid>
+          ))
         }
       </Container>
     </Home>

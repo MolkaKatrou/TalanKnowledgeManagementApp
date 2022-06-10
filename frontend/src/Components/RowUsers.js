@@ -1,16 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 function RowUsers({ index, email, username, role, fullname, phone, occupation, Id, OnDelete }) {
 
   return (
     <tr style={{color:'#5F5B5A'}}>
-      <td scope="row">{index}</td>
-      <td scope="row">{fullname}</td>
-      <th scope="row">{email}</th>
-      <td scope="row">{username}</td>
-      <td scope="row">{occupation}</td>
-      <th scope="row">{phone}</th>
+      <td >{index}</td>
+      <td >{fullname}</td>
+      <td >{email}</td>
+      <td >{username}</td>
+      <td >{occupation}</td>
+      <td >{phone}</td>
+      <td  style={{marginLeft:'200px'}}>{role === 'ADMIN' ? <CheckIcon/> : <CloseIcon/> }</td>
+
 
       <td>
         <span className="btn border-shadow update">

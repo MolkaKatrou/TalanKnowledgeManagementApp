@@ -1,6 +1,19 @@
 const chatModel = require("../models/Chat.model");
 const UserModel = require("../models/users.model");
 const messageModel = require('../models/message.model');
+const multer = require("multer");
+const path = require("path");
+
+
+
+const filesStorageB = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, "./../frontend/public");
+  },
+  filename: (req, file, cb) => {
+      cb(null, `${file.originalname}`);
+  },
+});
 
 const allMessages = async (req, res) => {
     try {

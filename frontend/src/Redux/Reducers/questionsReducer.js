@@ -1,4 +1,4 @@
-import {GET_QUESTIONS, GET_QUESTION, DELETE_QUESTION, VOTE_UP, VOTE_DOWN } from "../types";
+import {GET_QUESTIONS, GET_QUESTION, DELETE_QUESTION, VOTE_UP, VOTE_DOWN, BOOKMARK_QUESTION } from "../types";
 
 const initialState = {
   questions: [],
@@ -39,6 +39,17 @@ export default function (state = initialState, action) {
       };
 
       case VOTE_DOWN:
+        return {
+          ...state,
+          questions: state.questions.map((question) => {
+          if (question._id == +action.payload._id) {
+            return action.payload;
+          }
+          return question;
+        }),
+      };
+
+      case BOOKMARK_QUESTION:
         return {
           ...state,
           questions: state.questions.map((question) => {

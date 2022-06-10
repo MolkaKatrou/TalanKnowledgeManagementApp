@@ -4,7 +4,7 @@ import classnames from 'classnames'
 function AdminRoleOption({ name, onChangeHandler, errors, value, label }) {
     return (
         <div className="mb-2">
-            <label for="Email" className="form-label">
+            <label for="Email" className="form-label" style={{fontWeight:'bold'}}>
             {label}
             </label>
             <span className="text-danger">*</span>

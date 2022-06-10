@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import {Box, List, ListItem, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, makeStyles, MenuItem, Select, TextField, Typography } from "@material-ui/core"
+import { Box, List, ListItem, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, makeStyles, MenuItem, Select, TextField, Typography } from "@material-ui/core"
 import Home from '@mui/icons-material/Home';
 import Bookmark from '@mui/icons-material/Bookmarks';
 import AdminPanel from '@mui/icons-material/AdminPanelSettings';
@@ -28,6 +28,8 @@ import toast, { Toaster } from 'react-hot-toast';
 const useStyles = makeStyles((theme) => ({
   container: {
     height: "100vh",
+    overflowX:'hidden',
+    overflowY: 'auto',
     background: 'rgb(225, 228, 232)',
     boxShadow: '0 5px 2px #8084ac',
     paddingTop: theme.spacing(7),
@@ -74,19 +76,19 @@ const useStyles = makeStyles((theme) => ({
       display: "none",
     },
     [theme.breakpoints.down("sm")]: {
-      fontSize:'12px'
+      fontSize: '12px'
     },
   },
 
   textCategory: {
     fontFamily: 'Monaco',
     fontWeight: '540',
-    cursor:'pointer',
+    cursor: 'pointer',
     [theme.breakpoints.down("sm")]: {
       display: "none",
-      
+
     },
-    
+
   },
 
   dialogWrapper: {
@@ -129,12 +131,12 @@ const Sidebar = ({ user }) => {
   const [submitUpdate, setSubmitUpdate] = useState(false)
   const currentCategory = useSelector((state) => (categoryId ? createCategoryList(categoriesResult).find((c) => c.value === categoryId) : null));
   const [categoriesModal, setCategoriesModal] = useState([])
-  
-  const handleCloseAdd = () => { 
-    setOpenAdd(false); 
-    setCategory(''); 
-    SetParentCategoryId(''); 
-    setColor(createColor('')) 
+
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
+    setCategory('');
+    SetParentCategoryId('');
+    setColor(createColor(''))
   }
 
 
@@ -193,16 +195,16 @@ const Sidebar = ({ user }) => {
 
   const DeleteCategory = (Id) => {
     setOpenDelete(true)
-    setCategoryId(Id);    
+    setCategoryId(Id);
   }
 
   const SubmitDelete = async () => {
-      axios.delete(`/Api/categories/${categoryId}`) 
-      setOpenDelete(false)
-      toast.success('Category successfully deleted');
-        
-    }
-  
+    axios.delete(`/Api/categories/${categoryId}`)
+    setOpenDelete(false)
+    toast.success('Category successfully deleted');
+
+  }
+
 
   const Clear = () => {
     setUpdateCategory(false)
@@ -220,7 +222,7 @@ const Sidebar = ({ user }) => {
     const form = {
       name: categoryIdName,
       parentId: parentCategoryIdName,
-      color:"#" + newColor.hex
+      color: "#" + newColor.hex
     }
     if (!categoryIdName) {
       toast.error('Choose a new category name');
@@ -276,7 +278,7 @@ const Sidebar = ({ user }) => {
       return;
     }
 
-    dispatch(createCategory(form)); 
+    dispatch(createCategory(form));
     toast.success('Category successfully created');
     setShow(!show)
     setOpenAdd(false)
@@ -288,7 +290,7 @@ const Sidebar = ({ user }) => {
 
   return (
     <div className={classes.container} >
-       
+
       <List>
         <ListItem className={classes.item} onClick={() => navigate('/Home')}>
           <Home className={classes.icon} />
@@ -305,12 +307,12 @@ const Sidebar = ({ user }) => {
           </Typography>
         </ListItem>
         {user.role === "ADMIN" ? (
-          <ListItem className={classes.item}>
+          <ListItem className={classes.item} onClick={() => navigate('/admin')}>
             <AdminPanel className={classes.icon} />
             <Typography className={classes.text}>
-              <a href="/admin" style={{ textDecoration: 'none', color: 'black', fontFamily: 'monaco' }}>
-                Admin Dashboard
-              </a>
+
+              Admin Dashboard
+
             </Typography>
           </ListItem>
         ) : (
@@ -323,19 +325,20 @@ const Sidebar = ({ user }) => {
           <Typography className={classes.textCategory}>
             Categories
           </Typography>
-          <AddIcon onClick={() => {setOpenAdd(true)}} className='mx-2' style={{ color: '#8084ac', width: '20px' }}></AddIcon>
+          <AddIcon onClick={() => { setOpenAdd(true) }} className='mx-2' style={{ color: '#8084ac', width: '20px' }}></AddIcon>
         </ListItem>
+        <Box className='d-flex mx-2'>
+        <IconButton >
+          <SearchIcon style={{color:'gray'}} />
+        </IconButton>
+        <InputBase
+          className='mx-1'
+          placeholder="Search.."
+          onChange={handleSearch}
+        />
+      </Box>
       </List>
-      <IconButton >
-        <SearchIcon />
-      </IconButton>
-      <InputBase
-        className='ml-1'
-        style={{ flex: '1' }}
-        placeholder="Search.."
-        onChange={handleSearch}
-        inputProps={{ 'aria-label': 'search ' }}
-      />
+  
       <TreeView
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
@@ -352,49 +355,51 @@ const Sidebar = ({ user }) => {
       {/*Add categories */}
 
       <Dialog open={openAdd} onClose={handleCloseAdd} className={classes.paper}>
-        <DialogTitle >Add a new category or a subcategory </DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Category"
-            fullWidth
-            variant="standard"
-            value={category}
-            placeholder={'Enter the category name'}
-            onChange={(e) => { setCategory(e.target.value) }}
-          />
-
-
-          <FormControl sx={{ m: 1, minWidth: 120 }} className='mt-4'>
-            <Select
-              value={parentCategoryId}
-              onChange={(e) => { SetParentCategoryId(e.target.value) }}
+        <div style={{ backgroundColor: '#E6E6E6' }}>
+          <DialogTitle>Add a new category or a subcategory </DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
               label="Category"
+              fullWidth
+              variant="standard"
+              value={category}
+              placeholder={'Enter the category name'}
+              onChange={(e) => { setCategory(e.target.value) }}
+            />
 
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              {
-                createCategoryList(categoriesList.categories).map(option =>
-                  <MenuItem value={option.value}>{option.name}</MenuItem>
-                )
-              }
 
-            </Select>
-          </FormControl>
+            <FormControl sx={{ m: 1, minWidth: 120 }} className='mt-4'>
+              <Select
+                value={parentCategoryId}
+                onChange={(e) => { SetParentCategoryId(e.target.value) }}
+                label="Category"
 
-          <Box my={4}>
-            <ColorPicker placeholder='Choose a color' value={color} onChange={ChangeColor} />
-          </Box>
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                {
+                  createCategoryList(categoriesList.categories).map(option =>
+                    <MenuItem value={option.value}>{option.name}</MenuItem>
+                  )
+                }
 
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => { setOpenAdd(false) }} size="small" variant="outlined" color="#8984ac">Cancel</Button>
-          <Button onClick={AddCategory} size="small" variant="outlined" color="#8884ac">Add</Button>
-        </DialogActions>
+              </Select>
+            </FormControl>
+
+            <Box my={4}>
+              <ColorPicker placeholder='Choose a color' value={color} onChange={ChangeColor} />
+            </Box>
+
+          </DialogContent>
+          <DialogActions className='mt-2' style={{ paddingBottom: '21px', paddingLeft: '180px' }}>
+            <Button onClick={() => { setOpenAdd(false) }} size="md" variant="outlined" color="secondary">Cancel</Button>
+            <Button onClick={AddCategory} size="md" variant="outlined" color="primary">Add Category</Button>
+          </DialogActions>
+        </div>
       </Dialog>
 
       {/*Edit categories */}
@@ -404,55 +409,58 @@ const Sidebar = ({ user }) => {
         onClose={() => { setUpdateCategory(false) }}
         size="lg"
       >
-        <DialogTitle >Edit the category or a subcategory </DialogTitle>
-        <DialogContent>
-          <Row className='d-flex justify-content-between'>
-            <Col >
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Category"
-                fullWidth
-                variant="standard"
-                placeholder={'Enter the category name'}
-                onChange={(e) => { setCategoryIdName(e.target.value) }}
-                value={categoryIdName}
-
-              />
-            </Col>
-            <Col>
-
-              <FormControl sx={{ m: 1, minWidth: 120 }} className='mt-4 form-control'>
-                <Select
-                  value={parentCategoryIdName}
-                  onChange={(e) => { setParentCategoryIdName(e.target.value) }}
+        <div style={{ backgroundColor: '#E6E6E6' }}>
+          <DialogTitle >Edit the category or a subcategory </DialogTitle>
+          <DialogContent >
+            <Row className='d-flex justify-content-between'>
+              <Col >
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
                   label="Category"
+                  fullWidth
+                  variant="standard"
+                  placeholder={'Enter the category name'}
+                  onChange={(e) => { setCategoryIdName(e.target.value) }}
+                  value={categoryIdName}
 
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  {
-                    categoriesModal.map(option =>
-                      <MenuItem value={option.value}>{option.name}</MenuItem>
-                    )
-                  }
+                />
+              </Col>
+              <Col>
 
-                </Select>
-              </FormControl>
-            </Col>
-          </Row>
-          <Box my={4}>
-            <ColorPicker placeholder='Choose a color' value={newColor} onChange={ChangeNewColor} />
-          </Box>
+                <FormControl sx={{ m: 1, minWidth: 120 }} className='mt-4 form-control'>
+                  <Select
+                    value={parentCategoryIdName}
+                    onChange={(e) => { setParentCategoryIdName(e.target.value) }}
+                    label="Category"
+
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {
+                      categoriesModal.map(option =>
+                        <MenuItem value={option.value}>{option.name}</MenuItem>
+                      )
+                    }
+
+                  </Select>
+                </FormControl>
+              </Col>
+            </Row>
+            <Box my={4}>
+              <ColorPicker placeholder='Choose a color' value={newColor} onChange={ChangeNewColor} />
+            </Box>
 
 
-        </DialogContent>
-        <DialogActions className='mt-4'>
-          <Button onClick={() => { setUpdateCategory(false) }} size="small" variant="outlined" color="#8984ac">Cancel</Button>
-          <Button onClick={SubmitUpdate} size="small" variant="outlined" color="#8884ac">Update</Button>
-        </DialogActions>
+          </DialogContent>
+
+          <DialogActions className='mt-2' style={{ paddingBottom: '21px', paddingLeft: '180px' }}>
+            <Button onClick={() => { setUpdateCategory(false) }} variant="outlined" color="secondary" >Cancel</Button>
+            <Button onClick={SubmitUpdate} variant="outlined" color="primary" >Update Category</Button>
+          </DialogActions>
+        </div>
       </Dialog>
 
       <Confirm
@@ -461,7 +469,7 @@ const Sidebar = ({ user }) => {
         open={openDelete}
         onCancel={() => { setOpenDelete(false) }}
         onConfirm={SubmitDelete}
-        style={{ height: '21%'}}
+        style={{ height: '21%' }}
       />
 
 

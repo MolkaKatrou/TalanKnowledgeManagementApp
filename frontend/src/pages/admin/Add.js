@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { AddProfile } from '../../Redux/Actions/authActions'
 import axios from "axios";
+import AdminUserInput from "../../Components/inputs/AdminUserInput";
 
 
 
@@ -15,6 +16,8 @@ function Add() {
   const errors = useSelector(state => state.errors)
   const [message, setMessage] = useState("");
   const [show, setShow] = useState(false);
+  const [fullname, setFullname] = useState('')
+
 
   const onChangeHandler = (e) => {
     setForm({
@@ -27,22 +30,24 @@ function Add() {
   const onSubmitHandler = (e) => {
     e.preventDefault();
     dispatch(AddProfile(form, setShow, setMessage, e))
+    setFullname(form.firstname + ' ' + form.lastname.toUpperCase())
+
   }
 
   useEffect(async () => {
     await axios.get("/Api/users")
-    .then((res) => {
-      setForm(res.data);
-    });
+      .then((res) => {
+        setForm(res.data);
+      });
   }, [message]);
 
   return (
-    <section >
+    <div style={{ backgroundColor: 'rgb(225, 228, 232)', height: '100%', paddingBottom: '82px' }}>
       <div className="container">
         <div className="row">
           <div className="col-md-6 offset-md-3">
             <div className="signup-form mt-5">
-            { show ? <Alert severity="success">The user is successfully added!</Alert> : ""}
+              {show ? <Alert severity="success">{`${fullname} is successfully added! `}</Alert> : ""}
               <form onSubmit={onSubmitHandler} className="mt-3 border p-4 bg-light shadow">
 
                 <div className="row">
@@ -54,6 +59,7 @@ function Add() {
                       icon="fa fa-user"
                       onChangeHandler={onChangeHandler}
                       errors={errors.firstname}
+                      placeholder="Enter your first name"
                     />
                   </div>
                   <div className="mb-3 col-md-6">
@@ -64,6 +70,7 @@ function Add() {
                       onChangeHandler={onChangeHandler}
                       errors={errors.lastname}
                       icon="fa fa-user"
+                      placeholder="Enter your last name"
                     />
                   </div>
 
@@ -74,29 +81,32 @@ function Add() {
                     onChangeHandler={onChangeHandler}
                     errors={errors.email}
                     icon="fa fa-envelope"
+                    placeholder="Enter your email"
                   />
-                 <div className="mb-3 col-md-6">
-                  <AdminInput
-                    label="Username"
-                    type="text"
-                    name="username"
-                    onChangeHandler={onChangeHandler}
-                    errors={errors.username}
-                    icon="fa fa-user"
-                  />
+                  <div className="mb-3 col-md-6">
+                    <AdminInput
+                      label="Username"
+                      type="text"
+                      name="username"
+                      onChangeHandler={onChangeHandler}
+                      errors={errors.username}
+                      icon="fa fa-user"
+                      placeholder="Enter your username"
+                    />
                   </div>
                   <div className="mb-3 col-md-6">
-                  <AdminInput
-                    label="Password"
-                    type="text"
-                    name="password"
-                    onChangeHandler={onChangeHandler}
-                    errors={errors.password}
-                    icon="fa fa-key"
-                  />
+                    <AdminInput
+                      label="Password"
+                      type="text"
+                      name="password"
+                      onChangeHandler={onChangeHandler}
+                      errors={errors.password}
+                      icon="fa fa-key"
+                      placeholder="Enter your Password"
+                    />
                   </div>
-                  
- 
+
+             
                     <AdminInput
                       label="Phone Number"
                       type="text"
@@ -104,8 +114,11 @@ function Add() {
                       onChangeHandler={onChangeHandler}
                       errors={errors.phone}
                       icon="fa fa-phone"
+                      placeholder="Enter your phone number"
                     />
- 
+               
+             
+               <div className="mb-3 col-md-6">
                   <AdminRoleOption
                     label="Occupation"
                     type="text"
@@ -114,6 +127,17 @@ function Add() {
                     errors={errors.occupation}
                     icon="fa fa-briefcase"
                   />
+                  </div>
+                       <div className="mb-3 col-md-6">
+                    <AdminUserInput
+                      label="Role"
+                      type="text"
+                      name="role"
+                      onChangeHandler={onChangeHandler}
+                      errors={errors.role}
+                      icon="fa fa-briefcase"
+                    />
+                  </div>
 
                   <button className="btn btn-success mt-3 " type="submit"> Add user </button>
                 </div>
@@ -122,7 +146,7 @@ function Add() {
             </div >
           </div>
         </div></div>
-    </section>
+    </div>
   );
 }
 

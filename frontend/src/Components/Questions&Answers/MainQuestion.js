@@ -1,16 +1,17 @@
-import {  CircularProgress, Container, makeStyles, Grid} from "@material-ui/core";
+import { CircularProgress, Container, makeStyles, Grid } from "@material-ui/core";
 import React, { useEffect, useState, useContext } from "react";
 import ReactQuill from "react-quill";
 import Editor from "react-quill/lib/index";
 import Home from "../../pages/home/Home";
-import { Button, ChakraProvider } from "@chakra-ui/react";
+import { Button, ChakraProvider, Select, Stack } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { createAnswer,  getAllAnswers, getAllQuestions} from "../../Redux/Actions/questionsActions";
+import { createAnswer, getAllAnswers, getAllQuestions } from "../../Redux/Actions/questionsActions";
 import { useParams } from "react-router-dom";
 import Answer from "./Answer";
 import QuestionAnswer from "./QuestionAnswer";
 import { HomeContext } from "../../Context/HomeContext";
 import Alert from '@mui/material/Alert';
+import toast from "react-hot-toast";
 
 
 
@@ -81,13 +82,26 @@ function MainQuestion() {
   const dispatch = useDispatch()
   const { id } = useParams()
   const classes = useStyles()
-  const {questions,loading } = useSelector((state) => state.questions);
+  const { questions, loading } = useSelector((state) => state.questions);
   const filteredQuestion = questions.filter(q => q._id == id)
   const [answer, setAnswer] = useState("");
+  const [newest, setNewest] = useState('newest');
   const auth = useSelector(state => state.auth)
   const userId = auth.user.id
   const { answers } = useSelector((state) => state.answers);
-  const Answers = answers.filter(answer => answer.question._id == id)
+  const Answers = answers?.filter(answer => answer?.question?._id == id)
+  console.log(filteredQuestion)
+  console.log(newest)
+
+  /*const handleNotification = (type) => {
+    socket.emit("sendNotification", {
+      sender: auth.user,
+      receiver: filteredQuestion.createdby,
+      postId : filteredQuestion._id,
+       post:'question',
+      type,    
+    });
+  };*/
 
 
 
@@ -101,6 +115,8 @@ function MainQuestion() {
 
     if (answer) {
       dispatch(createAnswer(Answer));
+      toast.success('Answer added successfully')
+      //handleNotification(9)
       setAnswer('')
     }
   }
@@ -112,17 +128,20 @@ function MainQuestion() {
   useEffect(() => {
     dispatch(getAllAnswers())
     dispatch(getAllQuestions())
-  }, [dispatch, id, answer, comment])
+  }, [showAlert, comment, answer])
 
-
+  const handleChange = (value) => {
+    setNewest(value)
+}
+  
   return (
     <Home>
       <Container className={classes.container}>
-      { showAlert ? <Alert style={{marginBottom:'15px'}} variant="filled" severity="success">The Answer has been successfully deleted!</Alert> : ""}
+        {showAlert ? <Alert style={{ marginBottom: '15px' }} variant="filled" severity="success">The Answer has been successfully deleted!</Alert> : ""}
         {loading ?
           <CircularProgress size="1em" elevation={2} className={classes.loadingPaper} />
           :
-           
+
           <div className="main">
             <div className="main-container">
 
@@ -134,22 +153,52 @@ function MainQuestion() {
               ))}
 
               <div style={{ flexDirection: "column" }} className="all-questions">
-                <p
-                  style={{
-                    marginBottom: "20px",
-                    fontSize: "1.8rem",
-                    fontWeight: "300",
-                  }}
-                >
-                  Answers
-                </p>
-                {Answers.map((answer, index) => (
+                <div className="d-flex justify-content-between">
+                  <p
+                    style={{
+                      marginBottom: "20px",
+                      fontSize: "1.8rem",
+                      fontWeight: "300",
+                    }}
+                  >   <p>{`${Answers.length} Answer${Answers.length > 1 ? 's' : ''}`}</p>
+                  </p>
+                  <ChakraProvider>
+                    <Stack spacing={3}>
+                      <Select variant='filled' style={{ backgroundColor: 'rgb(233, 233, 227)'}} onChange={(e) => handleChange(e.target.value)} >
+                        <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='newest' >Newest answers</option>
+                        <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='popular' >Most popular answers</option>
+                      </Select>
+                    </Stack>
+
+                  </ChakraProvider>
+                </div>
+                {newest==='newest' ? Answers.map((answer, index) => (
                   <Grid key={answer._id}>
                     <Answer
                       answer={answer}
                     />
                   </Grid>
-                ))}
+
+                ))
+              : Answers.sort(function (one, other) {
+                let otherVotes = other.upVotes.length - other.downVotes.length
+                let oneVotes = one.upVotes.length - one.downVotes.length
+                return otherVotes - oneVotes;
+             }).map((answer, index) => (         
+                   <Grid key={answer._id}>
+                    <Answer
+                      answer={answer}
+                    />
+                  </Grid>
+                )
+              )
+              }
+
+
+
+
+
+
               </div>
             </div>
             <div className="main-answer">

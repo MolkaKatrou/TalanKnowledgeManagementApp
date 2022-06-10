@@ -80,7 +80,7 @@ function AddQuestion() {
   const Clear = () => {
     setBody("")
     setTitle("")
-    setBody("")
+    setCategory("")
   }
 
   const onSubmit = async (e) => {
@@ -97,6 +97,9 @@ function AddQuestion() {
       toast.success('Question successfully created');
       Clear()
     }
+    else if (!title || !category || !body){
+      toast.error('Fill all the fields to ask your question')
+  }
 
 
   }

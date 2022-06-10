@@ -40,8 +40,33 @@ const uploadB = multer({ storage: filesStorageB }).single('file');
 
 const Getnotes = async (req, res) => {
     try {
-        const note = await noteModel.find().populate('createdby').populate('category').populate('comments').sort({date: 1});
+        const note = await noteModel.find().populate('createdby').populate('category').populate({
+            path: 'comments',
+            model:'comment',
+            populate: {
+              path: 'user',
+              model: 'user'
+            }
+          }).sort({date: 1});
         res.status(201).json(note);
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const GetAll = async (req, res) => {
+    try {
+        const notes = await noteModel.find().populate('createdby').populate('category').populate({
+            path: 'comments',
+            model:'comment',
+            populate: {
+              path: 'user',
+              model: 'user'
+            }
+          }).sort({date: 1});
+          const questions = await QuestionModel.find().populate('category').populate('createdby');
+          const all = notes.concat(questions)
+        res.status(201).json(all);
     } catch (error) {
         console.log(error.message);
     }
@@ -78,7 +103,7 @@ const Commentnote = async (req, res) => {
     }
     note.comments.push(newComment);
     newComment.save()
-    const updatedNote = await noteModel.findByIdAndUpdate(id, note, { new: true }) .populate({
+    const updatedNote = await noteModel.findByIdAndUpdate(id, note, { new: true }).populate({
         path: 'comments',
         model:'comment',
         populate: {
@@ -97,7 +122,8 @@ const getPostsBySearch = async (req, res) => {
 
         const posts = await noteModel.find({title}).populate('category').populate('createdby');
         const questions = await QuestionModel.find({title}).populate('category').populate('createdby');
-        res.status(201).json(posts);
+        const all = posts.concat(questions)
+        res.status(201).json(all);
     } catch (error) {    
         res.status(404).json({ message: error.message });
     }
@@ -201,5 +227,6 @@ module.exports = {
     Commentnote,
     likePost,
     BookmarkPost,
-    getPostsBySearch
+    getPostsBySearch,
+    GetAll
 };

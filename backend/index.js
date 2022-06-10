@@ -68,32 +68,15 @@ const io = require("socket.io")(server, {
 
   io.on("connection", (socket)=> {
       console.log('connected to socket.io')
-  
 
       socket.on('setup', (userData)=> {
           socket.join(userData.id)
-          socket.emit("connected")   
+          socket.emit("connected") 
+          console.log( userData.fullname + ' connected to socket.io')
+
+          users[socket.id] = userData;  
       })
-
-      socket.on('login', function(userData){
-        console.log(userData.fullname + ' connected');
-        users[socket.id] = userData;
-
-
-      });
-
-      socket.on('disconnect', function(){
-        console.log('user ' + users[socket.id] + ' disconnected');
-        delete users[socket.id];
-        socket.disconnect(); 
-      });
-
-     
-
-      socket.on("reconnect", function() {
-        console.log("Reconnecting");
-      });
-
+ 
       socket.on('getrooms', (replyFn)=>{
             replyFn(users)
     })
@@ -114,6 +97,21 @@ const io = require("socket.io")(server, {
               socket.in(user._id).emit("message received", newMessageReceived)
           })
       })
+
+      socket.on("sendNotification", ({ sender, receiver, type, postId, post }) => {
+        if(sender.id === receiver._id) return;
+        socket.in(receiver._id).emit("getNotification", {
+          sender,
+          type,
+          postId,
+          post
+        });
+      });
+    
+      socket.on('disconnect', function(){
+        console.log('user ' + users[socket.id] + ' disconnected');
+        delete users[socket.id];
+      });
 
     })
 

@@ -1,4 +1,4 @@
-import {GET_QUESTION,DELETE_QUESTION, GET_QUESTIONS, VOTE_UP, VOTE_DOWN, ERRORS,GET_ANSWERS, VOTE_UP_ANSWER, VOTE_DOWN_ANSWER, DELETE_ANSWER} from '../types'
+import {GET_QUESTION,DELETE_QUESTION,BOOKMARK_QUESTION, GET_QUESTIONS, VOTE_UP, VOTE_DOWN, ERRORS,GET_ANSWERS, VOTE_UP_ANSWER, VOTE_DOWN_ANSWER, DELETE_ANSWER} from '../types'
 import axios from 'axios'
 
 export const getAllQuestions = () => async dispatch => {    
@@ -58,6 +58,7 @@ export const UpVoteQuestion = (id) => async dispatch => {
     const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
     const { data } = await axios.patch(`/Api/questions/${id}/voteup`, token)
     dispatch({ type: VOTE_UP, payload: data });
+    dispatch(getAllQuestions());
     }
    catch (error) {
     console.log(error.message);
@@ -69,8 +70,20 @@ export const DownVoteQuestion = (id) => async dispatch => {
     const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
     const { data } = await axios.patch(`/Api/questions/${id}/votedown`, token)
     dispatch({ type: VOTE_DOWN, payload: data });
+    dispatch(getAllQuestions());
     }
    catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const BookmarkQuestion = (id) => async dispatch => {
+  try {
+    const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
+    const { data } = await axios.patch(`/Api/questions/${id}/bookmark`, token)
+    dispatch({ type: BOOKMARK_QUESTION, payload: data });
+    dispatch(getAllQuestions());
+  } catch (error) {
     console.log(error.message);
   }
 };
@@ -128,6 +141,8 @@ try {
   const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
   const { data } = await axios.patch(`/Api/answers/${id}/voteup`, token)
   dispatch({ type: VOTE_UP_ANSWER, payload: data });
+  dispatch(getAllAnswers());
+  
   }
  catch (error) {
   console.log(error.message);
@@ -139,6 +154,7 @@ try {
   const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
   const { data } = await axios.patch(`/Api/answers/${id}/votedown`, token)
   dispatch({ type: VOTE_DOWN_ANSWER, payload: data });
+  dispatch(getAllAnswers());
   }
  catch (error) {
   console.log(error.message);

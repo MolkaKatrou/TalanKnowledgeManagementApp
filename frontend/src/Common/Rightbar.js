@@ -6,7 +6,6 @@ import { Avatar, AvatarGroup, AvatarBadge, Button, ChakraProvider } from '@chakr
 import { useNavigate } from 'react-router-dom';
 import Following from '../Components/Following';
 import { HomeContext } from '../Context/HomeContext';
-import io from "socket.io-client";
 import { getAllUsers } from '../Redux/Actions/authActions';
 import { getAllCategories } from '../Redux/Actions/categoryAction';
 import { createCategoryList } from '../utils/functions';
@@ -24,8 +23,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ENDPOINT = "http://localhost:4000";
-var socket;
+
 
 const Rightbar = () => {
   const classes = useStyles()
@@ -36,20 +34,13 @@ const Rightbar = () => {
   const usersList = useSelector(state => state.users)
   const users = usersList.users
   const userId = auth.user.id
-
+  const {socket} = useContext(HomeContext)
   const categoriesList = useSelector(state => state.categories)
   const hasFollowedCategory = createCategoryList(categoriesList.categories).filter(cat => cat.followers.includes(userId))
-
-console.log(hasFollowedCategory)
-
 
 
 
   useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit("login", auth.user);
-    //socket.emit("offline", auth.user);
-
     socket.emit("getrooms", (rooms) => {
       const roomsValues = Object.values(rooms);
       const ids = roomsValues.map(o => o.id)

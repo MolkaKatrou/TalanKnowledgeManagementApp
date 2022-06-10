@@ -10,10 +10,12 @@ import EditIcon from '@mui/icons-material/EditOutlined';
 import { HomeContext } from "../../Context/HomeContext";
 import { DownVoteAnswer, UpVoteAnswer, deleteAnswer, CommentAnswer, deleteAnswerComment } from "../../Redux/Actions/questionsActions";
 import { Confirm } from "semantic-ui-react";
+import toast from "react-hot-toast";
+import { Card } from "react-bootstrap";
 
 
 function Answer({ answer }) {
-    const { setShowAlert, showAlert, comment, setComment } = useContext(HomeContext)
+    const { setShowAlert, showAlert, comment, setComment, socket } = useContext(HomeContext)
     const dispatch = useDispatch()
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
@@ -25,7 +27,16 @@ function Answer({ answer }) {
     const [comments, setComments] = useState(answer?.comments)
     const [open, setOpen] = useState(false)
 
-
+    const handleNotification = (type) => {
+        socket.emit("sendNotification", {
+          sender: auth.user,
+          receiver: answer.createdby,
+          postId : answer?.question._id,
+          post:'question',
+          type,    
+        });
+      };
+    
     const DeleteAnswer = (id) => {
         dispatch(deleteAnswer(id))
         setOpen(false)
@@ -51,9 +62,11 @@ function Answer({ answer }) {
             comment: comment
         }
         const newComments = dispatch(CommentAnswer(finalComment, answer._id));
+        handleNotification(6)
         setComment('');
         setShow(false)
         setComments(newComments);
+        toast.success('Comment added successfully')
 
     }
 
@@ -90,6 +103,7 @@ function Answer({ answer }) {
         } else {
             setDownVotes(answer.downVotes.filter((id) => id !== userId));
             setUpVotes([...answer.upVotes, userId]);
+            handleNotification(7)
         }
     };
 
@@ -101,6 +115,7 @@ function Answer({ answer }) {
         else {
             setUpVotes(answer.upVotes.filter((id) => id !== userId));
             setDownVotes([...answer.downVotes, userId]);
+            handleNotification(8)
         }
     };
 
@@ -108,13 +123,13 @@ function Answer({ answer }) {
         <div className="mb-2">
             <div style={{ backgroundColor: '#cacfd4' }}>
                 <div className="d-flex justify-content-between author-answer">
-                    <div className=" mt-2 d-flex flex-row ">
+                    <div className=" mt-2 d-flex flex-row my-2 ">
                         <ChakraProvider>
-                            <Avatar name={answer.createdby.fullname} src={answer.createby.pic} style={{ height: 40, width: 40 }} />
+                            <Avatar name={answer.createdby.fullname} src={answer.createdby.pic} size='sm' style={{ height: 32, width: 32 }} className='mx-2'/>
                         </ChakraProvider>
 
 
-                        <Box className="mt-2 mx-2"> {answer.createdby.fullname}</Box>
+                        <Box className="mt-2 mx-2" style={{fontWeight:'600'}}> {answer.createdby.fullname}</Box>
                         <Box className="mt-2 mx-2 me-2" style={{ color: 'grey' }}>{`Answered ${moment(answer.createdAt).fromNow()}`}</Box>
 
                     </div>
@@ -139,7 +154,7 @@ function Answer({ answer }) {
                     <Confirm
                         open={open}
                         onCancel={() => { setOpen(false) }}
-                        onConfirm={DeleteAnswer}
+                        onConfirm={() => { DeleteAnswer(answer._id) }} 
                         style={{ height: '22%' }}
                     />
                 </div>
@@ -147,28 +162,28 @@ function Answer({ answer }) {
                 <div className="all-questions-container">
 
                     <div className="all-questions-left">
-                        <div className="all-options">
+                        <div className="all-options" >
                             <IconButton className="arrow" onClick={handleUpVote}> <UpVote /></IconButton>
                             <p className="arrow"> <i>{upVotes?.length - downVotes?.length || 0}</i></p>
                             <IconButton className="arrow" onClick={handleDownVote}><DownVote /></IconButton>
-                            <BookmarkIcon />
                         </div>
                     </div>
+                  
                     <div className="question-answer">
-
-                        <div dangerouslySetInnerHTML={{ __html: answer.body }} />
+                        <div className='card-content' dangerouslySetInnerHTML={{ __html: answer.body }} />
                     </div>
+                   
                 </div>
             </div>
             {answer.comments?.map((c, i) => (
                 <div className="comments">
                     <div className="d-flex justify-content-between author-answer">
-                        <div className=" mt-2 d-flex flex-row ">
+                        <div className=" my-1 d-flex flex-row ">
                             <ChakraProvider>
-                                <Avatar style={{ height: 40, width: 40 }} name={c.user.fullname} src={c.user.pic} />
+                                <Avatar style={{ height: 30, width: 30 }} size='sm' className='mx-2' name={c.user.fullname} src={c.user.pic} />
                             </ChakraProvider>
-                            <Box className="mt-2 mx-2"> {c.user.fullname}</Box>
-                            <Box className="mt-2 mx-2 me-2" style={{ color: 'grey' }}>{`Added ${moment(c.createdAt).fromNow()}`}</Box>
+                            <Box className="mt-2 mx-2" style={{fontSize:'11px',fontWeight:'600'}}> {c.user.fullname}</Box>
+                            <Box className="mt-2 mx-2 me-2" style={{ color: 'grey', fontSize:'11px'}}>{`Added ${moment(c.createdAt).fromNow()}`}</Box>
 
                         </div>
                         {

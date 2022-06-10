@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { makeStyles, Box, Card, CardContent, Typography, CardHeader, IconButton } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import moment from 'moment';
 import { Col } from "react-bootstrap";
 import { Button } from "semantic-ui-react";
@@ -11,8 +11,12 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import { Confirm } from 'semantic-ui-react'
-import { deleteQuestion, DownVoteQuestion, getAllQuestions, UpVoteQuestion } from "../../Redux/Actions/questionsActions";
+import { BookmarkQuestion, deleteQuestion, DownVoteQuestion, getAllQuestions, UpVoteQuestion } from "../../Redux/Actions/questionsActions";
 import { HomeContext } from "../../Context/HomeContext";
+import ReactHtmlParser from "react-html-parser";
+import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
+import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -26,20 +30,38 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function Question({ question, show }) {
-  const {  setShowAlert,showAlert } = useContext(HomeContext)
+function Question({ question }) {
+  const {  setShowAlert, socket} = useContext(HomeContext)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { answers } = useSelector((state) => state.answers);
-  const AllAnswers = answers.filter(answer => answer.question._id == question._id)
+  const AllAnswers = answers?.filter(answer => answer?.question?._id == question._id)
   const auth = useSelector(state => state.auth)
   const userId = auth.user.id
   const hasUpvotedquestion = question.upVotes.find((vote) => vote === userId);
   const hasDownvotedquestion = question.downVotes.find((vote) => vote === userId);
+  const hasBookmarkedQuestion = question.bookmarks.find((bookmark) => bookmark === userId);
   const [upVotes, setUpVotes] = useState(question.upVotes);
   const [downVotes, setDownVotes] = useState(question.downVotes);
+  const [bookmarks, setBookmarks] = useState(question.bookmarks);
+
   const [open, setOpen] = useState(false)
   const classes = useStyles()
+  const location = useLocation()
+
+  function truncate(str, n) {
+    return str?.length > n ? str.substr(0, n - 1) + "..." : str;
+  }
+
+  const handleNotification = (type) => {
+    socket.emit("sendNotification", {
+      sender: auth.user,
+      receiver: question.createdby,
+      postId : question._id,
+      post:'question',
+      type,    
+    });
+  };
 
 
 
@@ -51,6 +73,29 @@ function Question({ question, show }) {
       setShowAlert(false)
   }, 4000);
   }
+
+  const Bookmarks = () => {
+    if (bookmarks.length > 0) {
+      return bookmarks.find((bookmark) => bookmark === userId)
+        ? (
+          <BookmarkIcon style={{ color: '#937474' }} />
+        ) : (
+          <BookmarkOutlinedIcon />
+        );
+    }
+
+    return <BookmarkOutlinedIcon />
+  };
+
+  const handleBookmark = async () => {
+    dispatch(BookmarkQuestion(question._id));
+    if (hasBookmarkedQuestion) {
+      setBookmarks(question.bookmarks.filter((id) => id !== userId));
+    } else {
+      setBookmarks([...question.bookmarks, userId]);
+    }
+
+  };
 
   const UpVote = () => {
     if (upVotes.length > 0) {
@@ -79,15 +124,15 @@ function Question({ question, show }) {
   };
 
   const handleUpVote = async () => {
-    dispatch(UpVoteQuestion(question._id));
+      dispatch(UpVoteQuestion(question._id));
     if (hasUpvotedquestion) {
       setUpVotes(question.upVotes.filter((id) => id !== userId));
-    } else {
+    } else{
       setDownVotes(question.downVotes.filter((id) => id !== userId));
       setUpVotes([...question.upVotes, userId]);
+      handleNotification(4)
     }
-    dispatch(getAllQuestions())
-    console.log(upVotes)
+    
   };
 
   const handleDownVote = async () => {
@@ -98,9 +143,9 @@ function Question({ question, show }) {
     else {
       setUpVotes(question.upVotes.filter((id) => id !== userId));
       setDownVotes([...question.downVotes, userId]);
+      handleNotification(5)
+
     }
-    dispatch(getAllQuestions())
-    console.log(downVotes)
   };
 
   return (
@@ -142,7 +187,7 @@ function Question({ question, show }) {
           <div className='row'>
           <div className='col-4'> {question.createdby.fullname} </div>
           
-            <Typography className='col-7' onClick={() => navigate(`/category/${question.category._id}/notes`)} style={{ color: `${question.category.color}`, textAlign: 'center', fontWeight: '600', display: show ? "flex" : "none" }}>
+            <Typography className='col-7' onClick={() => navigate(`/category/${question.category._id}/notes`)} style={{ color: `${question.category.color}`, textAlign: 'center', fontWeight: '600', display: location.pathname === '/Home' || location.pathname ==='/Bookmarks' ? "flex" : "none" }}>
               {`  ${question.category.name} `}
 
             </Typography> 
@@ -152,19 +197,25 @@ function Question({ question, show }) {
         >
         </CardHeader>
 
-        <CardContent className="row">
-          <Col sm={3}>
-            <Button.Group>
+        <CardContent className="d-flex">
+          <Col sm={6} lg={3} md={4}>
+            <Button.Group style={{marginTop:'-15px', marginLeft:'-6px'}}>
             <IconButton onClick={handleUpVote}> <UpVote /></IconButton>
-              <IconButton> <i>{upVotes.length - downVotes.length}</i></IconButton>
+              <IconButton style={{marginLeft:'-3px', marginRight:'-3px'}}> <i>{upVotes.length - downVotes.length}</i></IconButton>
               <IconButton onClick={handleDownVote}><DownVote /></IconButton>
             </Button.Group>
-            <Button color='violet' className="row" style={{ marginTop: '19px' }}>{`${AllAnswers.length} Answer${AllAnswers.length > 1 ? 's' : ''}`}</Button>
+            <div className="d-flex" style={{marginLeft:'-10px'}}>
+            <Button style={{fontSize:'78%', width:'58%'}} color='violet' className='mt-3 mx-3' onClick={()=> navigate(`/Main-Question/${question._id}`)}>{`${AllAnswers.length}  Answer${AllAnswers.length > 1 ? 's' : ''}`}</Button>
+         
+            <IconButton onClick={handleBookmark} className="MyCustomButton" style={{marginLeft:'-20px'}}>
+            <Bookmarks />
+          </IconButton>
+           
+            </div>
           </Col>
 
-          <Col sm={8}  onClick={() => navigate(`/Main-Question/${question._id}`)}>
+          <Col sm={5} xs={8} lg={8} md={7} onClick={() => navigate(`/Main-Question/${question._id}`)}>
             <Typography
-              color="text.secondary"
               style={{ color: 'blue', marginBottom: '20px',cursor:'pointer' }}
             >
                 {question.title}
@@ -176,7 +227,8 @@ function Question({ question, show }) {
               color="text.secondary"
               component="div" >
 
-              <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', marginTop: '10px' }} dangerouslySetInnerHTML={{ __html: question.body }} />
+              <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', marginTop: '10px' }} 
+              className='card-content' >{ReactHtmlParser(question.body)}</div>
 
             </Typography>
 

@@ -48,6 +48,8 @@ const ENDPOINT = "http://localhost:4000";
 var socket
 
 function App() {
+  const [notifications, setNotifications] = useState([]);
+  const [newNotifications, setNewNotifications] = useState([]);
   const [currentId, setCurrentId] = useState(0);
   const [openNote, setOpenNote] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -67,6 +69,7 @@ function App() {
   const auth = useSelector(state => state.auth)
   socket = io(ENDPOINT);
   const [ fetchAgain, setFetchAgain ] = useState(false)
+  const notificationsRef = React.createRef();
 
   const user = {
     isConnected: auth.isConnected,
@@ -77,14 +80,28 @@ function App() {
   useEffect(() => {
     socket.emit("setup", auth.user);
     socket.on('connected', () => setSocketConnected(true))
-    socket.on('typing', () => setIsTyping(true))
-    socket.on('stop typing', () => setIsTyping(false))
 }, [])
+
+
+
+useEffect( () => {
+  notificationsRef.current = notifications;
+  socket.on("getNotification", (data) => {   
+      setNotifications((prev) => [...prev, data]);
+    
+  });
+});
+
+/*useEffect(() => {
+  notificationsRef.current = notifications;
+  const newArray = Array.from(new Set(notifications.map(el => JSON.stringify(el)))).map(el => JSON.parse(el));
+  setNewNotifications(newArray)
+}, [])*/
 
 
   return (
     <HomeContext.Provider
-      value={{ socket,fetchAgain, setFetchAgain,
+      value={{ socket,fetchAgain, setFetchAgain,notifications, setNotifications,
         socketConnected, setSocketConnected,isTyping, setIsTyping,
         token, dispatch, comment, setComment, openNote, liked, setLiked, search, setSearch, 
         followers, setFollowers, setOpenNote, showAlert, setShowAlert, currentId, setCurrentId,

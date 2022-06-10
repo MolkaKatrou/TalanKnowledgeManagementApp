@@ -26,6 +26,11 @@ const QuestionModel = new mongoose.Schema({
         type: [String], 
         default: [] 
     }, 
+    bookmarks: { 
+        type: [String], 
+        default: [] 
+    },
+
     createdAt: {
         type: Date,
         default: Date.now(),

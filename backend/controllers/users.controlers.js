@@ -1,5 +1,5 @@
 const UserModel = require("../models/users.model");
-const { ValidateUser, ValidateLogin, ValidatePassword, ValidateEmail } = require('../Validation/users.validation')
+const { ValidateUser, ValidateLogin, ValidatePassword, ValidateEmail, ValidateChangePassword } = require('../Validation/users.validation')
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto')
@@ -35,7 +35,7 @@ const AddUser = async (req, res) => {
             const hash = bcrypt.hashSync(req.body.password, 10); //hashed password
             password = req.body.password
             req.body.password = hash;
-            req.body.role = "USER";
+            //req.body.role = "USER";
             req.body.firstname = capitalizeFirstLetter(req.body.firstname)
             req.body.lastname = req.body.lastname.toUpperCase()
             req.body.fullname =  req.body.firstname +' '+ req.body.lastname
@@ -243,6 +243,9 @@ const UpdateUser = async (req, res) => {
     if (!isValid) {
       res.status(404).json(errors);
     } else {
+      req.body.firstname = capitalizeFirstLetter(req.body.firstname)
+      req.body.lastname = req.body.lastname.toUpperCase()
+      req.body.fullname =  req.body.firstname +' '+ req.body.lastname
       const data = await UserModel.findOneAndUpdate(
         { _id: req.params.id },
         req.body,
@@ -477,6 +480,45 @@ const Newpassword = async (req, res) => {
     })
 }
 
+const Changepassword = async (req, res) => {
+  const { errors, isValid} = ValidateChangePassword(req.body)
+  try {
+    if (!isValid) {
+      res.status(404).json(errors)
+    } else {
+      if (bcrypt.compareSync(req.body.old_password, req.user.password)){
+          let hashedpassword=bcrypt.hashSync(req.body.new_password,10 )
+          await UserModel.updateOne({_id:req.userId},{password:hashedpassword})
+          let user = await UserModel.findOne({_id : req.userId})
+          var token = jwt.sign({
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            fullname:user.fullname,
+          },
+            process.env.PRIVATE_KEY, { expiresIn: '10d' });
+         
+         
+         
+            return res.status(200).json({
+              message: "success",
+              token: "Bearer " + token,
+              user: user
+            })
+
+
+        }else{
+        return res.status(400).send({message:'passwords do not match!'})
+      }
+    }
+  }
+  catch(error){
+    console.log(error)
+  }
+
+}
+
+
 const SearchUsers = async (req, res) => {
   try {
     const {keyword} = req.query
@@ -526,4 +568,5 @@ module.exports = {
   Newpassword,
   SearchUsers,
   updateProfilePicture,
+  Changepassword
 };
