@@ -1,4 +1,4 @@
-import { GET_POSTS, GET_POST,DELETE_POST, FETCH_BY_SEARCH, LIKE, BOOKMARK } from "../types";
+import { GET_POSTS, GET_POST,DELETE_POST, FETCH_BY_SEARCH, LIKE, BOOKMARK, UPDATE_POST } from "../types";
 
 const initialState = {
   posts: [],
@@ -13,6 +13,17 @@ export default function (state = initialState, action) {
         posts: action.payload.data,
         loading: false,
       };
+
+    case UPDATE_POST:
+      return {
+        ...state,
+        posts: state.posts.map((post) => {
+        if (post._id == +action.payload._id) {
+          return action.payload;
+        }
+        return post;
+      }),
+    };
 
     case GET_POST:
       return {

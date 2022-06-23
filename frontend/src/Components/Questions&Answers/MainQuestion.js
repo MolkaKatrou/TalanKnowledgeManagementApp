@@ -1,7 +1,5 @@
 import { CircularProgress, Container, makeStyles, Grid } from "@material-ui/core";
 import React, { useEffect, useState, useContext } from "react";
-import ReactQuill from "react-quill";
-import Editor from "react-quill/lib/index";
 import Home from "../../pages/home/Home";
 import { Button, ChakraProvider, Select, Stack } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +10,9 @@ import QuestionAnswer from "./QuestionAnswer";
 import { HomeContext } from "../../Context/HomeContext";
 import Alert from '@mui/material/Alert';
 import toast from "react-hot-toast";
+import QuillEditor from "../Editor";
+import Editor from "../Editor";
+
 
 
 
@@ -40,59 +41,18 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 function MainQuestion() {
-  var toolbarOptions = [
-    ["bold", "italic", "underline", "strike"], // toggled buttons
-    ["blockquote", "code-block"],
-
-    [{ header: 1 }, { header: 2 }], // custom button values
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ script: "sub" }, { script: "super" }], // superscript/subscript
-    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-    [{ direction: "rtl" }], // text direction
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    [{ align: [] }],
-
-    ["clean"],
-  ];
-  Editor.modules = {
-    syntax: false,
-    toolbar: toolbarOptions,
-    clipboard: {
-      matchVisual: false,
-    },
-  };
-
-  Editor.formats = [
-    "header",
-    "font",
-    "size",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "video",
-  ];
-  const { setShowAlert, showAlert, comment } = useContext(HomeContext)
+  const {t, setShowAlert, showAlert, comment, fetch, setFetch } = useContext(HomeContext)
   const dispatch = useDispatch()
   const { id } = useParams()
   const classes = useStyles()
   const { questions, loading } = useSelector((state) => state.questions);
   const filteredQuestion = questions.filter(q => q._id == id)
   const [answer, setAnswer] = useState("");
+  const [files, setFiles] = useState([]);
   const [newest, setNewest] = useState('newest');
   const auth = useSelector(state => state.auth)
-  const userId = auth.user.id
   const { answers } = useSelector((state) => state.answers);
   const Answers = answers?.filter(answer => answer?.question?._id == id)
-  console.log(filteredQuestion)
-  console.log(newest)
-
   /*const handleNotification = (type) => {
     socket.emit("sendNotification", {
       sender: auth.user,
@@ -118,17 +78,21 @@ function MainQuestion() {
       toast.success('Answer added successfully')
       //handleNotification(9)
       setAnswer('')
+      setFetch(!fetch)
     }
   }
 
-  const handleQuill = (value) => {
+  const onEditorChange = (value) => {
     setAnswer(value);
-  };
+}
+
+const onFilesChange = (files) => {
+    setFiles(files)
+}
 
   useEffect(() => {
     dispatch(getAllAnswers())
-    dispatch(getAllQuestions())
-  }, [showAlert, comment, answer])
+  }, [fetch ])
 
   const handleChange = (value) => {
     setNewest(value)
@@ -137,7 +101,6 @@ function MainQuestion() {
   return (
     <Home>
       <Container className={classes.container}>
-        {showAlert ? <Alert style={{ marginBottom: '15px' }} variant="filled" severity="success">The Answer has been successfully deleted!</Alert> : ""}
         {loading ?
           <CircularProgress size="1em" elevation={2} className={classes.loadingPaper} />
           :
@@ -160,13 +123,13 @@ function MainQuestion() {
                       fontSize: "1.8rem",
                       fontWeight: "300",
                     }}
-                  >   <p>{`${Answers.length} Answer${Answers.length > 1 ? 's' : ''}`}</p>
+                  >   <p>{`${Answers.length} ${t('Answer')}${Answers.length > 1 ? 's' : ''}`}</p>
                   </p>
                   <ChakraProvider>
                     <Stack spacing={3}>
                       <Select variant='filled' style={{ backgroundColor: 'rgb(233, 233, 227)'}} onChange={(e) => handleChange(e.target.value)} >
-                        <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='newest' >Newest answers</option>
-                        <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='popular' >Most popular answers</option>
+                        <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='newest' >{t('Newest answers')}</option>
+                        <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='popular' >{t('Most popular answers')}</option>
                       </Select>
                     </Stack>
 
@@ -209,15 +172,15 @@ function MainQuestion() {
                   fontWeight: "400",
                 }}
               >
-                Your Answer
-              </h3>
-              <ReactQuill
-                value={answer}
-                onChange={handleQuill}
-                modules={Editor.modules}
-                className="react-quill"
-                theme="snow"
-              />
+                {t('Your Answer')}
+              </h3>           
+                <Editor
+                placeholder={t("Add Your Answer")}
+                onEditorChange={onEditorChange}
+                onFilesChange={onFilesChange}
+                empty={answer}
+            />
+ 
             </div>
             <div
               style={{
@@ -234,7 +197,7 @@ function MainQuestion() {
                   width='250px'
                   variant='solid'
                   style={{ maxWidth: "fit-content" }}>
-                  Add Answer
+                  {t('Add Answer')}
                 </Button>
               </ChakraProvider>
             </div>

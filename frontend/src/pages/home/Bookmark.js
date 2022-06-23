@@ -3,11 +3,12 @@ import { Container, makeStyles,CircularProgress } from "@material-ui/core"
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Post from '../../Components/posts/Post'
-import { getAllPosts } from '../../Redux/Actions/postsActions';
+import { getAll, getAllPosts } from '../../Redux/Actions/postsActions';
 import { useDispatch, useSelector } from 'react-redux';
 import Home from './Home';
 import { Grid } from '@mui/material';
 import { HomeContext } from '../../Context/HomeContext';
+import Question from '../../Components/Questions&Answers/Question';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -40,21 +41,33 @@ function Bookmark() {
     const classes = useStyles()
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
-    const {posts, loading } = useSelector((state) => state.posts);
-    const bookmarkedPosts = posts.filter(post => post?.bookmarks?.includes(userId))
+    const {posts} = useSelector((state) => state.posts);
+    const {questions} = useSelector((state) => state.questions);
+    const bookmarkedQuestions = questions.filter(question => question?.bookmarks?.includes(userId))
+    const bookmarkedPosts = posts.filter(post => post?.bookmarks?.includes(userId) && post.isDraft===false)
+    const {postsQuestions, loading} = useSelector(state => state.all)
+    const bookmarkedPostsQuestions = postsQuestions.filter(post => post?.bookmarks?.includes(userId))
+    console.log(bookmarkedPostsQuestions)
     const {showAlert, openNote, setOpenNote, dispatch, liked} = useContext(HomeContext)
 
     useEffect(() => {
         dispatch(getAllPosts())
-      },[dispatch, openNote, liked])
+        dispatch(getAll())
+      },[dispatch, openNote, liked, showAlert])
    
 
-    const renderPosts = bookmarkedPosts.reverse().map((post, index) => (
+    const renderPosts = bookmarkedPostsQuestions.reverse().map((post, index) => (
       <div >
+        { post.content ? 
         <Post
             post ={post}      
-            show={show}
+      
         />
+        : 
+        <Question
+          question={post}
+        />
+}
     </div> 
      
     
@@ -69,9 +82,10 @@ function Bookmark() {
                 :
                 <>
                 
-           <Grid className={classes.mainContainer} container alignItems="stretch" spacing={2}> 
+           <Grid className={classes.mainContainer} container  spacing={3}> 
           
-         {renderPosts}    
+        
+         {bookmarkedPostsQuestions.length>0 ? renderPosts : <div className={classes.loadingPaper} style={{color:'gray'}}>No Bookmarks</div>}
          </Grid>
          </>
          }

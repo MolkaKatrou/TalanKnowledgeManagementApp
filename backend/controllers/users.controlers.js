@@ -36,6 +36,8 @@ const AddUser = async (req, res) => {
             password = req.body.password
             req.body.password = hash;
             //req.body.role = "USER";
+            
+            req.body.createdAt = new Date().toISOString()
             req.body.firstname = capitalizeFirstLetter(req.body.firstname)
             req.body.lastname = req.body.lastname.toUpperCase()
             req.body.fullname =  req.body.firstname +' '+ req.body.lastname
@@ -497,23 +499,21 @@ const Changepassword = async (req, res) => {
             fullname:user.fullname,
           },
             process.env.PRIVATE_KEY, { expiresIn: '10d' });
-         
-         
-         
-            return res.status(200).json({
-              message: "success",
+
+            res.status(200).json({message: "success",
               token: "Bearer " + token,
               user: user
             })
 
 
         }else{
-        return res.status(400).send({message:'passwords do not match!'})
+          errors.old_password = "Tha password is incorrect"
+          return res.status(404).json(errors)
       }
     }
   }
   catch(error){
-    console.log(error)
+    console.log(error.message)
   }
 
 }

@@ -10,6 +10,10 @@ const noteModel = new Schema ({
         type: Date,
         default: Date.now(),
     },
+
+    updated_At:{
+        type: Date,
+    },
     
     category:{
         type: Schema.Types.ObjectId, 
@@ -23,6 +27,10 @@ const noteModel = new Schema ({
     content: {
         type: String, 
         required: true
+    },
+    isDraft: { 
+        type: Boolean, 
+        default: false 
     },
     comments: [{ 
         type: Schema.Types.ObjectId, 

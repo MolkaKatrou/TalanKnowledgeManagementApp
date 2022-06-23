@@ -26,6 +26,9 @@ const categoryModel = new Schema ({
         type: [String], 
         default: [] 
     },
+    createdAt: {
+        type: Date,
+    },
  
 }, {timestamps: true})
 

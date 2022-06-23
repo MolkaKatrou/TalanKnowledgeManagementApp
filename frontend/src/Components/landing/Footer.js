@@ -17,41 +17,36 @@ function Footer() {
           </div>
           <small className='website-rights'>Talan Consulting Tunisia © 2022</small>
           <div className='social-icons'>
-            <Link
+            <a
               className='social-icon-link facebook'
-              to={{ pathname: "https://www.facebook.com/TalanTunisia" }} 
+              herf ="https://www.facebook.com/TalanTunisia" 
               target='_blank'
               aria-label='Facebook'
             >
               <i className='fab fa-facebook-f' />
-            </Link>
-            <Link
+            </a>
+            <a
               className='social-icon-link instagram'
-              to={{ pathname: "https://www.instagram.com/talan.group/" }}
-              
+              herf ="https://www.instagram.com/talan.group/"     
               target='_blank'
               aria-label='Instagram'
             >
               <i className='fab fa-instagram' />
-            </Link>
+            </a>
            
-            <Link
+            <a
               className='social-icon-link twitter'
-              to={{ pathname: "https://twitter.com/talan_fr" }} 
-            
+              href ="https://twitter.com/talan_fr"          
               target='_blank'
               aria-label='Twitter'
             >
               <i className='fab fa-twitter' />
-            </Link>
-            <Link
-              className='social-icon-link twitter'
-              to={{ pathname: "https://www.linkedin.com/company/talan-tunisie/" }} 
-              target='_blank'
-              aria-label='LinkedIn'
-            >
+            </a>
+            <a className='social-icon-link twitter' href='https://www.linkedin.com/company/talan-tunisie/' target='_blank'
+              aria-label='LinkedIn'>
+            
               <i className='fab fa-linkedin' />
-            </Link>
+            </a>
           </div>
         </div>
       </section>

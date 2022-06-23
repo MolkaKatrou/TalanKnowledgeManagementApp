@@ -5,11 +5,13 @@ import '../../App.css'
 function AdminInput({ label, type, success, labelclass, name, icon, onChangeHandler, errors, value, placeholder }) {
   return (
     <div className="mb-3 col-md-19">
+      
       <label className={labelclass} style={{ fontWeight: 'bold' }}>{label}<span className="text-danger">*</span></label>
       <div className="input-group">
-        <span className="input-group-text" >
+        <span className="input-group-text" style={{backgroundColor:'rgb(225, 228, 232)', border:'1px solid #0000003f'}} >
           <i className={icon}></i>
         </span>
+        
         <input
           style={{ fontFamily: 'sans-serif' }}
           className={(classnames("form-control admin-input", { "is-invalid": errors }, { "form-control is-valid": success }))}

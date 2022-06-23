@@ -8,7 +8,7 @@ const { ValidateQuestion } = require("../Validation/questions.validation");
 
 const GetQuestions = async (req, res) => {
     try {
-        const data = await QuestionModel.find().populate('category').populate('createdby');
+        const data = await QuestionModel.find().populate('category').populate('createdby').sort({date: 1});
         res.status(201).json(data);
     } catch (error) {
         console.log(error.message);
@@ -17,6 +17,7 @@ const GetQuestions = async (req, res) => {
 
 const AddQuestion = async (req, res) => {
     req.body.createdAt = new Date().toISOString()
+    req.body.updated_At = new Date().toISOString()
     const { errors, isValid } = ValidateQuestion(req.body)
     try {
         if (!isValid) {
@@ -125,6 +126,23 @@ const BookmarkQuestion = async (req, res) => {
 
     res.status(200).json(updatedQuestion);
    
+}
+
+const updateQuestion = async (req, res) => {
+    const { id } = req.params;
+    req.body.updated_At = new Date().toISOString()
+    const updated_At = req.body.updated_At
+    const { title, category, body } = req.body;
+    const updatedQuestion = { category, title, body,updated_At, _id: id };
+
+    await QuestionModel.findByIdAndUpdate(id, updatedQuestion, { new: true });
+    res.json(updatedQuestion);
+}
+
+const updateAnswer = async (req, res) => {
+    const { id } = req.params;
+    const updatedAnswer = await AnswerModel.findByIdAndUpdate(id, req.body , { new: true });
+    res.json(updatedAnswer);
 }
 const GetAnswers = async (req, res) => {
     try {
@@ -250,5 +268,7 @@ module.exports = {
     VoteDownAnswer,
     CommentAnswer,
     DeleteComment,
-    BookmarkQuestion
+    BookmarkQuestion,
+    updateQuestion,
+    updateAnswer
 };

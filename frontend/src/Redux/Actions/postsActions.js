@@ -1,4 +1,4 @@
-import {GET_POSTS, GET_POST,CREATE_POST,GET_All, UPDATE_POST, DELETE_POST, LIKE, BOOKMARK,FETCH_BY_SEARCH, ERRORS} from '../types'
+import {GET_POSTS, GET_POST,CREATE_POST,GET_All, UPDATE_POST, DELETE_POST, LIKE, BOOKMARK,FETCH_BY_SEARCH, ERRORS, DELETE_COMMENT} from '../types'
 import axios from 'axios'
 
 axios.interceptors.request.use((req) => {
@@ -60,6 +60,15 @@ export const commentPost =(value,id) => async dispatch =>{
     } 
 }
 
+export const deleteComment = (id) => async (dispatch) => {
+  try {
+    await axios.delete(`/Api/notes/${id}/comment/${id}`);
+    dispatch({ type: DELETE_COMMENT, payload: id });
+  } catch (error) {
+    console.log(error);
+  }
+  };
+
 export const likePost = (id) => async dispatch => {
     try {
       const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
@@ -95,6 +104,7 @@ export const createPost = (post) => async (dispatch) => {
   try {
     const { data } = await axios.post('/Api/notes', post);
     dispatch({ type: CREATE_POST, payload: data });
+    dispatch(getAllPosts())
     
   } catch (error) { 
     dispatch({
@@ -118,6 +128,7 @@ export const updatePost = (id, post) => async (dispatch) => {
   try {
     const { data } = await axios.patch(`/Api/notes/${id}`, post);
     dispatch({ type: UPDATE_POST, payload: data });
+    //dispatch(getAllPosts())
   } 
   catch (error) {
     console.log(error);

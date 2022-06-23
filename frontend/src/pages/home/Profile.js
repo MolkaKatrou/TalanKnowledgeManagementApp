@@ -42,7 +42,7 @@ function Profile() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const categoryModal1 = useDisclosure()
   const categoryModal2 = useDisclosure()
-  const { token } = useContext(HomeContext)
+  const { token} = useContext(HomeContext)
   const classes = useStyles()
   const [image, setImage] = useState("")
   const auth = useSelector(state => state.auth)
@@ -54,11 +54,7 @@ function Profile() {
   const Createdposts = postsList.posts.filter(post => post?.createdby?._id === id)
   const Createdquestions = questionsList.questions.filter(post => post?.createdby?._id === id)
   const allcreated = Createdposts.concat(Createdquestions)
-  const dispatch = useDispatch()
 
-  useEffect(() => {
-    dispatch(getAllPosts())
-  }, [])
   
   useEffect(() => {
     if (image) {
@@ -263,7 +259,7 @@ const ArtCard = styled.div`
   text-align: center;
   overflow: hidden;
   margin-bottom: 8px;
-  background-color: #fff;
+  background-color: #F0F1F4;
   border-radius: 5px;
   transition: box-shadow 83ms;
   position: relative;
@@ -274,7 +270,7 @@ const ArtCard = styled.div`
 const Card = styled.div`
   overflow: hidden;
   margin-bottom: 8px;
-  background-color: #fff;
+  background-color: #F0F1F4;
   border-radius: 5px;
   transition: box-shadow 83ms;
   position: relative;
@@ -403,7 +399,7 @@ const CommunityCard = styled(ArtCard)`
 `;
 
 const PostsCard = styled(Card)`
-  padding: 10px 0 0;
+  padding: 40px 5px 5px;
   }
 `;
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography } from "@material-ui/core"
+import React, {useContext} from 'react';
+import { Box, makeStyles, Typography } from "@material-ui/core"
 import PropTypes from 'prop-types';
 import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
 import { styled } from '@mui/material/styles';
@@ -8,14 +8,11 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import { createTheme } from "@mui/material/styles";
 import { purple } from "@mui/material/colors";
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { ChakraProvider } from '@chakra-ui/react'
-import { CategoryContext } from '../Context/CategoryContext';
-import { useContext } from 'react';
 import { useSelector } from 'react-redux';
-
-
+import { HomeContext } from '../Context/HomeContext';
 
 
 const CustomizedTheme = createTheme({
@@ -25,6 +22,14 @@ const CustomizedTheme = createTheme({
     },
   },
 });
+const useStyles = makeStyles((theme) => ({
+  ListItem:{
+    "&.active": {
+      backgroundColor: '--tree-view-bg-color'
+    },
+  },
+}));
+
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.text.secondary,
   [`& .${treeItemClasses.content}`]: {
@@ -49,17 +54,15 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 }));
 
 export default function StyledTreeItem(props) {
-  const navigate = useNavigate()
-  const categoriesList = useSelector(state => state.categories)
+  const {t} = useContext(HomeContext)
+  const classes = useStyles()
+  const auth = useSelector(state=>state.auth)
 
   const {
     bgColor,
     color,
     labelText,
-    menu,
-    ClickMenu,
-    anchorEl,
-    CloseMenu,
+    createdby,
     handleOpen,
     OnDelete,
     OnUpdate,
@@ -76,27 +79,29 @@ export default function StyledTreeItem(props) {
           key={Id}
           nodeId={Id}
           label={
-            <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5, pr: 2 }} >
-              <Typography onClick={() => navigate(`/category/${Id}/notes`)} variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }} >
+            <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5, pr: 2 }} className={classes.ListItem}>
+              <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}  component={NavLink} to={`/category/${Id}/notes`} >
                 {labelText}
               </Typography>
               <ChakraProvider>
                 <Typography style={{ width: '10%', marginLeft: 'auto', marginRight: 0 }} >
+                {
+                auth.user.email === createdby?.email ? (
                   <Menu>
                     <MenuButton className='checkbox'><MoreHorizIcon style={{ width: '15px' }} /></MenuButton>
                     <MenuList style={{ background: 'white', width: '150px' }}>
                       <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
                         onClick={()=>{OnDelete(Id)}}
                       >
-                        Delete
+                        {t("Delete")}
                       </MenuItem>
                       <MenuItem icon={<EditIcon style={{ marginRight: '30px', color: 'gray' }} />}
                         onClick={()=>{OnUpdate(Id)}}
                       >
-                        Edit
+                        {t("Edit")}
                       </MenuItem>
                     </MenuList>
-                  </Menu>
+                  </Menu> ) :('') }
                 </Typography>
               </ChakraProvider>
             </Box>
@@ -117,7 +122,6 @@ export default function StyledTreeItem(props) {
 StyledTreeItem.propTypes = {
   bgColor: PropTypes.string,
   color: PropTypes.string,
-  labelIcon: PropTypes.elementType.isRequired,
   labelInfo: PropTypes.string,
   labelText: PropTypes.string.isRequired,
 };

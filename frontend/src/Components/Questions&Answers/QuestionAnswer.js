@@ -1,5 +1,5 @@
 import { Typography, IconButton } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BookmarkQuestion, DownVoteQuestion, UpVoteQuestion } from "../../Redux/Actions/questionsActions";
 import { useParams } from "react-router-dom";
@@ -7,9 +7,11 @@ import moment from 'moment';
 import ReactHtmlParser from "react-html-parser";
 import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import { HomeContext } from "../../Context/HomeContext";
 
 
 function QuestionAnswer({ question }) {
+    const {t} = useContext(HomeContext)
     const dispatch = useDispatch()
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
@@ -19,30 +21,30 @@ function QuestionAnswer({ question }) {
     const [downVotes, setDownVotes] = useState(question?.downVotes);
     const hasBookmarkedQuestion = question.bookmarks.find((bookmark) => bookmark === userId);
     const [bookmarks, setBookmarks] = useState(question.bookmarks);
-  
+
     const Bookmarks = () => {
         if (bookmarks.length > 0) {
-          return bookmarks.find((bookmark) => bookmark === userId)
-            ? (
-              <BookmarkIcon style={{ color: '#937474' }} />
-            ) : (
-              <BookmarkOutlinedIcon />
-            );
+            return bookmarks.find((bookmark) => bookmark === userId)
+                ? (
+                    <BookmarkIcon style={{ color: '#937474' }} />
+                ) : (
+                    <BookmarkOutlinedIcon />
+                );
         }
-    
+
         return <BookmarkOutlinedIcon />
-      };
-    
-      const handleBookmark = async () => {
+    };
+
+    const handleBookmark = async () => {
         dispatch(BookmarkQuestion(question._id));
         if (hasBookmarkedQuestion) {
-          setBookmarks(question.bookmarks.filter((id) => id !== userId));
+            setBookmarks(question.bookmarks.filter((id) => id !== userId));
         } else {
-          setBookmarks([...question.bookmarks, userId]);
+            setBookmarks([...question.bookmarks, userId]);
         }
-    
-      };
-    
+
+    };
+
 
     const UpVote = () => {
         if (upVotes?.length > 0) {
@@ -104,12 +106,17 @@ function QuestionAnswer({ question }) {
             <div className="main-desc">
                 <div className="info">
                     <p>
-                        Asked by
+                        {t('Asked by')}
                         <span>{question?.createdby.fullname}</span>
                     </p>
                     <p>
-                        Posted<span>{moment(question.createdAt).fromNow()}</span>
+                        {t('Posted')}<span>{moment(question.createdAt).fromNow()}</span>
                     </p>
+                    {question.createdAt !== question.updated_At ?
+                        <p> {t('Updated')}
+                            <span> {moment(question?.updated_At).fromNow()} </span>
+                        </p> : ''
+                    }
                 </div>
             </div>
             <div className="all-questions">
@@ -120,8 +127,8 @@ function QuestionAnswer({ question }) {
                             <p className="arrow"> <i>{upVotes?.length - downVotes?.length || 0}</i></p>
                             <IconButton className="arrow" onClick={handleDownVote}><DownVote /></IconButton>
                             <IconButton onClick={handleBookmark} className="MyCustomButton">
-            <Bookmarks />
-          </IconButton>
+                                <Bookmarks />
+                            </IconButton>
 
                         </div>
                     </div>

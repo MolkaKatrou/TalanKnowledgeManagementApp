@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import logo from '../images/logo.png'
-import { alpha, AppBar, Badge, Box, InputBase, makeStyles, Typography, IconButton } from "@material-ui/core"
+import { alpha, AppBar, Badge, Box, InputBase, makeStyles, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, useTheme, useMediaQuery, InputLabel } from "@material-ui/core"
 import { Toolbar } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import Mail from '@mui/icons-material/Mail';
@@ -12,12 +12,16 @@ import { useDispatch } from 'react-redux';
 import { ChangePasswordAction, Logout } from "../Redux/Actions/authActions";
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, MenuButton, MenuList, Button, MenuItem, ChakraProvider, Divider, Avatar, AvatarBadge, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, Button, MenuItem, ChakraProvider, Divider, Avatar, AvatarBadge, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { HomeContext } from '../Context/HomeContext';
 import { getSender } from '../Components/Chats/ChatLogic';
 import NotificationBadge from "react-notification-badge";
 import { Effect } from "react-notification-badge";
 import Passwordinput from '../Components/inputs/Password';
+import toast from 'react-hot-toast';
+import i18next from 'i18next';
+import classNames from 'classnames'
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -49,13 +53,24 @@ function useQuery() {
 
 
 export default function HomeNavbar({ searchPost, handleKeyPress, search, setSearch }) {
+  const classes = useStyles()
   const [form, setForm] = useState({});
   const errors = useSelector(state => state.errors)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { setSocketConnected, notification, socket, notifications, setNotifications, setNotification, selectedChat, setSelectedChat, notificationChat, setNotificationChat } = useContext(HomeContext)
+  const { setSocketConnected, notification, socket, notifications, setNotifications, setNotification, selectedChat, setSelectedChat, notificationChat, setNotificationChat, t, languages, currentLanguage, currentLanguageCode } = useContext(HomeContext)
   const auth = useSelector(state => state.auth)
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [open, setOpen] = React.useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const onChangeHandler = (e) => {
     setForm({
@@ -64,14 +79,20 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
     });
   };
 
-  const ChangepasswordHandler = () => {
-    dispatch(ChangePasswordAction(form))
+  const ChangepasswordHandler = (e) => {
+    e.preventDefault();
+    dispatch(ChangePasswordAction(e, form))
+  }
+
+  const onKeyPressForm = (e) => {
+    if (e.keyCode === 13) {
+      dispatch(ChangePasswordAction(e, form))
+    }
   }
 
   const LogoutHandler = () => {
     dispatch(Logout())
   }
-  const classes = useStyles()
 
 
   const displayNotification = ({ sender, type }) => {
@@ -200,64 +221,187 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
                     Profile
                   </MenuItem>
 
-                  <MenuItem icon={<LockOpen />} onClick={onOpen} >
+                  <MenuItem icon={<LockOpen />} onClick={handleClickOpen} >
                     Manage Account
                   </MenuItem>
-                  <Modal size='full' isOpen={isOpen}>
+                  {/*<Modal size='full' isOpen={isOpen} onClose={onClose} >
                     <ModalOverlay />
-                    <ModalContent style={{ width: '60%' }}>
-                      <ModalHeader>Change Password</ModalHeader>
+                    <ModalContent className="mt-3 border p-5 bg-light" style={{ width: '50%', paddingBottom: '-20px' }} >
+                      <ModalHeader >Change Password</ModalHeader>
                       <ModalCloseButton />
-                      <ModalBody pb={6}>
+                      <ModalBody pb={6} className="mt-3 border bg-light">
 
                         <div className='mx-5 mt-5'>
-                          <FormControl>
-                            <FormLabel>Old Password</FormLabel>
+                          <form className=" bg-light ">
+                            <FormControl isRequired>
+                              <FormLabel>Old Password</FormLabel>
+                              < Passwordinput
+                                onKeyDown={onKeyPressForm}
+                                name="old_password"
+                                placeholder="Enter your old password"
+                                icon="fa fa-key"
+                                onChangeHandler={onChangeHandler}
+                                errors={errors.old_password}
+                              />
+                            </FormControl>
+
+                            <FormControl mt={4} isRequired>
+                              <FormLabel>New Password</FormLabel>
+                              <Passwordinput
+                                onKeyDown={onKeyPressForm}
+                                name="new_password"
+                                placeholder="Enter your new password"
+                                icon="fa fa-key"
+                                onChangeHandler={onChangeHandler}
+                                errors={errors.new_password}
+                              />
+                            </FormControl>
+
+                            <FormControl mt={4} isRequired>
+                              <FormLabel>Confirm New Password</FormLabel>
+                              <Passwordinput
+                                onKeyDown={onKeyPressForm}
+                                name="confirm_password"
+                                placeholder="Confirm your new password"
+                                type="text"
+                                icon="fa fa-key"
+                                onChangeHandler={onChangeHandler}
+                                errors={errors.confirm_password}
+                              />
+                            </FormControl>
+                          </form>
+                        </div>
+
+
+                      </ModalBody>
+                      <ModalFooter className="bg-light mt-5">
+                        <Button size='md'
+                          height='40px'
+                          width='110px'
+                          border='2px' colorScheme='pink' mr={3} onClick={ChangepasswordHandler}>
+                          Save
+                        </Button>
+                        <Button size='md'
+                          height='40px'
+                          width='110px'
+                          border='0px' onClick={onClose}>Cancel</Button>
+                      </ModalFooter>
+                    </ModalContent>
+                  </Modal>*/}
+                  <Dialog
+                    fullScreen={fullScreen}
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="responsive-dialog-title"
+                  >
+
+
+                    <DialogContent style={{ paddingRight: '150px' }} className="border bg-light" >
+                      <div style={{ fontWeight: '600', fontSize: '17px', color: '#3B285E' }}>{t('Change Password')}</div>
+                      <div className='mx-3 mt-3'>
+                        <form className="bg-light ">
+                          <FormControl isRequired style={{width:'360px'}}>
+                            <FormLabel>{t('Old Password')}</FormLabel>
                             < Passwordinput
+                              onKeyDown={onKeyPressForm}
                               name="old_password"
-                              placeholder="Enter your old password"
+                              placeholder={t("Enter your old password")}
                               icon="fa fa-key"
                               onChangeHandler={onChangeHandler}
                               errors={errors.old_password}
                             />
                           </FormControl>
 
-                          <FormControl mt={4}>
-                            <FormLabel>New Password</FormLabel>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>{t('New Password')}</FormLabel>
                             <Passwordinput
+                              onKeyDown={onKeyPressForm}
                               name="new_password"
-                              placeholder="Enter your new password"
+                              placeholder={t("Enter your new password")}
                               icon="fa fa-key"
                               onChangeHandler={onChangeHandler}
                               errors={errors.new_password}
                             />
                           </FormControl>
 
-                          <FormControl mt={4}>
-                            <FormLabel>Confirm New Password</FormLabel>
-                            < Passwordinput
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>{t('Confirm New Password')}</FormLabel>
+                            <Passwordinput
+                              onKeyDown={onKeyPressForm}
                               name="confirm_password"
-                              placeholder="Confirm your new password"
+                              placeholder={t("Confirm your new password")}
+                              type="text"
                               icon="fa fa-key"
                               onChangeHandler={onChangeHandler}
                               errors={errors.confirm_password}
                             />
                           </FormControl>
-                        </div>
+                          <div className="bg-light">
+                      <Button autoFocus onClick={handleClose}>
+                        {t('Cancel')}
+                      </Button>
 
 
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={ChangepasswordHandler}>
-                          Save
-                        </Button>
-                        <Button onClick={onClose}>Cancel</Button>
-                      </ModalFooter>
-                    </ModalContent>
-                  </Modal>
+                      <Button size='md'
+                  
+                        border='2px'
+                        colorScheme='pink' mr={0} onClick={ChangepasswordHandler}>
+                        {t('Save')}
+                      </Button>
+
+                    </div>
+                        </form>
+
+                      </div>
+
+                      <FormControl fullWidth className='mt-4' >
+                        <div style={{ fontWeight: '600', fontSize: '17px', color: '#3B285E' }}>{t('Change Language')}</div>
+                        <ChakraProvider>
+                          <div className="dropdown mt-2" style={{marginLeft:'-15px'}}>
+                            <button
+                              className="btn dropdown-toggle"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              Language
+                            </button>
+                            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                              <li>
+                                <span className="dropdown-item-text">{t('language')}</span>
+                              </li>
+                              {languages.map(({ code, name, country_code }) => (
+                                <li key={country_code}>
+                                  <a
+                                    href="#"
+                                    className={classNames('dropdown-item', {
+                                      disabled: currentLanguageCode === code,
+                                    })}
+                                    onClick={() => {
+                                      i18next.changeLanguage(code)
+                                    }}
+                                  >
+                                    <span
+                                      className={`flag-icon flag-icon-${country_code} mx-2`}
+                                      style={{
+                                        opacity: currentLanguageCode === code ? 0.5 : 1,
+                                      }}
+                                    ></span>
+                                    {name}
+                                  </a>
+                                </li>
+                              ))}
+                            </div>
+                          </div>
+                        </ChakraProvider>
+
+                      </FormControl>
+
+                    </DialogContent>
+                  
+                  </Dialog>
                   <Divider className='mt-2 mb-2' />
                   <MenuItem icon={<LogoutIcon />} onClick={LogoutHandler} >
-                    Logout
+                    {t('Logout')}
                   </MenuItem>
 
                 </MenuList>

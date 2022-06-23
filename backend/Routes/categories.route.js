@@ -24,7 +24,7 @@ router.post('/categories',auth, Addcategory)
 router.post('/categories/delete',auth, Deletecategory)
 router.delete('/categories/:id',auth, Delete)
 router.delete('/categories/notes/:id',auth, DeleteAndUpdateNotes)
-router.put('/categories/:id',auth, Update)
+router.patch('/categories/:id',auth, Update)
 router.post('/categories/update',auth,upload.array('categoryImage'), Updatecategory)
 router.patch('/categories/:id/follow', auth, FollowCategory);
 

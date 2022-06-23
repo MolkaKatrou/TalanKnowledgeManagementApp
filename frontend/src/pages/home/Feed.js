@@ -39,20 +39,20 @@ function Feed() {
   const userId = auth.user.id
   const posts = postsList.posts
   const questions = QuestionsList.questions
-  const FollowedPosts = posts.filter(post => post.category.followers.includes(userId))
-  const FollowedQuestions = questions.filter(question => question.category.followers.includes(userId))
+  const FollowedPosts = posts?.filter(post => post.category.followers.includes(userId) && post.isDraft===false)
+  const FollowedQuestions = questions?.filter(question => question.category.followers.includes(userId))
   const navigate = useNavigate()
   const query = useQuery();
   const [notes, setNotes] = useState(true)
   const [qa, setQa] = useState(true)
-  const FollowedNotesAndQuestions = FollowedPosts.concat(FollowedQuestions);
-  const { showAlert, dispatch, openNote, liked, search, setSearch } = useContext(HomeContext)
+  const FollowedNotesAndQuestions = FollowedPosts?.concat(FollowedQuestions);
+  const { showAlert, dispatch, openNote, liked, search, setSearch, openModal } = useContext(HomeContext)
 
   useEffect(() => {
     dispatch(getAllPosts())
     dispatch(getAllQuestions())
     dispatch(getAllAnswers())
-  }, [dispatch, openNote, liked])
+  }, [dispatch, openNote, liked,openModal])
 
   const searchPost = async () => {
     if (search.trim()) {
@@ -92,7 +92,7 @@ function Feed() {
     setQa(false)
   }
 
-  const renderLatestPosts = FollowedPosts.reverse().map((post, index) => (
+  const renderLatestPosts = FollowedPosts?.reverse().map((post, index) => (
     <Grid key={post._id}>
       <Post
         post={post}
@@ -101,7 +101,7 @@ function Feed() {
   )
   )
 
-  const renderLatestQuestions = FollowedQuestions.reverse().map((question, index) => (
+  const renderLatestQuestions = FollowedQuestions?.reverse().map((question, index) => (
 
     <Grid key={question._id}>
       <Question
@@ -111,7 +111,7 @@ function Feed() {
   )
   )
 
-  const renderLatestAll = FollowedNotesAndQuestions.sort(function (a, b) {
+  const renderLatestAll = FollowedNotesAndQuestions?.sort(function (a, b) {
     return new Date(b.createdAt) - new Date(a.createdAt);
   }).map((item, index) => (
     <>
@@ -147,7 +147,6 @@ function Feed() {
         </div>
 
         <Divider className='mb-4' />
-        {showAlert ? <Alert style={{ marginBottom: '15px' }} variant="filled" severity="success">The post has been successfully deleted!</Alert> : ""}
 
         {postsList.loading ?
 

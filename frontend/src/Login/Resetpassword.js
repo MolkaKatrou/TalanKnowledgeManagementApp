@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../Common/Navbar'
 import Passwordinput from '../Components/inputs/Password'
+import { HomeContext } from '../Context/HomeContext'
 
 function Resetpassword() {
+    const {t} = useContext(HomeContext)
     const [password, setPassword] = useState("")
     const [errors, setErrors] = useState({});
     const {token}=useParams()

@@ -42,14 +42,14 @@ export default function CategoryNotes() {
   const categoriesList = useSelector(state => state.categories)
   const filteredCategories = createCategoryList(categoriesList.categories).filter(cat => cat.value == id)
   const categoryPosts = postsList.posts
-  const filteredPosts = categoryPosts.filter(post => post.category._id == id)
+  const filteredPosts = categoryPosts.filter(post => post.category._id == id && post.isDraft===false)
   const [latest, setLatest] = useState(true)
-  const {showAlert, openNote, dispatch, liked} = useContext(HomeContext)
+  const {t, showAlert, openNote, dispatch, liked} = useContext(HomeContext)
 
 
   useEffect(() => {
     dispatch(getAllPosts())
-  },[dispatch, openNote, liked])
+  },[dispatch, openNote, liked, showAlert])
 
 
   const renderLatestPosts = filteredPosts.reverse().map((post, index) => {
@@ -75,7 +75,6 @@ export default function CategoryNotes() {
   return (
     <Home>
       <Container className={classes.container}>
-      { showAlert ? <Alert style={{marginBottom:'15px'}} variant="filled" severity="success">The post has been successfully deleted!</Alert> : ""}
         {postsList.loading ?
           < CircularProgress size="3em" elevation={4} className={classes.loadingPaper} />
           :
@@ -90,7 +89,7 @@ export default function CategoryNotes() {
         <div className="main">
           <div className="main-container">
             <div className="main-top">
-              <h2>All Notes</h2>
+              <h2>{t('All Notes')}</h2>
 
 
             </div>
@@ -99,8 +98,8 @@ export default function CategoryNotes() {
            
                 <div className="main-tabs">
                   <Button.Group>
-                    <Button onClick={()=> setLatest(true)}>Latest</Button>
-                    <Button onClick={()=> setLatest(false)}>Trending</Button>
+                    <Button onClick={()=> setLatest(true)}>{t('Latest')}</Button>
+                    <Button onClick={()=> setLatest(false)}>{t('Most popular')}</Button>
                   </Button.Group>
                 </div>
                 <div className="main-filter-item">

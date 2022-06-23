@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../Common/Navbar'
 import axios from 'axios'
 import AdminInput from '../Components/inputs/AdminInput'
 import Alert from '@mui/material/Alert';
+import { HomeContext } from '../Context/HomeContext'
 
 
 function Forgotpassword() {
+    const {t} = useContext(HomeContext)
     const [email, setEmail] = useState({});
     const [errors, setErrors] = useState({});
     const [success, setSuccess] = useState({});
@@ -46,8 +48,8 @@ function Forgotpassword() {
                     <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100'>
                         <div className='d-table-cell align-middle'>
                             <div className='text-center mt-5'>
-                                <h1 className='h2' style={{color :'rgb(8, 8, 126)', fontFamily:'PT Sans'}}>Reset password</h1>
-                                <p  style={{color:'grey', fontFamily:'PT Sans'}}> Enter your email to reset your password</p>
+                                <h1 className='h2' style={{color :'rgb(8, 8, 126)', fontFamily:'PT Sans'}}>{t('Reset password')}</h1>
+                                <p  style={{color:'grey', fontFamily:'PT Sans'}}> {t('Enter your email to reset your password')}</p>
                             </div>
                            { show ? <Alert severity="success">We sent you the link — Check your Email!</Alert> : ""}
                             <div className='card mt-5'>

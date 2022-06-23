@@ -41,7 +41,7 @@ function PostDetails() {
   const { id } = useParams()
   const classes = useStyles()
   const {posts, loading } = useSelector((state) => state.posts);
-  const post = posts.filter((post) => post._id === id)
+  const post = posts.filter((post) => post._id === id  && post.isDraft===false)
   const [likes, setLikes] = useState([]);
   const auth = useSelector(state => state.auth)
   const userId = auth.user.id

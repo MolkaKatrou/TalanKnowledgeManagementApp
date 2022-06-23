@@ -1,6 +1,5 @@
-import { makeStyles, Box, Divider, IconButton } from "@material-ui/core";
+import {Box, IconButton } from "@material-ui/core";
 import React, { useContext, useEffect, useState } from "react";
-import BookmarkIcon from "@material-ui/icons/Bookmark";
 import { Button, ChakraProvider, Menu, MenuButton, MenuList, MenuItem, Avatar } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from 'moment';
@@ -11,12 +10,14 @@ import { HomeContext } from "../../Context/HomeContext";
 import { DownVoteAnswer, UpVoteAnswer, deleteAnswer, CommentAnswer, deleteAnswerComment } from "../../Redux/Actions/questionsActions";
 import { Confirm } from "semantic-ui-react";
 import toast from "react-hot-toast";
-import { Card } from "react-bootstrap";
+import ReactHtmlParser from "react-html-parser";
+
 
 
 function Answer({ answer }) {
-    const { setShowAlert, showAlert, comment, setComment, socket } = useContext(HomeContext)
+    const { setShowAlert, showAlert, socket, fetch, setFetch, t } = useContext(HomeContext)
     const dispatch = useDispatch()
+    const [comment, setComment] = useState('')
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
     const hasUpvotedanswer = answer.upVotes.find((vote) => vote === userId);
@@ -36,23 +37,22 @@ function Answer({ answer }) {
           type,    
         });
       };
+
+    
     
     const DeleteAnswer = (id) => {
         dispatch(deleteAnswer(id))
         setOpen(false)
-        setShowAlert(true)
-        setTimeout(() => {
-            setShowAlert(false)
-        }, 4000);
+        setShowAlert(!showAlert)        
+        toast.success("The answer is successfully deleted!")
+
     }
 
     const DeleteAnswerComment = (_id) => {
         dispatch(deleteAnswerComment(_id))
+        toast.success("The comment is successfully deleted!")
         setOpen(false)
-        setShowAlert(true)
-        setTimeout(() => {
-            setShowAlert(false)
-        }, 4000);
+        setShowAlert(!showAlert)
     }
 
     const SubmitComment = (e) => {
@@ -67,6 +67,7 @@ function Answer({ answer }) {
         setShow(false)
         setComments(newComments);
         toast.success('Comment added successfully')
+        setFetch(!fetch)
 
     }
 
@@ -143,9 +144,6 @@ function Answer({ answer }) {
                                             onClick={() => { setOpen(true) }} >
                                             Delete
                                         </MenuItem>
-                                        <MenuItem icon={<EditIcon style={{ marginRight: '30px', color: 'gray' }} />}>
-                                            Edit
-                                        </MenuItem>
                                     </MenuList>
                                 </Menu>
                             </ChakraProvider>
@@ -153,10 +151,15 @@ function Answer({ answer }) {
                     }
                     <Confirm
                         open={open}
+                        confirmButton={t("Delete Answer")}
+                        cancelButton={t('Cancel')}
+                        content={t('Are you sure you want to delete this answer?')}
                         onCancel={() => { setOpen(false) }}
                         onConfirm={() => { DeleteAnswer(answer._id) }} 
                         style={{ height: '22%' }}
                     />
+
+
                 </div>
 
                 <div className="all-questions-container">
@@ -170,7 +173,7 @@ function Answer({ answer }) {
                     </div>
                   
                     <div className="question-answer">
-                        <div className='card-content' dangerouslySetInnerHTML={{ __html: answer.body }} />
+                        <div className='card-content'>{ReactHtmlParser(answer?.body)}</div>
                     </div>
                    
                 </div>
@@ -195,9 +198,6 @@ function Answer({ answer }) {
                                             <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
                                                 onClick={() => { DeleteAnswerComment(c._id) }} >
                                                 Delete
-                                            </MenuItem>
-                                            <MenuItem icon={<EditIcon style={{ marginRight: '30px', color: 'gray' }} />}>
-                                                Edit
                                             </MenuItem>
                                         </MenuList>
                                     </Menu>

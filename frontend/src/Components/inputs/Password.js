@@ -2,7 +2,7 @@ import { style } from "@mui/system";
 import classnames from "classnames";
 import { useState } from "react";
 
-function Passwordinput({ onChangeHandler, value, name, placeholder, icon, errors}) {
+function Passwordinput({ onChangeHandler,onKeyDown, value, name, placeholder, icon, errors}) {
   const [type, setType] = useState("password");
   const togglePassword = () => {
       if (type === "password") {
@@ -20,12 +20,13 @@ function Passwordinput({ onChangeHandler, value, name, placeholder, icon, errors
             <i className={icon}></i>
           </span>
                     <input
+                        onKeyDown={onKeyDown}
                         style={{fontFamily:'sans-serif'}}
                         type={type}
                         onChange={onChangeHandler}
                         value={value}
                         name={name}
-                        className={(classnames("form-control", {"is-invalid" : errors}))}                        
+                        className={(classnames("form-control password-input", {"is-invalid" : errors}))}                        
                         placeholder={placeholder} />
                     
                         <span style={{ backgroundColor: 'transparent'}} className="input-group-text" onClick={togglePassword}>

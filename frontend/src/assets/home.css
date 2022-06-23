@@ -26,6 +26,10 @@
   float: right;
   }
   .Left-wrapper > h1 {
+    position: absolute;
+ 
+       top: 120px;
+       z-index: 1000;
     color: #091472;
     white-space: nowrap;
     overflow: hidden;
@@ -41,18 +45,18 @@
     font-size: 24px;
     font-weight:bold;
     font-family: 'PT Sans', sans-serif;
-    margin-top: 40px;
+    margin-top: 130px;
   }
 
   @media screen and (max-width: 1350px) { 
     .Left-wrapper > h1 {
-      font-size: 35px;
+      font-size: 34px;
     }
   }
 
   @media screen and (max-width: 1300px) {
     .Left-wrapper > h1 {
-      font-size: 30px;
+      font-size: 37px;
     }
   }
   @media screen and (max-width: 1200px) {
@@ -75,11 +79,14 @@
     }
 
     .Left-wrapper > h1 {
-      font-size: 29px;
+      font-size: 23px;
+      position: relative;
+      margin-top: -80px;
      
     }
     .Left-wrapper > h2 {
       font-size: 19px;  
+      
 
     }
     .home-wrapper > img{

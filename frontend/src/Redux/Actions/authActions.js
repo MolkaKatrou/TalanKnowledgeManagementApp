@@ -2,6 +2,7 @@ import axios from 'axios';
 import { ERRORS, SET_USER, GET_USERS, UPDATE_USER } from '../types';
 import jwt_decode from 'jwt-decode';
 import { setAuth } from '../../utils/setAuth';
+import toast from 'react-hot-toast';
 
 
 export const AddProfile = (form, setShow, setMessage, e)=>dispatch=>{
@@ -43,7 +44,7 @@ export const LoginAction = (form, setLoading)=>dispatch=>{
       dispatch(setUser(user))
       dispatch(getAllUsers())
       setAuth(token)
-      if (token)   {
+      if (token){
         dispatch({
             type: ERRORS,
             payload: {}
@@ -59,24 +60,20 @@ export const LoginAction = (form, setLoading)=>dispatch=>{
     })
 }
 
-export const ChangePasswordAction = (form)=>dispatch=>{
+export const ChangePasswordAction = (e,form)=>dispatch=>{
     axios.post('/Api/changepassword', form) 
     .then(res=>{
-      const {token} = res.data
-      localStorage?.setItem('jwt', JSON.stringify(token))
-      //setAuth(token)
-      if (token)   {
+      if (JSON.stringify(res.data.message)){
+        toast.success('Your password is successfully updated')
         dispatch({
             type: ERRORS,
             payload: {}
-        })
-    }
+        })}
     })
-    
-    .catch(err=>{
+    .catch(error=>{
         dispatch({
             type: ERRORS,
-            payload: err.response.data
+            payload: error.response.data
         })
     })
 }

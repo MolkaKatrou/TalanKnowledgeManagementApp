@@ -34,7 +34,7 @@ const Rightbar = () => {
   const usersList = useSelector(state => state.users)
   const users = usersList.users
   const userId = auth.user.id
-  const {socket} = useContext(HomeContext)
+  const {socket, t} = useContext(HomeContext)
   const categoriesList = useSelector(state => state.categories)
   const hasFollowedCategory = createCategoryList(categoriesList.categories).filter(cat => cat.followers.includes(userId))
 
@@ -70,12 +70,12 @@ const Rightbar = () => {
             colorScheme='facebook'
             variant='solid'
             onClick={() => navigate('/Add-Question')}>
-            Ask Question
+            {t('Ask Question')}
           </Button>
         </ChakraProvider>
 
         <Typography fontWeight={100} style={{ marginTop: '20px' }} fontSize={{ lg: '18px', md: '18px', sm: '16px' }} >
-          Online Friends
+          {t('Online Friends')}
         </Typography>
         <ChakraProvider>
           <AvatarGroup size='md' max={8}>
@@ -92,7 +92,7 @@ const Rightbar = () => {
           </AvatarGroup>
         </ChakraProvider>
         <Typography fontWeight={100} className='mb-3 mt-3' fontSize={{ lg: '18px', md: '18px', sm: '16px' }}>
-          My Following
+          {t('My Following')}
         </Typography>
         { (hasFollowedCategory.length>0) ?
           <Following/> : ''}

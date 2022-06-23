@@ -1,4 +1,5 @@
-import {GET_QUESTION,DELETE_QUESTION,BOOKMARK_QUESTION, GET_QUESTIONS, VOTE_UP, VOTE_DOWN, ERRORS,GET_ANSWERS, VOTE_UP_ANSWER, VOTE_DOWN_ANSWER, DELETE_ANSWER} from '../types'
+import {GET_QUESTION,DELETE_QUESTION,BOOKMARK_QUESTION, GET_QUESTIONS, VOTE_UP, UPDATE_QUESTION,
+   VOTE_DOWN, ERRORS,GET_ANSWERS,DELETE_COMMENT, VOTE_UP_ANSWER, VOTE_DOWN_ANSWER, DELETE_ANSWER} from '../types'
 import axios from 'axios'
 
 export const getAllQuestions = () => async dispatch => {    
@@ -52,6 +53,17 @@ export const deleteQuestion = (id) => async (dispatch) => {
     console.log(error);
   }
 };
+
+export const updateQuestion = (id, question) => async (dispatch) => {
+  try {
+    const { data } = await axios.patch(`/Api/questions/${id}`, question);
+    dispatch({ type: UPDATE_QUESTION, payload: data });
+  } 
+  catch (error) {
+    console.log(error);
+  }
+};
+
 
 export const UpVoteQuestion = (id) => async dispatch => {
   try {
@@ -130,7 +142,7 @@ try {
 export const deleteAnswerComment = (id2) => async (dispatch) => {
   try {
     await axios.delete(`/Api/answers/${id2}/comment/${id2}`);
-    dispatch({ type: DELETE_ANSWER, payload: id2 });
+    dispatch({ type: DELETE_COMMENT, payload: id2 });
   } catch (error) {
     console.log(error);
   }

@@ -143,7 +143,8 @@ Quill.register(PollBlot);
 Quill.register('modules/magicUrl', MagicUrl)
 
 class QuillEditor extends React.Component {
-
+    currentId;
+    post;
     bandId;
     placeholder;
     onEditorChange;
@@ -167,6 +168,9 @@ class QuillEditor extends React.Component {
 
     componentDidMount() {
         this._isMounted = true;
+        if (this.props.currentId) {
+            this.setState({ editorHtml: this.props.post?.content })
+        }
     }
 
     componentWillUnmount() {
@@ -327,18 +331,18 @@ class QuillEditor extends React.Component {
                     <button class="ql-script" value="sub"></button>
                     <button class="ql-script" value="super"></button>
                     <button className="ql-insertImage">
-                        <ImageIcon/>
+                        <ImageIcon />
                     </button>
                     <button className="ql-insertVideo">
-                        <OndemandVideoIcon/>
+                        <OndemandVideoIcon />
                     </button>
                     <button className="ql-insertFile">
-                        <AttachmentIcon/>
+                        <AttachmentIcon />
                     </button>
 
                     <button className="ql-list" value="ordered"></button>
                     <button className="ql-list" value="bullet"></button>
-                   
+
                     <button className="ql-code-block" />
                     <button className="ql-video" />
                     <button className="ql-blockquote" />
@@ -384,11 +388,8 @@ class QuillEditor extends React.Component {
     formats = [
         'header', 'font',
         'bold', 'italic', 'underline', 'strike', 'script',
-       'image',  'video','file', 'list',  "code-block", 'link', "blockquote", "clean"
+        'image', 'video', 'file', 'list', "code-block", 'link', "blockquote", "clean"
     ];
 }
 
 export default QuillEditor;
-
-
-

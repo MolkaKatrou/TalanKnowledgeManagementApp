@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import { Grid } from "@material-ui/core"
 import HomeNavbar from '../../Common/homeNavbar';
 import Sidebar from '../../Common/Sidebar';
@@ -6,6 +6,9 @@ import AddNote from './AddNote';
 import Rightbar from '../../Common/Rightbar';
 import { useSelector } from 'react-redux';
 import { CategoryContext } from '../../Context/CategoryContext';
+import { getAll, getAllPosts } from '../../Redux/Actions/postsActions';
+import { getAllAnswers, getAllQuestions } from '../../Redux/Actions/questionsActions';
+import { HomeContext } from '../../Context/HomeContext';
 
 
 
@@ -16,12 +19,20 @@ const Home = ({children, searchPost, handleKeyPress, search, setSearch}) => {
   const [parentCategoryIdName, setParentCategoryIdName] = useState('')
   const [categoryIdName, setCategoryIdName] = useState('')
   const [open, setOpen] = useState(false)
+  const {dispatch, liked, openModal, showAlert, openNote, currentId}= useContext(HomeContext)
 
   const auth = useSelector(state => state.auth)
   const user = {
     isConnected: auth.isConnected,
     role: auth.user.role
   }
+
+  /*useEffect(() => {
+    dispatch(getAllPosts())
+    dispatch(getAllQuestions())
+    dispatch(getAllAnswers())
+    dispatch(getAll())
+  }, [openModal,showAlert,liked,openNote,dispatch])*/
 
   return (
     

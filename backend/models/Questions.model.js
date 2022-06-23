@@ -35,6 +35,10 @@ const QuestionModel = new mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
-});
+
+    updated_At : {
+        type: Date,
+    },
+}, {timestamps: true});
 
 module.exports = mongoose.model("question", QuestionModel);

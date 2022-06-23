@@ -29,6 +29,7 @@ function createCategories(categories, parentId = null) {
       color: cat.color,
       parentId: cat.parentId,
       followers: cat.followers,
+      createdAt:cat.createdAt,
       children: createCategories(categories, cat._id)
     })
 
@@ -41,8 +42,8 @@ const Addcategory = async (req, res) => {
   try {
     if (!isValid) {
       res.status(404).json(errors);
-    } else {
-      
+    } else {     
+      req.body.createdAt = new Date().toISOString()
       await categoryModel.findOne({ name: req.body.name })
         .then(async (exist) => {
           if (exist) {
@@ -53,7 +54,8 @@ const Addcategory = async (req, res) => {
               name: req.body.name,
               slug: slugify(req.body.name),
               color: req.body.color,
-              parentId: req.body.parentId
+              parentId: req.body.parentId,
+              createdAt : req.body.createdAt
             }
       
             if (!isEmpty(req.body.parentId)) {
@@ -83,6 +85,7 @@ const Getcategories = async (req, res) => {
   }
 
 }
+
 
 const Deletecategory = async (req, res) => {
   const { ids } = req.body.payload;

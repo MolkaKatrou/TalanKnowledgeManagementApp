@@ -15,7 +15,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 const MyChats = ({ fetchAgain }) => {
     const auth = useSelector(state => state.auth)
-    const { chats, setChats, selectedChat, setSelectedChat, notification, setNotification } = useContext(HomeContext)
+    const {t, chats, setChats, selectedChat, setSelectedChat, notification, setNotification } = useContext(HomeContext)
     const [search, setSearch] = useState("");
     const [searchResult, setSearchResult] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -119,7 +119,7 @@ const MyChats = ({ fetchAgain }) => {
                             fontSize={{ base: "17px", md: "10px", lg: "15px" }}
                             rightIcon={<AddIcon />}
                         >
-                            New Group Chat
+                            {t('New Group Chat')}
                         </Button>
                     </GroupChatModal>
 
@@ -152,24 +152,23 @@ const MyChats = ({ fetchAgain }) => {
                                     key={chat._id}
                                 > 
                                 <div style={{ display: "flex" }}>
-                                     <Avatar    
-                                           
+                                    
+                                     <Avatar           
+                                        mt={1}                     
                                         mr={3}
-                                        size="sm"    
-                                                                  
-                                                                    
+                                        size="sm"                                                                 
                                         name={!chat.isGroupChat
                                             ? getSender(auth.user, chat.users)
                                             : chat.chatName}                                      
                                     />
-                                    <Text  mt="3px" >
+                                    <Text>
                                         {!chat.isGroupChat
                                             ? getSender(auth.user, chat.users)
                                             : chat.chatName}
                                     </Text>
                                     </div>
                                     {chat.latestMessage && (
-                                        <Text fontSize="xs" style={{marginLeft: 38}}>
+                                        <Text fontSize="xs" style={{marginLeft: 38, marginTop:'-10px'}}>
                                             <b>
                                                 { chat.latestMessage.sender._id == auth.user.id ? ' Me : ' :
                                                 chat.latestMessage.sender.fullname + " : " } 
@@ -196,7 +195,7 @@ const MyChats = ({ fetchAgain }) => {
             <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
                 <DrawerOverlay />
                 <DrawerContent style={{ backgroundColor: 'rgb(225, 228, 232)' }}>
-                    <DrawerHeader borderBottomWidth='1px'>Search Collaborators</DrawerHeader>
+                    <DrawerHeader borderBottomWidth='1px'>{t('Search Collaborators')}</DrawerHeader>
                     <DrawerBody>
                         <Box d="flex" pb={2}>
                             <InputGroup>

@@ -58,6 +58,7 @@ function ValidateUser(data){
     data.firstname = !isEmpty(data.firstname) ? data.firstname : "";
     data.lastname = !isEmpty(data.lastname) ? data.lastname : "";
     data.phone = !isEmpty(data.phone) ? data.phone : "";
+    data.adress = !isEmpty(data.adress) ? data.adress : "";
 
 
     if (!validator.isEmail(data.email)){
@@ -92,6 +93,9 @@ function ValidateUser(data){
     }
     if (validator.isEmpty(data.role)){
         errors.role ="Please Choose the user's role";
+    }
+      if (validator.isEmpty(data.adress)){
+        errors.adress ="Please Choose the user's adress";
     }
 
     return {

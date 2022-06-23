@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {List, ListItemText} from '@mui/material';
-
 import { useSelector } from 'react-redux';
 import { createCategoryList } from '../utils/functions';
 import { ListItemButton } from '@mui/material';

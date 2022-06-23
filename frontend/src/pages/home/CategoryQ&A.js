@@ -11,6 +11,8 @@ import Question from "../../Components/Questions&Answers/Question";
 import { createCategoryList } from "../../utils/functions";
 import { getAllQuestions } from "../../Redux/Actions/questionsActions";
 import { Button } from "semantic-ui-react";
+import { useContext } from "react";
+import { HomeContext } from "../../Context/HomeContext";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -34,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function CategoryQA() {
+  const {t,openModal,showAlert} = useContext(HomeContext)
   const { id } = useParams();
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -47,7 +50,7 @@ export default function CategoryQA() {
 
   useEffect(() => {
     dispatch(getAllQuestions())
-  }, [dispatch])
+  }, [openModal, showAlert])
 
 
   const renderLatestQuestions = filteredQuestions.reverse().map((question, index) => (
@@ -85,17 +88,17 @@ export default function CategoryQA() {
         <div className="main">
           <div className="main-container">
             <div className="main-top">
-              <h2>All Questions</h2>
+              <h2>{t('All Questions')}</h2>
 
-              <Button variant="contained" color="primary" onClick={() => navigate('/Add-Question')}>  Ask Question </Button>
+              <Button variant="contained" color="primary" onClick={() => navigate('/Add-Question')}> {t('Ask Question')} </Button>
 
             </div>
             <div className="main-desc">
               <p>{`${filteredQuestions.length} Question${filteredQuestions.length > 1 ? 's' : ''}`}</p>
               <div className="main-tabs">
                 <Button.Group>
-                  <Button onClick={()=> setLatest(true)}>Latest</Button>
-                  <Button onClick={()=> setLatest(false)}>Trending</Button>
+                  <Button onClick={()=> setLatest(true)}>{t('Latest')}</Button>
+                  <Button onClick={()=> setLatest(false)}>{t('Most popular')}</Button>
                 </Button.Group>
               </div>
               <div className="main-filter-item">

@@ -74,15 +74,13 @@ const GetAll = async (req, res) => {
 
 const Addnote = async (req, res) => {
     req.body.createdAt = new Date().toISOString()
-    const { errors, isValid } = ValidateNote(req.body)
+    req.body.updated_At = new Date().toISOString()
     try {
-        if (!isValid) {
-            res.status(404).json(errors);
-        } else {
+      
             const note = new noteModel(req.body)
             await note.save();
             res.status(201).json(note);
-        }
+      
     }   
     catch (error) {
         console.log(error.message);
@@ -179,13 +177,19 @@ const Deletenote = async (req, res) => {
     await noteModel.findByIdAndRemove(id);
     res.json({ message: "Post deleted successfully." });
 };
+const DeleteComment = async (req, res) => {
+    const { id } = req.params;
+    await commentModel.findByIdAndRemove(id);
+    res.json({ message: "Comment deleted successfully." });
+};
 
 
 const Updatenote = async (req, res) => {
     const { id } = req.params;
-    const { title, category, content } = req.body;
-    const updatedPost = { category, title, content, _id: id };
-
+    req.body.updated_At = new Date().toISOString()
+    const updated_At = req.body.updated_At
+    const { title, category, content, isDraft} = req.body;
+    const updatedPost = { category, title, content,isDraft,updated_At, _id: id };
     await noteModel.findByIdAndUpdate(id, updatedPost, { new: true });
     res.json(updatedPost);
 }
@@ -228,5 +232,6 @@ module.exports = {
     likePost,
     BookmarkPost,
     getPostsBySearch,
-    GetAll
+    GetAll,
+    DeleteComment
 };

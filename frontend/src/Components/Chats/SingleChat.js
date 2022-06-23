@@ -20,7 +20,7 @@ import styled from "styled-components";
 var selectedChatCompare
 
 export default function SingleChat({ fetchAgain, setFetchAgain }) {
-    const { socket, selectedChat, isTyping, setIsTyping, setSelectedChat, socketConnected, setSocketConnected, notificationChat, setNotificationChat, notification, setNotification, token } = useContext(HomeContext)
+    const {t, socket, selectedChat, isTyping, setIsTyping, setSelectedChat, socketConnected, setSocketConnected, notificationChat, setNotificationChat, notification, setNotification, token } = useContext(HomeContext)
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState("")
@@ -284,7 +284,7 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                                         <Input
                                             variant="filled"
                                             bg="#E0E0E0"
-                                            placeholder="Enter a message.."
+                                            placeholder={t("Enter a message..")}
                                             value={newMessage}
                                             onChange={typingHandler}
                                             autoComplete="off"
@@ -312,7 +312,7 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                                 style={{ marginBottom: 15, display: 'flex', justifyContent: 'center' }}
                             />
                         </div>
-                        Click on a collaborator to start Chatting
+                        {t('Click on a collaborator to start Chatting')}
                     </Text>
                 </Box>
             )

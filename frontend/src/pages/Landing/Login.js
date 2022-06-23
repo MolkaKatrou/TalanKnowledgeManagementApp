@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import bg from '../../images/login.png';
 import logo from '../../images/logo2.png'
 import "../../assets/Login.css";
@@ -10,9 +10,11 @@ import { LoginAction } from '../../Redux/Actions/authActions';
 import Passwordinput from '../../Components/inputs/Password';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
+import { HomeContext } from '../../Context/HomeContext';
 
 
 export default function Login() {
+  const {t} = useContext(HomeContext)
   const [form, setForm] = useState({});
   const dispatch = useDispatch()
   const errors = useSelector(state=>state.errors)
@@ -46,8 +48,8 @@ export default function Login() {
         <div className="login-wrapper">
           <div className='left-login'>
             <img src={bg} />
-            <h2>Welcome To Our Knowledge Management Platform  </h2>
-            <h3> Increase productivity, social interaction, and trust among the team</h3>
+            <h2>{t('Welcome To Our Knowledge Management Platform')}  </h2>
+            <h3> {t('Increase productivity, social interaction, and trust among the team')} </h3>
           </div>
           <div className='form-login'>
             <form onSubmit={onSubmit} >
@@ -62,7 +64,7 @@ export default function Login() {
               <Logininput
                 type="text"
                 name="email"
-                placeholder="Enter your email"
+                placeholder={t("Enter your email")} 
                 icon="fa fa-at"
                 onChangeHandler={onChange}
                 errors={errors.email}
@@ -71,7 +73,7 @@ export default function Login() {
               < Passwordinput
                 type={type}
                 name="password"
-                placeholder="Enter your password"
+                placeholder={t("Enter your password")} 
                 onChangeHandler={onChange}
                 errors={errors.password}
                 icon="fa fa-key"
@@ -79,9 +81,9 @@ export default function Login() {
 
 
               <div className='form-input'>
-                <button type="submit" className='button btn-login'>LOGIN</button>
-                <h6 style={{color:'grey'}}> forgot your password?   
-                  <Link to='/forgotpassword' style={{ textDecoration: 'none', fontFamily:'PT Sans' }} > Reset it </Link>
+                <button type="submit" className='button btn-login'>{t('Login')}</button>
+                <h6 style={{color:'grey'}}> {t('forgot your password?')}  
+                  <Link to='/forgotpassword' style={{ textDecoration: 'none', fontFamily:'PT Sans' }} > {t('Reset it')} </Link>
                   </h6>
               </div>
 

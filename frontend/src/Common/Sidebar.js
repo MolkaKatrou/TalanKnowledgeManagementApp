@@ -10,12 +10,13 @@ import { createCategory, getAllCategories } from '../Redux/Actions/categoryActio
 import { Row, Col } from 'react-bootstrap';
 import axios from 'axios'
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Draft from '@mui/icons-material/StickyNote2';
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import TreeView from '@mui/lab/TreeView';
 import StyledTreeItem from '../Components/StyledTreeItem'
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { ColorPicker, createColor } from "material-ui-color";
 import { Alert, InputBase } from '@mui/material';
 import { CategoryContext } from '../Context/CategoryContext';
@@ -42,11 +43,17 @@ const useStyles = makeStyles((theme) => ({
   },
   item: {
     color: 'black',
+    textDecoration: 'none',
+    padding: theme.spacing(1.3),
+    "&.active": {
+      background:'rgb(191, 205, 222)',     
+    },
     '&:hover': {
       backgroundColor: 'rgb(191, 205, 222)',
+      textDecorationStyle: 'none'
     },
 
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(0),
     [theme.breakpoints.up("xs")]: {
       cursor: "pointer",
     },
@@ -59,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Monaco',
     fontWeight: '540',
     float: 'left',
-    margin: '10px 10px 0 0'
+    margin: '10px px 0 0'
   },
 
   icon: {
@@ -70,8 +77,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   text: {
-    fontFamily: 'Monaco',
-    fontWeight: '540',
+    
+    fontSize:'13px',
+  
+    color: '0000008A',
     [theme.breakpoints.down("xs")]: {
       display: "none",
     },
@@ -110,7 +119,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Sidebar = ({ user }) => {
-  const { categoryId, setCategoryId, updateCategory, setUpdateCategory } = useContext(CategoryContext)
+  const {categoryId, setCategoryId, updateCategory, setUpdateCategory } = useContext(CategoryContext)
+  const {t} = useContext(HomeContext)
   const navigate = useNavigate()
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -140,18 +150,21 @@ const Sidebar = ({ user }) => {
   }
 
 
-  useEffect(() => {
-    setCategories(categoriesList.categories)
+  useEffect( async () => {
     dispatch(getAllCategories())
+    await axios.get(`/Api/categories`)
+    .then((res) => {
+        setCategories(res.data);
+    });
     if (currentCategory) {
-      setCategoryIdName(currentCategory.name);
-      setParentCategoryIdName(currentCategory.parentId);
-      setNewColor(currentCategory.color);
+      setCategoryIdName(currentCategory?.name);
+      setParentCategoryIdName(currentCategory?.parentId);
+      setNewColor(currentCategory?.color);
 
       const c = createCategoryList(categoriesList.categories).filter(cat => cat.value !== categoryId)
       setCategoriesModal(c)
     }
-  }, [categories, dispatch, show, openDelete, updateCategory])
+  }, [ dispatch, show, openDelete, updateCategory])
 
 
   const ChangeColor = (value) => {
@@ -159,7 +172,7 @@ const Sidebar = ({ user }) => {
   };
 
   const ChangeNewColor = (value) => {
-    setNewColor(value);
+     setNewColor(value);
   };
 
   const handleToggle = (event, nodeIds) => {
@@ -181,16 +194,24 @@ const Sidebar = ({ user }) => {
 
   const filterContent = (categories, searchTerm) => {
     const result = categories.filter(
-      (category) => category.name.toLowerCase().includes(searchTerm)
-      //category?.parentId.toLowerCase().includes(searchTerm) ||
+        (cat) =>
+            cat.name.toLowerCase().includes(searchTerm) ||
+            cat.color.toLowerCase().includes(searchTerm) ||
+            cat.createdby.fullname.toLowerCase().includes(searchTerm) 
     );
-    setCategories(result)
-  }
+    setCategories(result);
+}
 
-  const handleSearch = (e) => {
+const handleSearch = (e) => {
+    e.preventDefault()
     const searchTerm = e.target.value;
-    filterContent(categoriesResult, searchTerm);
-  };
+    axios.get("/Api/categories")
+        .then(res => {
+            filterContent(res.data, searchTerm);
+
+        });
+};
+
 
 
   const DeleteCategory = (Id) => {
@@ -232,7 +253,7 @@ const Sidebar = ({ user }) => {
       toast.error('This category already exists');
       return;
     }
-    axios.put(`/Api/categories/${categoryId}`, form)
+    axios.patch(`/Api/categories/${categoryId}`, form)
     toast.success('Category successfully updated');
     Clear()
 
@@ -245,6 +266,7 @@ const Sidebar = ({ user }) => {
       myCategories.push(
         <StyledTreeItem
           Id={category._id}
+          createdby = {category.createdby}
           labelText={category.name}
           color="#a250f5"
           bgColor="#f3e8fd"
@@ -259,7 +281,7 @@ const Sidebar = ({ user }) => {
     return myCategories;
 
   }
-  const items = renderCategories(categoriesList.categories)
+  const items = renderCategories(categories)
 
   const AddCategory = (e) => {
     e.preventDefault();
@@ -292,22 +314,30 @@ const Sidebar = ({ user }) => {
     <div className={classes.container} >
 
       <List>
-        <ListItem className={classes.item} onClick={() => navigate('/Home')}>
+        <ListItem component={NavLink} className={classes.item} to='/Home'>
           <Home className={classes.icon} />
           <Typography className={classes.text}>
-            Home
+            {t('Home')}
           </Typography>
         </ListItem>
 
 
-        <ListItem className={classes.item} onClick={() => navigate('/Bookmarks')}>
+        <ListItem  component={NavLink} className={classes.item} to='/Bookmarks'>
           <Bookmark className={classes.icon} />
           <Typography className={classes.text}>
-            Bookmarks
+            {t('Bookmarks')}
           </Typography>
         </ListItem>
+
+        <ListItem  component={NavLink} className={classes.item} to='/Drafts'>
+          <Draft className={classes.icon} />
+          <Typography className={classes.text}>
+            {t('Drafts')}
+          </Typography>
+        </ListItem>
+
         {user.role === "ADMIN" ? (
-          <ListItem className={classes.item} onClick={() => navigate('/admin')}>
+          <ListItem component={NavLink} className={classes.item} to='/admin' onClick={() => navigate('/admin')}>
             <AdminPanel className={classes.icon} />
             <Typography className={classes.text}>
 
@@ -323,7 +353,7 @@ const Sidebar = ({ user }) => {
         <ListItem className={classes.item}>
           <CategoryIcon className={classes.icon} />
           <Typography className={classes.textCategory}>
-            Categories
+           {t('Categories')}
           </Typography>
           <AddIcon onClick={() => { setOpenAdd(true) }} className='mx-2' style={{ color: '#8084ac', width: '20px' }}></AddIcon>
         </ListItem>
@@ -356,17 +386,17 @@ const Sidebar = ({ user }) => {
 
       <Dialog open={openAdd} onClose={handleCloseAdd} className={classes.paper}>
         <div style={{ backgroundColor: '#E6E6E6' }}>
-          <DialogTitle>Add a new category or a subcategory </DialogTitle>
+          <DialogTitle>{t('Add a new category or a subcategory')} </DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
               margin="dense"
               id="name"
-              label="Category"
+              label={t("Category")}
               fullWidth
               variant="standard"
               value={category}
-              placeholder={'Enter the category name'}
+              placeholder={t('Enter the category name')}
               onChange={(e) => { setCategory(e.target.value) }}
             />
 
@@ -375,7 +405,7 @@ const Sidebar = ({ user }) => {
               <Select
                 value={parentCategoryId}
                 onChange={(e) => { SetParentCategoryId(e.target.value) }}
-                label="Category"
+                label={t("Category")}
 
               >
                 <MenuItem value="">
@@ -396,8 +426,8 @@ const Sidebar = ({ user }) => {
 
           </DialogContent>
           <DialogActions className='mt-2' style={{ paddingBottom: '21px', paddingLeft: '180px' }}>
-            <Button onClick={() => { setOpenAdd(false) }} size="md" variant="outlined" color="secondary">Cancel</Button>
-            <Button onClick={AddCategory} size="md" variant="outlined" color="primary">Add Category</Button>
+            <Button onClick={() => { setOpenAdd(false) }} size="md" variant="outlined" color="secondary">{t('Cancel')}</Button>
+            <Button onClick={AddCategory} size="md" variant="outlined" color="primary">{t('Add Category')}</Button>
           </DialogActions>
         </div>
       </Dialog>
@@ -410,7 +440,7 @@ const Sidebar = ({ user }) => {
         size="lg"
       >
         <div style={{ backgroundColor: '#E6E6E6' }}>
-          <DialogTitle >Edit the category or a subcategory </DialogTitle>
+          <DialogTitle >{t('Edit the category or a subcategory')} </DialogTitle>
           <DialogContent >
             <Row className='d-flex justify-content-between'>
               <Col >
@@ -418,10 +448,10 @@ const Sidebar = ({ user }) => {
                   autoFocus
                   margin="dense"
                   id="name"
-                  label="Category"
+                  label={t("Category")}
                   fullWidth
                   variant="standard"
-                  placeholder={'Enter the category name'}
+                  placeholder={t('Enter the category name')}
                   onChange={(e) => { setCategoryIdName(e.target.value) }}
                   value={categoryIdName}
 
@@ -457,15 +487,16 @@ const Sidebar = ({ user }) => {
           </DialogContent>
 
           <DialogActions className='mt-2' style={{ paddingBottom: '21px', paddingLeft: '180px' }}>
-            <Button onClick={() => { setUpdateCategory(false) }} variant="outlined" color="secondary" >Cancel</Button>
-            <Button onClick={SubmitUpdate} variant="outlined" color="primary" >Update Category</Button>
+            <Button onClick={() => { setUpdateCategory(false) }} variant="outlined" color="secondary" >{t('Cancel')}</Button>
+            <Button onClick={SubmitUpdate} variant="outlined" color="primary" >{t('Update Category')}</Button>
           </DialogActions>
         </div>
       </Dialog>
 
       <Confirm
-        confirmButton="Delete Category"
-        content='Are you sure you want to delete this category? '
+        confirmButton={t("Delete Category")}
+        cancelButton={t('Cancel')}
+        content={t('Are you sure you want to delete this category?')}
         open={openDelete}
         onCancel={() => { setOpenDelete(false) }}
         onConfirm={SubmitDelete}

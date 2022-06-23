@@ -18,12 +18,14 @@ import { createCategoryList } from "../utils/functions";
  function CategoryBanner({ category }) {
     const {id} = useParams()
     const dispatch=useDispatch();
-    const {followers, setFollowers} = useContext(HomeContext)
+    const {t, followers, setFollowers} = useContext(HomeContext)
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
     const hasFollowedCategory = category.followers.find((follower) => follower === userId);
     const categoriesList = useSelector(state => state.categories)
     const parentCategory = createCategoryList(categoriesList.categories).filter(cat => cat.value == category.parentId)
+    //const parentCategory = createCategoryList(categoriesList.categories).find(cat => cat.value == category.parentId);
+
 
     useEffect(() => {
           setFollowers(category.followers)
@@ -36,7 +38,7 @@ import { createCategoryList } from "../utils/functions";
                     <Button
                        onClick={handleFollow}
                         color='violet'
-                        content='Following'
+                        content={t('Following')}
                         icon='check'
                         label={{ basic: true, color: 'violet', pointing: 'left', content: `${followers.length}` }}
                     />
@@ -45,7 +47,7 @@ import { createCategoryList } from "../utils/functions";
                        onClick={handleFollow}
                         basic
                         color='violet'
-                        content='Follow'
+                        content={t('Follow')}
                         icon='add'
                         label={{ basic: true, color: 'violet', pointing: 'left', content:`${followers.length}` }}
                     />
@@ -56,7 +58,7 @@ import { createCategoryList } from "../utils/functions";
                     onClick={handleFollow}
                     basic
                     color='violet'
-                    content='Follow'
+                    content={t('Follow')}
                     icon='add'
                     label={{ basic: true, color: 'violet', pointing: 'left', content: `${followers.length}` }}
                 />
