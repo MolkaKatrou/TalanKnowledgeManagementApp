@@ -44,6 +44,7 @@ export const FollowCategory = (id) => async dispatch => {
       const token = JSON.parse(localStorage.getItem('jwt')).split(" ")[1]
       const { data } = await axios.patch(`/Api/categories/${id}/follow`, token)
       dispatch({ type: FOLLOW, payload: data });
+      dispatch(getAllCategories())
     } catch (error) {
       console.log(error.message);
     }

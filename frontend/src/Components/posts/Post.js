@@ -194,12 +194,12 @@ export default function Post({ post }) {
             <div className='d-flex'>
               <div className='col-4'> {post?.createdby.fullname} </div>
 
-              <Typography className='col-6' onClick={() => navigate(`/category/${post?.category._id}/notes`)} style={{ color: `${post.category.color}`, textAlign: 'center', fontWeight: '600', display: location.pathname === `/category/${post?.category._id}/notes` ? "none" : "flex" }}>
+              <Typography component={'div'} className='col-6' onClick={() => navigate(`/category/${post?.category._id}/notes`)} style={{ color: `${post.category.color}`, textAlign: 'center', fontWeight: '600', display: location.pathname === `/category/${post?.category._id}/notes` ? "none" : "flex" }}>
                 {`  ${post?.category.name} `}
 
               </Typography>
 
-              <Typography className='col-4' onClick={() => navigate(`/category/${post?.category._id}/notes`)} style={{ color: `#E3C4C4`, fontWeight: '600', display: post.isDraft ? "flex" : "none" }}>
+              <Typography component={'div'} className='col-4' onClick={() => navigate(`/category/${post?.category._id}/notes`)} style={{ color: `#E3C4C4`, fontWeight: '600', display: post.isDraft ? "flex" : "none" }}>
                 <ErrorIcon className='mx-2' /> {t('Draft')}
 
               </Typography>
@@ -220,7 +220,7 @@ export default function Post({ post }) {
         </CardHeader>
         <CardContent onClick={() => post.isDraft === false ? navigate(`/post/${post._id}`) : ''} >
 
-          <Typography color="text.secondary" style={{ fontWeight: '550', fontFamily: 'Raleway,sans-serif', fontSize: '16px' }}>
+          <Typography component={'div'} style={{ fontWeight: '550', fontFamily: 'Raleway,sans-serif', fontSize: '16px' }}>
             {post.title}
           </Typography>
           <div className='card-content mt-3'>{ReactHtmlParser(post?.content)}</div>

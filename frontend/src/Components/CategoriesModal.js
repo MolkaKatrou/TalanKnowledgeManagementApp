@@ -37,7 +37,6 @@ export default function CategoriesModal({ categoryModal, title, categories }) {
                                 <Box
                                     className={classes.box}
                                     cursor="pointer"
-                                   
                                     color="black"
                                     px={3}
                                     py={2}

@@ -34,17 +34,20 @@ export const AddProfile = (form, setShow, setMessage, e)=>dispatch=>{
       });
 }
 
-export const LoginAction = (form, setLoading)=>dispatch=>{
+export const LoginAction = (form, setLoading, loading)=>dispatch=>{
     axios.post('/Api/login', form) 
     .then(res=>{
+      setLoading(true)
       const {token} = res.data
       const {user} = res.data
       localStorage?.setItem('jwt', JSON.stringify(token))
       localStorage?.setItem('user', JSON.stringify(user))
       dispatch(setUser(user))
-      dispatch(getAllUsers())
       setAuth(token)
-      if (token){
+      setTimeout(() => {
+        setLoading(false)
+      }, 2000);
+      if (token && !loading){
         dispatch({
             type: ERRORS,
             payload: {}
@@ -52,6 +55,34 @@ export const LoginAction = (form, setLoading)=>dispatch=>{
     }
     })
     
+    .catch(err=>{
+        dispatch({
+            type: ERRORS,
+            payload: err.response.data
+        })
+    })
+}
+
+export const LoginVerify = (form, setShowVerified)=>dispatch=>{
+    axios.post('/Api/loginVerify', form) 
+    .then(res=>{
+      const {token} = res.data
+      const {user} = res.data
+      localStorage?.setItem('jwt', JSON.stringify(token))
+      localStorage?.setItem('user', JSON.stringify(user))
+      dispatch(setUser(user))
+      setAuth(token)
+      setShowVerified(true)
+      setTimeout(() => {
+          setShowVerified(false)
+      }, 4000);              
+      if (token){
+        dispatch({
+            type: ERRORS,
+            payload: {}
+        })
+    }
+    })  
     .catch(err=>{
         dispatch({
             type: ERRORS,

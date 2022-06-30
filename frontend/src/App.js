@@ -41,6 +41,7 @@ import Category from './pages/admin/list/categories';
 import Single from './pages/admin/single/singleUser';
 import "./dark.scss";
 import { DarkModeContext } from './Context/darkModeContext';
+import EmailVerify from './Login/EmailVerify';
 
 const languages = [
   {
@@ -55,7 +56,7 @@ const languages = [
   },
 ]
 
-if (window.localStorage.user || window.localStorage.jwt) {
+if (window.localStorage.user && window.localStorage.jwt) {
   const decode = jwt_decode(window.localStorage.jwt)
   const user = JSON.parse(localStorage.getItem('user'))
   store.dispatch(setUser(user))
@@ -71,6 +72,7 @@ var socket
 
 function App() {
   const [notifications, setNotifications] = useState([]);
+  const [showVerified, setShowVerified] = useState(false)
   const [newNotifications, setNewNotifications] = useState([]);
   const [currentId, setCurrentId] = useState(0);
   const [openNote, setOpenNote] = useState(false);
@@ -93,6 +95,7 @@ function App() {
   const notificationsRef = React.createRef();
   const [currentQuestionId, setCurrentQuestionId] = useState(0);
   const [fetch, setFetch] = useState(false)
+  const [replyId, setReplyId] = useState('')
 
   const currentLanguageCode = cookies.get('i18next') || 'en'
   const currentLanguage = languages.find((l) => l.code === currentLanguageCode)
@@ -100,7 +103,6 @@ function App() {
 
   
   const { darkMode } = useContext(DarkModeContext); 
-  console.log(darkMode)
 
   const user = {
     isConnected: auth.isConnected,
@@ -144,8 +146,8 @@ function App() {
         followers, setFollowers, setOpenNote, showAlert, setShowAlert, currentId, setCurrentId,
         selectedChat, setSelectedChat, notification, setNotification, chats, setChats,
         notificationChat, setNotificationChat, openModal, setOpenModal, currentQuestionId, setCurrentQuestionId,
-        t, languages, currentLanguage, currentLanguageCode,fetch, setFetch
-
+        t, languages, currentLanguage, currentLanguageCode,fetch, setFetch,
+        replyId, setReplyId, showVerified, setShowVerified
       }}>
       <Toaster
         toastOptions={{
@@ -158,18 +160,19 @@ function App() {
           <Route path="/" element={<Redirect user={user}><Landing /></Redirect>} />
           <Route path="/about" element={<Redirect user={user}><About /></Redirect>} />
           <Route path="/login" element={<Redirect user={user}><Login /></Redirect>} />
-          <Route path="/admin" element={<Adminrouter user={user}><AdminPanel /></Adminrouter>} />
+          <Route path="/user/verify-email/:token" element={<Redirect user={user}><EmailVerify/></Redirect>} />
 
+          <Route path="/admin" element={<Adminrouter user={user}><AdminPanel /></Adminrouter>} />
           <Route path="/users">
             <Route index element={<Adminrouter user={user}><List /></Adminrouter>} />
             <Route path="/users/:id" element={<Adminrouter user={user}><Single/></Adminrouter>} />
-            <Route path="new" element={<New title="Add New Collaborator" />} />
+            <Route path="new" element={<Adminrouter user={user}><New title="Add New Collaborator" /></Adminrouter>} />
           </Route>
 
           <Route path="/categories">
             <Route index element={<Adminrouter user={user}><Category /></Adminrouter>} />
             <Route path="/categories/:id" element={<Adminrouter user={user}><SingleCategory/></Adminrouter>} />
-            <Route path="new" element={<Categorynew title="Add New Category" />} />
+            <Route path="new" element={<Adminrouter user={user}><Categorynew title="Add New Category" /></Adminrouter>} />
           </Route>
 
           <Route path='/users/update/:id' element={<Adminrouter user={user}><Details /></Adminrouter>} />

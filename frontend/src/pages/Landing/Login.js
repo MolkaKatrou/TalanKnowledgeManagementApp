@@ -11,6 +11,8 @@ import Passwordinput from '../../Components/inputs/Password';
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
 import { HomeContext } from '../../Context/HomeContext';
+import { Alert } from '@mui/material';
+import { ChakraProvider } from '@chakra-ui/react';
 
 
 export default function Login() {
@@ -22,9 +24,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false);
   
-  const handleClose = () => {
-    setOpen(!open);
-  };
 
   const onChange = (e) => {
     setForm({
@@ -41,9 +40,6 @@ export default function Login() {
   return (
     <>
       <Navbar />
-      <Backdrop open={open}>
-        {loading ? <CircularProgress/> : ""}
-      </Backdrop>
       <section className="login-container">
         <div className="login-wrapper">
           <div className='left-login'>
@@ -53,6 +49,7 @@ export default function Login() {
           </div>
           <div className='form-login'>
             <form onSubmit={onSubmit} >
+        
               <div className='heading1'>
                 <img src={logo} style={{ marginLeft: "-65px", width: "350px" }} alt='login' />
               </div>
@@ -85,6 +82,7 @@ export default function Login() {
                 <h6 style={{color:'grey'}}> {t('forgot your password?')}  
                   <Link to='/forgotpassword' style={{ textDecoration: 'none', fontFamily:'PT Sans' }} > {t('Reset it')} </Link>
                   </h6>
+                {errors.isVerified && <Alert severity="error"> {errors.isVerified}</Alert>}
               </div>
 
             </form>

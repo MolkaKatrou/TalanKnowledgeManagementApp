@@ -9,6 +9,7 @@ import 'highlight.js/styles/stackoverflow-light.css'
 import AttachmentIcon from '@mui/icons-material/Attachment';
 import ImageIcon from '@mui/icons-material/ImageOutlined';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import '../assets/editor.css'
 
 
 hljs.configure({
@@ -56,6 +57,7 @@ class VideoBlot extends BlockEmbed {
             iframeTag.setAttribute('frameborder', '0');
             iframeTag.setAttribute('allowfullscreen', true);
             iframeTag.setAttribute('width', '100%');
+            iframeTag.setAttribute('height', '320px');
             return iframeTag;
         }
     }
@@ -328,8 +330,8 @@ class QuillEditor extends React.Component {
                     <button className="ql-italic" />
                     <button className="ql-underline" />
                     <button className="ql-strike" />
-                    <button class="ql-script" value="sub"></button>
-                    <button class="ql-script" value="super"></button>
+                    <button className="ql-script" value="sub"></button>
+                    <button className="ql-script" value="super"></button>
                     <button className="ql-insertImage">
                         <ImageIcon />
                     </button>
@@ -358,6 +360,7 @@ class QuillEditor extends React.Component {
                     formats={this.formats}
                     value={this.state.editorHtml}
                     placeholder={this.props.placeholder}
+                    
                 />
 
 

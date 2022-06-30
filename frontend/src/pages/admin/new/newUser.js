@@ -12,6 +12,7 @@ import Navbar from "../../../Components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
 import AdminUserInput from "../../../Components/inputs/AdminUserInput";
 import add from '../../../images/add-user.png'
+import toast from "react-hot-toast";
 
 const New = ({ title }) => {
   const [file, setFile] = useState("");
@@ -35,6 +36,9 @@ const New = ({ title }) => {
     e.preventDefault();
     dispatch(AddProfile(form, setShow, setMessage, e))
     setFullname(form.firstname + ' ' + form.lastname.toUpperCase())
+    if (show) {
+    toast.success(`${fullname} is successfully added! `)
+    }
 
   }
 
@@ -51,7 +55,7 @@ const New = ({ title }) => {
       <Sidebar />
       <div className="newContainer">
         <Navbar />
-        {show ? <Alert severity="success">{`${fullname} is successfully added! `}</Alert> : ""}
+        {show ? <Alert severity="success" style={{backgroundColor:'#89CA97'}}>{`${fullname} is successfully added! `}</Alert> : ""}
         <div className="top">
           <h1>{title}</h1>
         </div>
@@ -102,21 +106,24 @@ const New = ({ title }) => {
                   name="username"
                   onChangeHandler={onChangeHandler}
                   errors={errors.username}
-                  icon="fa fa-user"
+                  icon="fa fa-at"
                   placeholder="Enter the username"
                 />
               </div>
+
               <div className="formInput">
                 <AdminInput
-                  label="Password"
+                  label="Address"
                   type="text"
-                  name="password"
+                  name="adress"
+                  icon="fa fa-home"
                   onChangeHandler={onChangeHandler}
-                  errors={errors.password}
-                  icon="fa fa-key"
-                  placeholder="Enter the Password"
+                  errors={errors.adress}
+                  placeholder="Enter the adress"
                 />
+
               </div>
+
 
 
               <div className="formInput">
@@ -143,18 +150,7 @@ const New = ({ title }) => {
                   icon="fa fa-briefcase"
                 />
               </div>
-              <div className="formInput">
-                <AdminInput
-                  label="Adress"
-                  type="text"
-                  name="adress"
-                  icon="fa fa-home"
-                  onChangeHandler={onChangeHandler}
-                  errors={errors.adress}
-                  placeholder="Enter the adress"
-                />
-
-              </div>
+ 
 
               <div className="formInput">
                 <AdminUserInput

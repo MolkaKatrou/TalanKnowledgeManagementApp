@@ -28,6 +28,7 @@
   font-size: 2rem;
   display: flex;
   align-items: center;
+  margin-right: 200px;
 }
 
 .fa-typo3 {
@@ -76,6 +77,8 @@
 }
 
 
+
+
 .nav-links {
   color: #000;
   display: flex;
@@ -105,9 +108,16 @@
 .menu-icon {
   display: none;
 }
-
+@media screen and (max-width: 960px) {
+.navbar-logo{
+  margin-left: 190px;
+  }
+}
 
 @media screen and (max-width: 960px) {
+  .navbar-logo{
+    margin-left: 10px;
+    }
   .NavbarItems {
     position: relative;
   }

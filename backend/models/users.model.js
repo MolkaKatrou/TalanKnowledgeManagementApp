@@ -12,6 +12,7 @@ const UserModel = new Schema ({
     adress: {type: String, required: true},
     phone: {type: String, required: true},
     role: {type: String},
+    isVerified : {type: Boolean , default:false},
     pic: {
         type: String,
         default: "",

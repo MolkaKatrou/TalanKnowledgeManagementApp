@@ -39,15 +39,13 @@ const Rightbar = () => {
   const hasFollowedCategory = createCategoryList(categoriesList.categories).filter(cat => cat.followers.includes(userId))
 
 
-
   useEffect(() => {
     socket.emit("getrooms", (rooms) => {
       const roomsValues = Object.values(rooms);
       const ids = roomsValues.map(o => o.id)
       const filtered = roomsValues.filter(({ id }, index) => !ids.includes(id, index + 1))
-      setOnlineUsers(filtered)
+      setOnlineUsers(filtered?.filter(value => JSON.stringify(value) !== '{}'))
     })
-
 
   }, [])
 
@@ -74,7 +72,7 @@ const Rightbar = () => {
           </Button>
         </ChakraProvider>
 
-        <Typography fontWeight={100} style={{ marginTop: '20px' }} fontSize={{ lg: '18px', md: '18px', sm: '16px' }} >
+        <Typography component={'div'} fontWeight={100} style={{ marginTop: '20px' }} fontSize={{ lg: '18px', md: '18px', sm: '16px' }} >
           {t('Online Friends')}
         </Typography>
         <ChakraProvider>
@@ -82,8 +80,7 @@ const Rightbar = () => {
 
             {
               onlineUsers?.filter((user) => user.id !== auth.user.id).map((user, index) => (
-
-                <Avatar name={user?.fullname} src={user?.pic}  >
+                <Avatar key={user?._id} name={user?.fullname} src={user?.pic}  >
                   <AvatarBadge bg='green.500' boxSize='1em' />
                 </Avatar>
 
@@ -91,7 +88,7 @@ const Rightbar = () => {
               ))}
           </AvatarGroup>
         </ChakraProvider>
-        <Typography fontWeight={100} className='mb-3 mt-3' fontSize={{ lg: '18px', md: '18px', sm: '16px' }}>
+        <Typography component={'div'} fontWeight={100} className='mb-3 mt-3' fontSize={{ lg: '18px', md: '18px', sm: '16px' }}>
           {t('My Following')}
         </Typography>
         { (hasFollowedCategory.length>0) ?

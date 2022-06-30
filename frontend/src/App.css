@@ -20,17 +20,6 @@ body {
   border-color: #247883;
   box-shadow: 0 0 5px rgb(206, 212, 212) !important;
 }
-.ql-editor {
-  min-height: 37vh; 
-  font-size: 17px;
-  font-family: 'Segoe UI';
- }
-
- .ql-editor:focus {
-  border: 1px solid rgba(211, 202, 202, 0.733);
-  border-color: #176772;
-  box-shadow: 3px 2px 6px rgb(206, 212, 212) !important;
-}
 
 .checkbox {
   opacity: 0;
@@ -41,7 +30,7 @@ body {
   opacity: 3
 }
 
-.textarea {
+.textarea-edit {
   font-family: inherit;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -55,14 +44,25 @@ body {
   max-width: 100%;
   min-width: 100%;
 }
+.textarea {
+  font-family: inherit;
+  background: #bdc2c7;
+
+}
 
 
 
-
-.panel {
+.panel_container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #63707a;
+  border-radius: 2px;
+  padding: 2px;
+}
+
+.panel {
+  display: flex;
   background: #63707a;
   border-radius: 2px;
   padding: 2px;
@@ -362,6 +362,10 @@ body {
   padding-bottom: 10px;
 }
 
+.card-content>pre>span>span {
+  margin-left: 4px;
+}
+
 .card-content>blockquote {
   color: gray;
   quotes: "“" "”" "‘" "’";
@@ -651,3 +655,4 @@ body {
   color: #685718;
   border: 1px solid #685718;
 }
+

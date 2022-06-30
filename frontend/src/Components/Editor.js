@@ -7,6 +7,8 @@ import hljs from 'highlight.js'
 import 'highlight.js/styles/stackoverflow-light.css'
 import AttachmentIcon from '@mui/icons-material/Attachment';
 import ImageIcon from '@mui/icons-material/ImageOutlined';
+import '../assets/editor.css'
+
 
 
 hljs.configure({
@@ -187,8 +189,8 @@ class Editor extends React.Component {
                     <button className="ql-italic" />
                     <button className="ql-underline" />
                     <button className="ql-strike" />
-                    <button class="ql-script" value="sub"></button>
-                    <button class="ql-script" value="super"></button>
+                    <button className="ql-script" value="sub"></button>
+                    <button className="ql-script" value="super"></button>
                     <button className="ql-insertImage">
                         <ImageIcon />
                     </button>
@@ -199,12 +201,12 @@ class Editor extends React.Component {
 
                     <button className="ql-list" value="ordered"></button>
                     <button className="ql-list" value="bullet"></button>
-                    <button class="ql-indent" value="-1"></button>
-                    <button class="ql-indent" value="+1"></button>
-                    <button class="ql-direction" value="rtl"></button>
-                    <span class="ql-formats">
-                        <button class="ql-align" value=""></button>
-                        <button class="ql-align" value="center"></button>
+                    <button className="ql-indent" value="-1"></button>
+                    <button className="ql-indent" value="+1"></button>
+                    <button className="ql-direction" value="rtl"></button>
+                    <span className="ql-formats">
+                        <button className="ql-align" value=""></button>
+                        <button className="ql-align" value="center"></button>
                     </span>
                     <button className="ql-code-block" />
                     <button className="ql-link" />

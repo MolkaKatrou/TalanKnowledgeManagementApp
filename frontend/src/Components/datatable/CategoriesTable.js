@@ -230,13 +230,15 @@ const CategoriesTable = () => {
                 <Paper
                     sx={{ p: '1px 1px', display: 'flex', alignItems: 'center', width: 400, bgcolor: 'transparent' }}
                     style={{ borderRadius: '18px', border: '1px solid #DDD4D4' }}
+                    className='Search-admin'
                 >
                     <IconButton>
-                        <SearchIcon />
+                        <SearchIcon className='Search-admin' />
                     </IconButton>
                     <InputBase
                         sx={{ ml: 1, flex: 1 }}
                         placeholder="Search.."
+                        className='Search-admin'
                         onChange={handleSearch}
                         inputProps={{ 'aria-label': 'search ' }}
                     />

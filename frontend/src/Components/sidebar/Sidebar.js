@@ -30,16 +30,8 @@ const Sidebar = () => {
       </div>
       <hr />
       <div className="center">
-        <ul>
-          <p className="title_sidebar">MAIN</p>
-          
-          <Link to="/admin" style={{ textDecoration: "none" }}>
-          <li>
-            <DashboardIcon className="icon" />
-            <span>Dashboard</span>
-          </li>
-          </Link>
-          <p className="title_sidebar">LISTS</p>
+        <ul style={{marginTop:'20px'}}>
+        
           <Link to="/users" style={{ textDecoration: "none" }}>
             <li>
               <PersonOutlineIcon className="icon" />
@@ -48,7 +40,7 @@ const Sidebar = () => {
           </Link>
           <Link to="/categories" style={{ textDecoration: "none" }}>
             <li>
-              <StoreIcon className="icon" />
+              <DashboardIcon className="icon" />
               <span>Categories</span>
             </li>
           </Link>

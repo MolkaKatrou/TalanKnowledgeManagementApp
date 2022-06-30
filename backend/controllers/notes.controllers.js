@@ -92,6 +92,7 @@ const Commentnote = async (req, res) => {
     const newComment = new commentModel ({
         user: req.body.user,
         comment: req.body.comment,
+        parentId : req.body.parentId,
         createdAt: new Date().toISOString()
     })
 
@@ -180,8 +181,17 @@ const Deletenote = async (req, res) => {
 const DeleteComment = async (req, res) => {
     const { id } = req.params;
     await commentModel.findByIdAndRemove(id);
+    await commentModel.deleteMany({ parentId: id })
     res.json({ message: "Comment deleted successfully." });
 };
+
+const UpdateComment = async (req, res) => {
+    const { id } = req.params;
+    const { comment } = req.body;
+    const updatedComment = { comment, _id: id };
+    await commentModel.findByIdAndUpdate(id, updatedComment, { new: true });
+    res.json(updatedComment);
+}
 
 
 const Updatenote = async (req, res) => {
@@ -233,5 +243,6 @@ module.exports = {
     BookmarkPost,
     getPostsBySearch,
     GetAll,
-    DeleteComment
+    DeleteComment,
+    UpdateComment
 };

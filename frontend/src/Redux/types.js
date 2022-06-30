@@ -18,6 +18,8 @@ export const CREATE_POST ="CREATE_POST"
 export const DELETE_POST ="DELETE_POST"
 export const UPDATE_POST ="UPDATE_POST"
 export const DELETE_COMMENT ="DELETE_COMMENT"
+export const CREATE_COMMENT ="CREATE_COMMENT"
+export const UPDATE_COMMENT ="UPDATE_COMMENT"
 
 
 export const GET_QUESTIONS ="GET_QUESTIONS"
@@ -32,6 +34,7 @@ export const GET_ANSWERS ="GET_ANSWERS"
 export const DELETE_ANSWER ="DELETE_ANSWER"
 export const VOTE_UP_ANSWER ="VOTE_UP"
 export const VOTE_DOWN_ANSWER ="VOTE_DOWN_ANSWER"
+export const UPDATE_ANSWER ="UPDATE_ANSWER"
 
 export const GET_All ="GET_All"
 

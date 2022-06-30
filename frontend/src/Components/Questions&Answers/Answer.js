@@ -1,20 +1,30 @@
-import {Box, IconButton } from "@material-ui/core";
+import { Box, IconButton } from "@material-ui/core";
 import React, { useContext, useEffect, useState } from "react";
-import { Button, ChakraProvider, Menu, MenuButton, MenuList, MenuItem, Avatar } from "@chakra-ui/react";
+import { Button, ChakraProvider, Menu, MenuButton, MenuList, MenuItem, Avatar, Textarea } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from 'moment';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import { HomeContext } from "../../Context/HomeContext";
-import { DownVoteAnswer, UpVoteAnswer, deleteAnswer, CommentAnswer, deleteAnswerComment } from "../../Redux/Actions/questionsActions";
+import { DownVoteAnswer, UpVoteAnswer, deleteAnswer, CommentAnswer, deleteAnswerComment, getAllAnswers, updateAnswer } from "../../Redux/Actions/questionsActions";
 import { Confirm } from "semantic-ui-react";
 import toast from "react-hot-toast";
 import ReactHtmlParser from "react-html-parser";
+import ReactQuill from "react-quill";
+import Editor from "react-quill/lib/index";
+import { getAllPosts } from "../../Redux/Actions/postsActions";
+import AnswerComment from "./AnswerComment";
 
 
 
 function Answer({ answer }) {
+    Editor.modules = {
+        syntax: false,
+        toolbar: false,
+    };
+
+
     const { setShowAlert, showAlert, socket, fetch, setFetch, t } = useContext(HomeContext)
     const dispatch = useDispatch()
     const [comment, setComment] = useState('')
@@ -25,49 +35,67 @@ function Answer({ answer }) {
     const [upVotes, setUpVotes] = useState(answer.upVotes);
     const [downVotes, setDownVotes] = useState(answer.downVotes);
     const [show, setShow] = useState(false);
+    const [newAnswer, setNewAnswer] = useState(answer?.body)
     const [comments, setComments] = useState(answer?.comments)
     const [open, setOpen] = useState(false)
+    const [openComment, setOpenComment] = useState(false)
+
+    const [activeAnswer, setActiveAnswer] = useState(null)
+    const [activeComment, setActiveComment] = useState(null)
+    const isEditing = activeAnswer && activeAnswer.type === "editing" && activeAnswer.id
+    const isEditingComment = activeComment && activeComment.type === "editingComment" && activeComment.id
+
+
+    useEffect(() => {
+        dispatch(getAllAnswers)
+    }, [fetch, show])
+
+    const handleQuill = (value) => {
+        setNewAnswer(value);
+    };
 
     const handleNotification = (type) => {
         socket.emit("sendNotification", {
-          sender: auth.user,
-          receiver: answer.createdby,
-          postId : answer?.question._id,
-          post:'question',
-          type,    
+            sender: auth.user,
+            receiver: answer.createdby,
+            postId: answer?.question._id,
+            post: 'question',
+            type,
         });
-      };
+    };
 
-    
-    
+    const handleCancel = () => {
+        setActiveAnswer(null)
+    }
+
     const DeleteAnswer = (id) => {
         dispatch(deleteAnswer(id))
         setOpen(false)
-        setShowAlert(!showAlert)        
+        setShowAlert(!showAlert)
         toast.success("The answer is successfully deleted!")
-
     }
 
-    const DeleteAnswerComment = (_id) => {
-        dispatch(deleteAnswerComment(_id))
-        toast.success("The comment is successfully deleted!")
-        setOpen(false)
-        setShowAlert(!showAlert)
+    const EditAnswer = () => {
+        dispatch(updateAnswer(answer._id, { body: newAnswer }))
+        toast.success("The answer is successfully updated!")
+        setFetch(!fetch)
+        setActiveAnswer(null)
     }
 
     const SubmitComment = (e) => {
         e.preventDefault()
         const finalComment = {
             user: auth.user.id,
-            comment: comment
+            comment: comment,
+            parentId: null
         }
         const newComments = dispatch(CommentAnswer(finalComment, answer._id));
+        setFetch(!fetch)
         handleNotification(6)
         setComment('');
         setShow(false)
         setComments(newComments);
         toast.success('Comment added successfully')
-        setFetch(!fetch)
 
     }
 
@@ -75,26 +103,26 @@ function Answer({ answer }) {
         if (upVotes.length > 0) {
             return upVotes.find((vote) => vote === userId)
                 ? (
-                    <i class="fa-solid fa-circle-up" style={{ color: 'green' }}></i>
+                    <i className="fa-solid fa-circle-up" style={{ color: 'green' }}></i>
                 ) : (
-                    <i class="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
+                    <i className="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
                 );
         }
 
-        return <i class="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
+        return <i className="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
     };
 
     const DownVote = () => {
         if (downVotes.length > 0) {
             return downVotes.find((vote) => vote === userId)
                 ? (
-                    <i class="fa-solid fa-circle-down" style={{ color: 'green' }}></i>
+                    <i className="fa-solid fa-circle-down" style={{ color: 'green' }}></i>
                 ) : (
-                    <i class="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
+                    <i className="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
                 );
         }
 
-        return <i class="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
+        return <i className="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
     };
 
     const handleUpVote = async () => {
@@ -126,12 +154,19 @@ function Answer({ answer }) {
                 <div className="d-flex justify-content-between author-answer">
                     <div className=" mt-2 d-flex flex-row my-2 ">
                         <ChakraProvider>
-                            <Avatar name={answer.createdby.fullname} src={answer.createdby.pic} size='sm' style={{ height: 32, width: 32 }} className='mx-2'/>
+                            <Avatar name={answer.createdby.fullname} src={answer.createdby.pic} size='sm' style={{ height: 32, width: 32 }} className='mx-2' />
                         </ChakraProvider>
 
 
-                        <Box className="mt-2 mx-2" style={{fontWeight:'600'}}> {answer.createdby.fullname}</Box>
+                        <Box className="mt-2 mx-2" style={{ fontWeight: '600' }}> {answer.createdby.fullname}</Box>
                         <Box className="mt-2 mx-2 me-2" style={{ color: 'grey' }}>{`Answered ${moment(answer.createdAt).fromNow()}`}</Box>
+                        {answer.createdAt !== answer.updated_At ?
+                            <Box className="mt-2 mx-2 me-2" style={{ color: 'grey' }}> {t('Updated')}
+                                <span> {moment(answer?.updated_At).fromNow()} </span>
+                            </Box> : ''
+                        }
+
+
 
                     </div>
                     {
@@ -144,6 +179,10 @@ function Answer({ answer }) {
                                             onClick={() => { setOpen(true) }} >
                                             Delete
                                         </MenuItem>
+                                        <MenuItem icon={<EditIcon style={{ marginRight: '30px', color: 'gray' }} />}
+                                            onClick={() => setActiveAnswer({ id: answer._id, type: 'editing' })} >
+                                            Edit
+                                        </MenuItem>
                                     </MenuList>
                                 </Menu>
                             </ChakraProvider>
@@ -155,7 +194,7 @@ function Answer({ answer }) {
                         cancelButton={t('Cancel')}
                         content={t('Are you sure you want to delete this answer?')}
                         onCancel={() => { setOpen(false) }}
-                        onConfirm={() => { DeleteAnswer(answer._id) }} 
+                        onConfirm={() => { DeleteAnswer(answer._id) }}
                         style={{ height: '22%' }}
                     />
 
@@ -171,47 +210,39 @@ function Answer({ answer }) {
                             <IconButton className="arrow" onClick={handleDownVote}><DownVote /></IconButton>
                         </div>
                     </div>
-                  
-                    <div className="question-answer">
+
+                    {!isEditing && <div className="question-answer">
                         <div className='card-content'>{ReactHtmlParser(answer?.body)}</div>
-                    </div>
-                   
+                    </div>}
+
+                    {isEditing && <div className="question-answer">
+                        <div className='card-content'>
+                            <ReactQuill
+                                value={newAnswer}
+                                onChange={handleQuill}
+                                modules={Editor.modules}
+                                theme="snow"
+                                style={{
+                                    minHeight: '10px'
+                                }}
+                            />
+                            <ChakraProvider>
+                                <div className="d-flex mt-2">
+                                    <Button disabled={!newAnswer} size='sm' onClick={EditAnswer} colorScheme='blue'>Update</Button>
+                                    <Button size='sm' className="mx-3" onClick={handleCancel}>Cancel</Button>
+                                </div>
+                            </ChakraProvider>
+                        </div>
+                    </div>}
+
                 </div>
             </div>
             {answer.comments?.map((c, i) => (
-                <div className="comments">
-                    <div className="d-flex justify-content-between author-answer">
-                        <div className=" my-1 d-flex flex-row ">
-                            <ChakraProvider>
-                                <Avatar style={{ height: 30, width: 30 }} size='sm' className='mx-2' name={c.user.fullname} src={c.user.pic} />
-                            </ChakraProvider>
-                            <Box className="mt-2 mx-2" style={{fontSize:'11px',fontWeight:'600'}}> {c.user.fullname}</Box>
-                            <Box className="mt-2 mx-2 me-2" style={{ color: 'grey', fontSize:'11px'}}>{`Added ${moment(c.createdAt).fromNow()}`}</Box>
-
-                        </div>
-                        {
-                            auth.user.email === answer.createdby.email ? (
-                                <ChakraProvider>
-                                    <Menu isLazy>
-                                        <MenuButton><MoreVertIcon /></MenuButton>
-                                        <MenuList>
-                                            <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
-                                                onClick={() => { DeleteAnswerComment(c._id) }} >
-                                                Delete
-                                            </MenuItem>
-                                        </MenuList>
-                                    </Menu>
-
-                                </ChakraProvider>
-
-                            ) : ('')
-                        }
-                    </div>
-                    <div className="comment">
-                        {c.comment}
-                    </div>
+                <div key={c._id}>
+                    <AnswerComment c={c} setOpenComment={setOpenComment} openComment={openComment} />
                 </div>
-            ))} <div className="comments">
+            ))}
+            <div className="comments">
 
                 <p
                     style={{ margin: "5px 0px", padding: "10px" }}

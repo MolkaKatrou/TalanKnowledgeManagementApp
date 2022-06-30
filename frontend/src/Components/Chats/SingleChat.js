@@ -50,6 +50,28 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+    useEffect(() => {
+        document.addEventListener("click", handleDocumentClick, false);
+      });
+
+      const handleDocumentClick = event => {
+        let isEmojiClassFound = false;
+    
+        event &&
+          event.path &&
+          event.path.forEach(elem => {
+            if (elem && elem.classList) {
+              const data = elem.classList.value;
+              if (data.includes("emoji")) {
+                isEmojiClassFound = true;
+              }
+            }
+          }); // end
+        if ( isEmojiClassFound === false && event.target.id !== "emojis-btn")
+          setShowEmojiPicker(false);
+      };
+
+
     const handleEmojiPickerhideShow = () => {
         setShowEmojiPicker(!showEmojiPicker);
     };

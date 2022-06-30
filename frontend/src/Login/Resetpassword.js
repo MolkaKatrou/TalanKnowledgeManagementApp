@@ -1,50 +1,63 @@
-import React, { useContext, useState } from 'react'
+import { Alert } from '@mui/material'
+import axios from 'axios'
+import React, { useContext, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import Navbar from '../Common/Navbar'
 import Passwordinput from '../Components/inputs/Password'
 import { HomeContext } from '../Context/HomeContext'
+import styles from "./styles.module.css";
 
 function Resetpassword() {
     const {t} = useContext(HomeContext)
     const [password, setPassword] = useState("")
-    const [errors, setErrors] = useState({});
+    const [confirm, setConfirm] = useState("")
     const {token}=useParams()
-    const Navigate = useNavigate()
-    const [message, setMessage] = useState("");
+    const [errors, setErrors] = useState({});
     const [show, setShow] = useState(false);
+    const [validUrl, setValidUrl] = useState(true);
 
     
         const changePassword = (e)=>{
             e.preventDefault();
-            fetch("/Api/resetpassword",{
-                method:"post",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    password,
-                    token
-                })
-            }).then(res=>res.json())
-            .then(data=>{Navigate('/login')
-               
-            }).catch(err=>{
-                console.log(err)
+            axios.post('/Api/resetpassword', {password: password , confirm:confirm, token: token})
+            .then(res=>{ 
+                setErrors({})
+                setShow(true)
+                setTimeout(() => {
+                    setShow(false)
+                }, 3000);              
             })
+            .catch(err=>setErrors(err.response.data))            
         }
+        const verifyEmailUrl = async () => {
+            axios.get(`/Api/verify/${token}`)
+                .then(res => {setValidUrl(true);})
+                .catch(err => {
+                    setValidUrl(false)
+                });
+        }
+        useEffect(() => {
+            verifyEmailUrl();
+        }, []);
     return (
         <>
           <Navbar />
+          {validUrl  ? (
+          <div className={styles.container} style={{paddingTop:'20px', height:'87.5vh'}}>
             <div className='main h-100 w-100' >
                 <div className='container h-100' >
                     <div className='row h-100'>
                         <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100'>
                             <div className='d-table-cell align-middle'>
+                            {show ? <Alert severity="success">Your password has been successfully reset!</Alert> : ""}
+                            {errors.expired ? <Alert severity="error">{errors.expired}</Alert> : ""}
+
                                 <div className='text-center mt-5'>
-                                    <h1 className='h2' style={{ color: 'rgb(8, 8, 126)' }}>Reset password</h1>
+                                    <h1 className='h2' style={{ color: 'rgb(8, 8, 126)', fontWeight:'600' }}>Reset password</h1>
                                 </div>
 
-                                <div className='card mt-4'>
+                                <div className='card mt-4' style={{ backgroundColor:'#dfdfe9'}} >
                                     <div className='card-body'>
                                         <div className='m-sm-4'>
                                             <form className='p-5' onSubmit={changePassword}>
@@ -56,18 +69,18 @@ function Resetpassword() {
                                                     onChangeHandler={(e)=>setPassword(e.target.value)}
                                                     errors={errors.password}
                                                 />
-                                                <div className='mt-5'>
+                                                <div className='mt-4'>
                                                     < Passwordinput
                                                         name="confirm"
                                                         placeholder="Confirm your password"
                                                         icon="fa fa-key"
-                                                        onChangeHandler={(e)=>setPassword(e.target.value)}
+                                                        onChangeHandler={(e)=>setConfirm(e.target.value)}
                                                         errors={errors.confirm}
                                                     />
                                                 </div>
 
 
-                                                <div className='text-center mt-5 p-3'>
+                                                <div className='text-center mt-3 p-3'>
                                                     <button type="submit" className='button btn-login'>Reset Password</button>
                                                 </div>
                                             </form>
@@ -83,6 +96,14 @@ function Resetpassword() {
                     </div>
                 </div>
             </div>
+            </div>
+                      ) : (
+                        <div className={styles.container} style={{paddingTop:'576px'}}>
+                             
+                            <h1 style={{marginTop:'-800px'}}>404 Not Found</h1>
+                            
+                        </div>
+                   )}
         </>
     )
 }

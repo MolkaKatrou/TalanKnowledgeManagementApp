@@ -29,7 +29,7 @@ app.use('./frontend/public', express.static('uploads'));
 /*passport*/
 app.use(passport.initialize());
 
-require('./security/passport')(passport)
+
 
 const URI = process.env.ATLAS_URI
 mongoose.connect(URI,

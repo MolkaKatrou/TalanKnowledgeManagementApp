@@ -27,7 +27,7 @@ const Details = ({ title }) => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    axios.put(`/Api/users/${id}`, form)
+    axios.patch(`/Api/users/${id}`, form)
       .then(res => {
         navigate('/users')
         toast.success(` ${form.fullname} informations have been successfully updated!`)

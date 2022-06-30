@@ -133,7 +133,7 @@ const Sidebar = ({ user }) => {
   const [expanded, setExpanded] = useState([])
   const [category, setCategory] = useState('')
   const categoriesResult = categoriesList.categories
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(categoriesList.categories);
   const [parentCategoryId, SetParentCategoryId] = useState('')
   const [show, setShow] = useState(false)
   const [selected, setSelected] = useState([])
@@ -164,7 +164,7 @@ const Sidebar = ({ user }) => {
       const c = createCategoryList(categoriesList.categories).filter(cat => cat.value !== categoryId)
       setCategoriesModal(c)
     }
-  }, [ dispatch, show, openDelete, updateCategory])
+  }, [dispatch, show, openDelete, updateCategory])
 
 
   const ChangeColor = (value) => {
@@ -316,7 +316,7 @@ const handleSearch = (e) => {
       <List>
         <ListItem component={NavLink} className={classes.item} to='/Home'>
           <Home className={classes.icon} />
-          <Typography className={classes.text}>
+          <Typography className={classes.text} component={'div'}>
             {t('Home')}
           </Typography>
         </ListItem>
@@ -324,22 +324,22 @@ const handleSearch = (e) => {
 
         <ListItem  component={NavLink} className={classes.item} to='/Bookmarks'>
           <Bookmark className={classes.icon} />
-          <Typography className={classes.text}>
+          <Typography className={classes.text} component={'div'}>
             {t('Bookmarks')}
           </Typography>
         </ListItem>
 
         <ListItem  component={NavLink} className={classes.item} to='/Drafts'>
           <Draft className={classes.icon} />
-          <Typography className={classes.text}>
+          <Typography className={classes.text} component={'div'}>
             {t('Drafts')}
           </Typography>
         </ListItem>
 
         {user.role === "ADMIN" ? (
-          <ListItem component={NavLink} className={classes.item} to='/admin' onClick={() => navigate('/admin')}>
+          <ListItem component={NavLink} className={classes.item} to='/users' onClick={() => navigate('/admin')}>
             <AdminPanel className={classes.icon} />
-            <Typography className={classes.text}>
+            <Typography className={classes.text} component={'div'}>
 
               Admin Dashboard
 
@@ -352,7 +352,7 @@ const handleSearch = (e) => {
 
         <ListItem className={classes.item}>
           <CategoryIcon className={classes.icon} />
-          <Typography className={classes.textCategory}>
+          <Typography className={classes.textCategory} component={'div'}>
            {t('Categories')}
           </Typography>
           <AddIcon onClick={() => { setOpenAdd(true) }} className='mx-2' style={{ color: '#8084ac', width: '20px' }}></AddIcon>
@@ -378,7 +378,7 @@ const handleSearch = (e) => {
         onNodeSelect={handleSelect}
       >
 
-        {items.map((item, index) => (<Typography key={index}>{item}</Typography>))}
+        {items.map((item, index) => (<Typography component={'div'} key={item._id}>{item}</Typography>))}
 
       </TreeView>
 

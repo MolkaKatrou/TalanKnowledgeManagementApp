@@ -1,5 +1,5 @@
 const express = require('express');
-const {Getnotes, Addnote, getPostsBySearch, likePost,GetAll, BookmarkPost, Updatenote, Deletenote, Uploadfiles, Commentnote, GetSinglenote, DeleteComment }= require('../controllers/notes.controllers');
+const {Getnotes, Addnote, getPostsBySearch, likePost,GetAll, BookmarkPost, Updatenote, Deletenote, Uploadfiles, Commentnote, GetSinglenote, DeleteComment, UpdateComment }= require('../controllers/notes.controllers');
 const { auth } = require('../security/auth');
 const router = express.Router();
 
@@ -16,9 +16,7 @@ router.patch('/notes/:id/bookmark', auth, BookmarkPost);
 router.patch('/notes/:id',auth, Updatenote);
 router.post('/uploadfiles',auth, Uploadfiles);
 router.delete('/notes/:id/comment/:id',auth, DeleteComment)
-
-
-
+router.patch('/notes/comment/:id',auth, UpdateComment)
 
 
 module.exports = router;

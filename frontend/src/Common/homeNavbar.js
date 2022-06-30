@@ -99,7 +99,7 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
     let action;
 
     if (type === 1) {
-      action = "liked your post.";
+      action = "liked your post";
     } else if (type === 2) {
       action = "bookmarked your post";
     } else if (type === 3) {
@@ -112,7 +112,7 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
       action = "downvoted your question";
     }
     else if (type === 6) {
-      action = "commented on your question";
+      action = "commented on an answer on your question";
     }
     else if (type === 7) {
       action = "upvoted your answer";
@@ -120,8 +120,17 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
     else if (type === 8) {
       action = "downvoted your answer";
     }
+    else if (type === 9) {
+      action = "replied to your comment";
+    }
+    else if (type === 10) {
+      action = "mentioned you in a comment";
+    }
+    else if (type === 11) {
+      action = "answered your question";
+    }
     else {
-      action = "answered your question"
+      action = ".."
     }
     return (
       <span className="d-flex" style={{ color: 'black' }}>
@@ -137,7 +146,7 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
   return (
     <AppBar position='fixed' >
       <Toolbar className="d-flex justify-content-between" style={{ backgroundColor: '#8084ac' }}>
-        <Typography variant="h6" onClick={() => { navigate('/Home') }}>
+        <Typography component={'div'} variant="h6" onClick={() => { navigate('/Home') }}>
           <img style={{ cursor: 'pointer', marginRight: '200px', width: "90px" }} src={logo} alt='logo' />
         </Typography>
         <div className={classes.search}>

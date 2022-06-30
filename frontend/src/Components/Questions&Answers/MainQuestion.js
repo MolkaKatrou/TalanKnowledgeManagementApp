@@ -41,19 +41,21 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 function MainQuestion() {
-  const {t, setShowAlert, showAlert, comment, fetch, setFetch } = useContext(HomeContext)
+  const { t, setShowAlert, showAlert, comment,socket, fetch, setFetch } = useContext(HomeContext)
   const dispatch = useDispatch()
   const { id } = useParams()
   const classes = useStyles()
   const { questions, loading } = useSelector((state) => state.questions);
-  const filteredQuestion = questions.filter(q => q._id == id)
+  //const filteredQuestion = questions.filter(q => q._id == id)
+  const filteredQuestion = questions?.find((q) => q?._id === id);
   const [answer, setAnswer] = useState("");
   const [files, setFiles] = useState([]);
   const [newest, setNewest] = useState('newest');
   const auth = useSelector(state => state.auth)
   const { answers } = useSelector((state) => state.answers);
   const Answers = answers?.filter(answer => answer?.question?._id == id)
-  /*const handleNotification = (type) => {
+
+  const handleNotification = (type) => {
     socket.emit("sendNotification", {
       sender: auth.user,
       receiver: filteredQuestion.createdby,
@@ -61,7 +63,7 @@ function MainQuestion() {
        post:'question',
       type,    
     });
-  };*/
+  };
 
 
 
@@ -75,29 +77,29 @@ function MainQuestion() {
 
     if (answer) {
       dispatch(createAnswer(Answer));
-      toast.success('Answer added successfully')
-      //handleNotification(9)
-      setAnswer('')
       setFetch(!fetch)
+      toast.success('Answer added successfully')
+      handleNotification(11)
+      setAnswer('')
     }
   }
 
   const onEditorChange = (value) => {
     setAnswer(value);
-}
+  }
 
-const onFilesChange = (files) => {
+  const onFilesChange = (files) => {
     setFiles(files)
-}
+  }
 
   useEffect(() => {
     dispatch(getAllAnswers())
-  }, [fetch ])
+  }, [fetch])
 
   const handleChange = (value) => {
     setNewest(value)
-}
-  
+  }
+
   return (
     <Home>
       <Container className={classes.container}>
@@ -109,25 +111,25 @@ const onFilesChange = (files) => {
             <div className="main-container">
 
 
-              {filteredQuestion.map((question, index) => (
-                <Grid key={question._id}>
-                  <QuestionAnswer question={question} />
+           
+                <Grid key={filteredQuestion._id}>
+                  <QuestionAnswer question={filteredQuestion} />
                 </Grid>
-              ))}
+              
 
               <div style={{ flexDirection: "column" }} className="all-questions">
                 <div className="d-flex justify-content-between">
-                  <p
+                  <div
                     style={{
                       marginBottom: "20px",
                       fontSize: "1.8rem",
                       fontWeight: "300",
                     }}
                   >   <p>{`${Answers.length} ${t('Answer')}${Answers.length > 1 ? 's' : ''}`}</p>
-                  </p>
+                  </div>
                   <ChakraProvider>
                     <Stack spacing={3}>
-                      <Select variant='filled' style={{ backgroundColor: 'rgb(233, 233, 227)'}} onChange={(e) => handleChange(e.target.value)} >
+                      <Select variant='filled' style={{ backgroundColor: 'rgb(233, 233, 227)' }} onChange={(e) => handleChange(e.target.value)} >
                         <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='newest' >{t('Newest answers')}</option>
                         <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='popular' >{t('Most popular answers')}</option>
                       </Select>
@@ -135,7 +137,7 @@ const onFilesChange = (files) => {
 
                   </ChakraProvider>
                 </div>
-                {newest==='newest' ? Answers.map((answer, index) => (
+                {newest === 'newest' ? Answers.map((answer, index) => (
                   <Grid key={answer._id}>
                     <Answer
                       answer={answer}
@@ -143,19 +145,19 @@ const onFilesChange = (files) => {
                   </Grid>
 
                 ))
-              : Answers.sort(function (one, other) {
-                let otherVotes = other.upVotes.length - other.downVotes.length
-                let oneVotes = one.upVotes.length - one.downVotes.length
-                return otherVotes - oneVotes;
-             }).map((answer, index) => (         
-                   <Grid key={answer._id}>
-                    <Answer
-                      answer={answer}
-                    />
-                  </Grid>
-                )
-              )
-              }
+                  : Answers.sort(function (one, other) {
+                    let otherVotes = other.upVotes.length - other.downVotes.length
+                    let oneVotes = one.upVotes.length - one.downVotes.length
+                    return otherVotes - oneVotes;
+                  }).map((answer, index) => (
+                    <Grid key={answer._id}>
+                      <Answer
+                        answer={answer}
+                      />
+                    </Grid>
+                  )
+                  )
+                }
 
 
 
@@ -173,14 +175,14 @@ const onFilesChange = (files) => {
                 }}
               >
                 {t('Your Answer')}
-              </h3>           
-                <Editor
+              </h3>
+              <Editor
                 placeholder={t("Add Your Answer")}
                 onEditorChange={onEditorChange}
                 onFilesChange={onFilesChange}
                 empty={answer}
-            />
- 
+              />
+
             </div>
             <div
               style={{

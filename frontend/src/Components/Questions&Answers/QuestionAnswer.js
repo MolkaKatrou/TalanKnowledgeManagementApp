@@ -50,26 +50,26 @@ function QuestionAnswer({ question }) {
         if (upVotes?.length > 0) {
             return upVotes?.find((vote) => vote === userId)
                 ? (
-                    <i class="fa-solid fa-circle-up" style={{ color: 'green' }}></i>
+                    <i className="fa-solid fa-circle-up" style={{ color: 'green' }}></i>
                 ) : (
-                    <i class="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
+                    <i className="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
                 );
         }
 
-        return <i class="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
+        return <i className="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
     };
 
     const DownVote = () => {
         if (downVotes?.length > 0) {
             return downVotes?.find((vote) => vote === userId)
                 ? (
-                    <i class="fa-solid fa-circle-down" style={{ color: 'green' }}></i>
+                    <i className="fa-solid fa-circle-down" style={{ color: 'green' }}></i>
                 ) : (
-                    <i class="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
+                    <i className="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
                 );
         }
 
-        return <i class="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
+        return <i className="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
     };
 
     const handleUpVote = async () => {
@@ -100,7 +100,7 @@ function QuestionAnswer({ question }) {
             <div className="main-top">
                 <h2 className="main-question" >{question?.title}</h2>
             </div>
-            <Typography variant='subtitle1' gutterBottom style={{ color: `${question?.category.color}` }}>
+            <Typography component={'div'} variant='subtitle1' gutterBottom style={{ color: `${question?.category.color}` }}>
                 {question?.category.name}
             </Typography>
             <div className="main-desc">
@@ -133,7 +133,7 @@ function QuestionAnswer({ question }) {
                         </div>
                     </div>
                     <div className="question-answer">
-                        <p> <div className='card-content'>{ReactHtmlParser(question?.body)}</div> </p>
+                       <div className='card-content'>{ReactHtmlParser(question?.body)}</div>
                     </div>
                 </div>
             </div>

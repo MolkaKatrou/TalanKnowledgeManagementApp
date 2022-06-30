@@ -1,6 +1,7 @@
 import { Avatar, ChakraProvider } from "@chakra-ui/react";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import { Chip } from "@mui/material";
 import { useEffect } from "react";
 import Moment from "react-moment";
 import { useDispatch } from "react-redux";
@@ -11,7 +12,7 @@ export const userColumns = [
   {
     field: "fullname",
     headerName: "Collaborator",
-    width: 180,
+    width: 160,
     renderCell: (params) => {
       return (
         <div className="cellWithImg">
@@ -33,17 +34,32 @@ export const userColumns = [
   {
     field: "phone",
     headerName: "Phone",
-    width: 100,
+    width: 90,
   },
 
   {
     field: "occupation",
     headerName: "Occupation",
-    width: 160,
+    width: 150,
     renderCell: (params) => {
       return (
         <div className={`cellWithStatus ${params.row.occupation}`}>
           {params.row.occupation}
+        </div>
+      );
+    },
+  },
+
+  {
+    field: "isVerified",
+    headerName: "Status",
+    width: 80,
+    renderCell: (params) => {
+      return (
+        <div className={`cellWithStatus`} style={{marginLeft:'-6px'}} >
+          {params.row.isVerified ? 
+          <div className="active">Verified</div> : 
+          <div className="pending" >Pending</div> }
         </div>
       );
     },

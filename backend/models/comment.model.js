@@ -13,6 +13,11 @@ const commentModel = new Schema ({
         type: Date,
         default: Date.now(),
     },
+
+    parentId: {
+        type: String, 
+        default:null,     
+    },
  
 }, {timestamps: true})
 

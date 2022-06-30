@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 function PostDetails() {
+  const{liked} = useContext(HomeContext)
   const { id } = useParams()
   const classes = useStyles()
   const {posts, loading } = useSelector((state) => state.posts);
@@ -46,20 +47,16 @@ function PostDetails() {
   const auth = useSelector(state => state.auth)
   const userId = auth.user.id
   const dispatch = useDispatch()
-  const { liked, setLiked } = useContext(HomeContext)
-  console.log(likes)
-
   useEffect(() => {
     dispatch(getAllPosts())
-  },[post])
+  },[liked])
 
-  
 
   if (!post) {
     return (
       <Home>
         <Container className={classes.container}>
-          <CircularProgress size="3em" elevation={2} className={classes.loadingPaper} />
+          <CircularProgress size="3em" elevation={4} className={classes.loadingPaper} />
         </Container>
       </Home>
 

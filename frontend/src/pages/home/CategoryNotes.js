@@ -53,7 +53,7 @@ export default function CategoryNotes() {
 
 
   const renderLatestPosts = filteredPosts.reverse().map((post, index) => {
-    return <div >
+    return <div key={post._id} >
       <Post
         post={post}
       />

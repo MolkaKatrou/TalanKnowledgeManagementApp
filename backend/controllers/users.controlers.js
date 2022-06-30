@@ -5,9 +5,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require('crypto')
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
-const usersModel = require("../models/users.model");
 require('dotenv').config();
-
 
 
 const transporter = nodemailer.createTransport(sendgridTransport({
@@ -32,21 +30,27 @@ const AddUser = async (req, res) => {
             errors.email = "This user already exists";
             res.status(404).json(errors);
           } else {
-            const hash = bcrypt.hashSync(req.body.password, 10); //hashed password
-            password = req.body.password
-            req.body.password = hash;
-            //req.body.role = "USER";
-            
-            req.body.createdAt = new Date().toISOString()
-            req.body.firstname = capitalizeFirstLetter(req.body.firstname)
-            req.body.lastname = req.body.lastname.toUpperCase()
-            req.body.fullname =  req.body.firstname +' '+ req.body.lastname
-            await UserModel.create(req.body);
-            transporter.sendMail({
-              to: req.body.email,
-              from: "molka.katrou@ensi-uma.tn",
-              subject: "User Identification",
-              html: `<html>
+            crypto.randomBytes(32, (err, buffer) => {
+              if (err) {
+                console.log(err)
+              }
+              const token = buffer.toString("hex")
+              req.body.password = 'Talan2022'
+              const hash = bcrypt.hashSync(req.body.password, 10); //hashed password
+              password = req.body.password
+              req.body.password = hash;
+              req.body.createdAt = new Date().toISOString()
+              req.body.firstname = capitalizeFirstLetter(req.body.firstname)
+              req.body.lastname = req.body.lastname.toUpperCase()
+              req.body.fullname = req.body.firstname + ' ' + req.body.lastname
+              req.body.resetToken = token
+              UserModel.create(req.body);
+              const url = `http://localhost:3000/user/verify-email/${token}`
+              transporter.sendMail({
+                to: req.body.email,
+                from: "molka.katrou@ensi-uma.tn",
+                subject: "Email Verification",
+                html: `<html>
               <head>
                 <style>
                   table {
@@ -170,17 +174,19 @@ const AddUser = async (req, res) => {
                                 <tr>
                                   <td>
                                   <p>Hello </strong><span style="text-transform:uppercase">${req.body.firstname}</span><strong></strong>, <p/>
-                                  <p>Welcome to to our knowledge management application at TALAN <br/>
+                                  <p>Welcome to to our knowledge management application at TALAN,
+                                  Click on the button bellow to verify your account <br/>
+                                 
                                   <ul>
-                                  <li>Your Email is : \n<b>${req.body.email} </li> <br/>
-                                  <li>Your password (to change) is : \n<b>${password}</li> 
+                                  Your Email is : \n<b>${req.body.email}  <br/> 
                                   </ul>                             
                                   </p>
+                                  
                                   <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
                                       <tbody>
                                         <tr>
                                           <td align="center" >
-                                          <a href="http://localhost:3000" target="_blank">Share Your Knowledge</a>                                    
+                                          <a href=${url} target="_blank">Verify Your Email</a>                                    
                                           </td>
                                         </tr>
                                       </tbody>
@@ -210,12 +216,30 @@ const AddUser = async (req, res) => {
                 </table>
               </body>
             </html>`
-            })
+              })
 
-            res.status(201).json({ message: "User added with success!" });
+              res.status(201).json({ message: "User added with success!" });
+            })
           }
         });
     }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const VerifyEmail = async (req, res) => {
+  try {
+    const token = req.params.token
+    const user = await UserModel.findOne({ resetToken: token })
+    if (user) {
+      
+      res.status(200).json(user)
+    }
+    else {
+      res.status(404).send({ message: "The email is not verified" })
+    }
+
   } catch (error) {
     console.log(error.message);
   }
@@ -247,7 +271,10 @@ const UpdateUser = async (req, res) => {
     } else {
       req.body.firstname = capitalizeFirstLetter(req.body.firstname)
       req.body.lastname = req.body.lastname.toUpperCase()
-      req.body.fullname =  req.body.firstname +' '+ req.body.lastname
+      req.body.fullname = req.body.firstname + ' ' + req.body.lastname
+      const hash = bcrypt.hashSync(req.body.password, 10); //hashed password
+      password = req.body.password
+      req.body.password = hash;
       const data = await UserModel.findOneAndUpdate(
         { _id: req.params.id },
         req.body,
@@ -272,64 +299,109 @@ const DeleteUser = async (req, res) => {
 const Login = async (req, res) => {
   const { errors, isValid } = ValidateLogin(req.body)
   try {
+    UserModel.findOne({ email: req.body.email })
+      .then(user => {
+        bcrypt.compare(req.body.password, user.password)
+          .then(isMatch => {
+            if (!isMatch) {
+              errors.password = "The password is incorrect"
+              res.status(404).json(errors)
+            } else {
+              var token = jwt.sign({
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                lastname: user.lastname,
+                firstname: user.firstname,
+                fullname: user.fullname,
+                phone: user.phone,
+                role: user.role,
+                occupation: user.occupation,
+                pic: user.pic
+
+              },
+                process.env.PRIVATE_KEY, { expiresIn: '10d' });
+              res.status(200).json({
+                message: "success",
+                token: "Bearer " + token,
+                user: {
+                  id: user._id,
+                  username: user.username,
+                  email: user.email,
+                  lastname: user.lastname,
+                  firstname: user.firstname,
+                  fullname: user.fullname,
+                  phone: user.phone,
+                  role: user.role,
+                  occupation: user.occupation,
+                  pic: user.pic
+
+                },
+              })
+
+            }
+          })
+
+      })
+
+  } catch (error) {
+    res.status(404).json(error.message);
+  }
+}
+
+const LoginVerify = async (req, res) => {
+  const newPassword = req.body.password
+  const { errors, isValid } = ValidatePassword(req.body)
+  try {
     if (!isValid) {
       res.status(404).json(errors)
     } else {
       UserModel.findOne({ email: req.body.email })
         .then(user => {
-          if (!user) {
-            errors.email = "The user does not exist!"
-            res.status(404).json(errors)
-          } else {
-            bcrypt.compare(req.body.password, user.password)
-              .then(isMatch => {
-                if (!isMatch) {
-                  errors.password = "The password is incorrect"
-                  res.status(404).json(errors)
-                } else {
-                  var token = jwt.sign({
-                    id: user._id,
-                    username: user.username,
-                    email: user.email,
-                    lastname: user.lastname,
-                    firstname: user.firstname,
-                    fullname:user.fullname,
-                    phone: user.phone,
-                    role: user.role,
-                    occupation: user.occupation,
-                    pic: user.pic
-                   
-                  },
-                    process.env.PRIVATE_KEY, { expiresIn: '10d' });
-                  res.status(200).json({
-                    message: "success",
-                    token: "Bearer " + token,
-                    user: {
-                      id: user._id,
-                      username: user.username,
-                      email: user.email,
-                      lastname: user.lastname,
-                      firstname: user.firstname,
-                      fullname:user.fullname,
-                      phone: user.phone,
-                      role: user.role,
-                      occupation: user.occupation,
-                      pic: user.pic
-                     
-                    },
-                  })
+          user.resetToken = undefined
+          user.isVerified = true
+          bcrypt.hash(newPassword, 12)
+            .then(hashedpassword => {
+              user.password = hashedpassword
+              user.save()
+            })
+          var token = jwt.sign({
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            lastname: user.lastname,
+            firstname: user.firstname,
+            fullname: user.fullname,
+            phone: user.phone,
+            role: user.role,
+            occupation: user.occupation,
+            pic: user.pic
 
-                }
-              })
-          }
+          },
+            process.env.PRIVATE_KEY, { expiresIn: '10d' });
+          res.status(200).json({
+            message: "success",
+            token: "Bearer " + token,
+            user: {
+              id: user._id,
+              username: user.username,
+              email: user.email,
+              lastname: user.lastname,
+              firstname: user.firstname,
+              fullname: user.fullname,
+              phone: user.phone,
+              role: user.role,
+              occupation: user.occupation,
+              pic: user.pic
+            },
+          })
+
         })
     }
   } catch (error) {
     res.status(404).json(error.message);
   }
 }
-
-
 
 const Resetpassword = async (req, res) => {
   const { errors, isValid, success } = ValidateEmail(req.body)
@@ -342,7 +414,7 @@ const Resetpassword = async (req, res) => {
           console.log(err)
         }
         const token = buffer.toString("hex")
-        usersModel.findOne({ email: req.body.email })
+        UserModel.findOne({ email: req.body.email })
           .then(user => {
             if (!user) {
               errors.email = "The user does not exist!"
@@ -461,104 +533,106 @@ const Resetpassword = async (req, res) => {
 }
 
 const Newpassword = async (req, res) => {
+  const { errors, isValid } = ValidatePassword(req.body)
   const newPassword = req.body.password
   const sentToken = req.body.token
-
-  UserModel.findOne({ resetToken: sentToken })
-    .then(user => {
-      if (!user) {
-        return res.status(422).json({ error: "Try again session expired" })
-      }
-      bcrypt.hash(newPassword, 12).then(hashedpassword => {
-        user.password = hashedpassword
-        user.resetToken = undefined
-        user.expireToken = undefined
-        user.save().then((saveduser) => {
-          res.json({ message: "password updated success" })
+  try {
+    if (!isValid) {
+      res.status(404).json(errors)
+    } 
+    else {
+      UserModel.findOne({ resetToken: sentToken })
+        .then(user => {
+          if (!user) {
+            errors.expired = "Your session has expired, send another request to reset your password"
+            return res.status(422).json(errors)
+          }
+          else {
+          bcrypt.hash(newPassword, 12).then(hashedpassword => {
+            user.password = hashedpassword
+            user.resetToken = undefined
+            user.expireToken = undefined
+            user.save().then((saveduser) => {
+              res.json({ message: "password updated success" })
+            })
+          })
+        }
         })
-      })
-    }).catch(err => {
-      console.log(err)
-    })
+    }
+  }
+  catch (error) {
+    res.status(404).json(error.message);
+  }
 }
 
 const Changepassword = async (req, res) => {
-  const { errors, isValid} = ValidateChangePassword(req.body)
+  const { errors, isValid } = ValidateChangePassword(req.body)
   try {
     if (!isValid) {
       res.status(404).json(errors)
     } else {
-      if (bcrypt.compareSync(req.body.old_password, req.user.password)){
-          let hashedpassword=bcrypt.hashSync(req.body.new_password,10 )
-          await UserModel.updateOne({_id:req.userId},{password:hashedpassword})
-          let user = await UserModel.findOne({_id : req.userId})
-          var token = jwt.sign({
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            fullname:user.fullname,
-          },
-            process.env.PRIVATE_KEY, { expiresIn: '10d' });
+      if (bcrypt.compareSync(req.body.old_password, req.user.password)) {
+        let hashedpassword = bcrypt.hashSync(req.body.new_password, 10)
+        await UserModel.updateOne({ _id: req.userId }, { password: hashedpassword })
+        let user = await UserModel.findOne({ _id: req.userId })
+        var token = jwt.sign({
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          fullname: user.fullname,
+        },
+          process.env.PRIVATE_KEY, { expiresIn: '10d' });
 
-            res.status(200).json({message: "success",
-              token: "Bearer " + token,
-              user: user
-            })
+        res.status(200).json({
+          message: "success",
+          token: "Bearer " + token,
+          user: user
+        })
 
 
-        }else{
-          errors.old_password = "Tha password is incorrect"
-          return res.status(404).json(errors)
+      } else {
+        errors.old_password = "Tha password is incorrect"
+        return res.status(404).json(errors)
       }
     }
   }
-  catch(error){
+  catch (error) {
     console.log(error.message)
   }
 
 }
 
-
 const SearchUsers = async (req, res) => {
   try {
-    const {keyword} = req.query
+    const { keyword } = req.query
     const email = new RegExp(keyword, "i");
     const firstname = new RegExp(keyword, "i");
     const lastname = new RegExp(keyword, "i");
 
-    const users = await UserModel.find({ $or: [ {email}, { firstname}, {lastname} ] }
-      ).find({ _id: { $ne: req.userId } });
+    const users = await UserModel.find({ $or: [{ email }, { firstname }, { lastname }] }
+    ).find({ _id: { $ne: req.userId } });
     res.status(201).json(users);
   }
   catch (error) {
     res.status(404).json(error.message);
   }
-};  
+};
 
 const updateProfilePicture = async (req, res) => {
-   UserModel.findByIdAndUpdate(req.userId,{$set:{pic:req.body.pic}},{new:true},
-    (err,result)=>{
-     if(err){
-         return res.status(422).json({error:"pic canot post"})
-     }
-     res.json(result)
-})
+  UserModel.findByIdAndUpdate(req.userId, { $set: { pic: req.body.pic } }, { new: true },
+    (err, result) => {
+      if (err) {
+        return res.status(422).json({ error: "pic canot post" })
+      }
+      res.json(result)
+    })
 };
 
 
-
-const Test = (req, res) => {
-  res.send("user")
-};
-
-const Admin = (req, res) => {
-  res.send("admin")
-};
 
 module.exports = {
-  Admin,
-  Test,
   Login,
+  VerifyEmail,
   AddUser,
   FindAllUsers,
   FindSingleUser,
@@ -568,5 +642,6 @@ module.exports = {
   Newpassword,
   SearchUsers,
   updateProfilePicture,
-  Changepassword
+  Changepassword,
+  LoginVerify
 };

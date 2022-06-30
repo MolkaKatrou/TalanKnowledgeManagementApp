@@ -84,7 +84,7 @@ export default function StyledTreeItem(props) {
                 {labelText}
               </Typography>
               <ChakraProvider>
-                <Typography style={{ width: '10%', marginLeft: 'auto', marginRight: 0 }} >
+                <Typography style={{ width: '10%', marginLeft: 'auto', marginRight: 0 }} component={'div'} >
                 {
                 auth.user.email === createdby?.email ? (
                   <Menu>

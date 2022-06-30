@@ -3,10 +3,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import { userColumns } from "../../datatablesource";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getAllUsers } from "../../Redux/Actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { CircularProgress, IconButton, InputBase, Paper } from "@mui/material";
+import { IconButton, InputBase, Paper } from "@mui/material";
 
 import SearchIcon from '@mui/icons-material/Search';
 import toast from "react-hot-toast";
@@ -62,7 +61,7 @@ const Datatable = () => {
     {
       field: "action",
       headerName: "Action",
-      width: 200,
+      width: 187,
       renderCell: (params) => {
         return (
           <div className="cellAction">
@@ -93,13 +92,15 @@ const Datatable = () => {
         <Paper
           sx={{ p: '1px 1px', display: 'flex', alignItems: 'center', width: 400, bgcolor: 'transparent' }}
           style={{ borderRadius: '18px', border: '1px solid #DDD4D4' }}
+          className='Search-admin'
         >
           <IconButton>
-            <SearchIcon />
+            <SearchIcon  className='Search-admin'/>
           </IconButton>
           <InputBase
             sx={{ ml: 1, flex: 1 }}
             placeholder="Search.."
+            className='Search-admin'
             onChange={handleSearch}
             inputProps={{ 'aria-label': 'search ' }}
           />

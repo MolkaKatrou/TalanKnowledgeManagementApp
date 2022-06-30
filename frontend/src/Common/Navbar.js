@@ -38,7 +38,7 @@ function Navbar() {
   }, []);
 
   window.addEventListener('resize', showButton);
-  const {  t,languages,currentLanguage,currentLanguageCode,number_of_days} = useContext(HomeContext)
+  const {  t,languages,currentLanguageCode} = useContext(HomeContext)
 
   return (
     <>
@@ -48,7 +48,7 @@ function Navbar() {
             to='/'
             className='navbar-logo'
             onClick={handleClick}>
-            <img className='mb-3' style={{marginRight: '200px', width: "98px" }} src={logo} alt='logo' />
+            <img className='mb-3' style={{ width: "98px" }} src={logo} alt='logo' />
           </NavLink>
           
           <div className='menu-icon' onClick={handleClick}>

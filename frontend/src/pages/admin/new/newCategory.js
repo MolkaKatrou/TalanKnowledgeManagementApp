@@ -74,7 +74,7 @@ const Categorynew = ({ title }) => {
                 </div>
                 <div className="bottom">
                     <form onSubmit={AddCategory}>
-                        <div style={{ backgroundColor: '#E6E6E6' }}>
+                        <div>
                             <label style={{ fontWeight: 'bold' }}>Category<span className="text-danger">*</span></label>
                             <TextField
                                 autoFocus
@@ -85,6 +85,7 @@ const Categorynew = ({ title }) => {
                                 value={category}
                                 placeholder={t('Enter the category name')}
                                 onChange={(e) => { setCategory(e.target.value) }}
+                                
                             />
 
                          
@@ -94,7 +95,7 @@ const Categorynew = ({ title }) => {
                                     value={parentCategoryId}
                                     onChange={(e) => { SetParentCategoryId(e.target.value) }}
                                     label={t("Parent Category")}
-                                    className='mt-3'
+                                    className='mt-3 dark-input'
 
                                 >
                                     <MenuItem value="">
@@ -109,9 +110,9 @@ const Categorynew = ({ title }) => {
                                 </Select>
                             </FormControl>
                             
-                            <Box my={4}>
+                            <Box my={4} >
                             <label style={{ fontWeight: 'bold' }}>Category Color<span className="text-danger mt-2">*</span></label>
-                                <ColorPicker className='mt-4' placeholder='Choose a color' value={color} onChange={ChangeColor} />
+                                <ColorPicker className='mt-4 dark-input' placeholder='Choose a color' value={color} onChange={ChangeColor} />
                             </Box>
                         </div>
                         <button className="btn btn-success mt-3" type="submit"> Add Category </button>

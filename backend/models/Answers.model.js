@@ -18,6 +18,9 @@ const AnswerModel = new mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
+    updated_At : {
+        type: Date,
+    },
     upVotes: { 
         type: [String], 
         default: [] 

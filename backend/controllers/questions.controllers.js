@@ -141,7 +141,12 @@ const updateQuestion = async (req, res) => {
 
 const updateAnswer = async (req, res) => {
     const { id } = req.params;
-    const updatedAnswer = await AnswerModel.findByIdAndUpdate(id, req.body , { new: true });
+    req.body.updated_At = new Date().toISOString()
+    const updated_At = req.body.updated_At
+    const {body} = req.body
+    const updatedAnswer = { body, updated_At, _id: id };
+
+    await AnswerModel.findByIdAndUpdate(id, updatedAnswer , { new: true });
     res.json(updatedAnswer);
 }
 const GetAnswers = async (req, res) => {
@@ -163,6 +168,7 @@ const GetAnswers = async (req, res) => {
 
 const AddAnswer = async (req, res) => {
     req.body.createdAt = new Date().toISOString()
+    req.body.updated_At = new Date().toISOString()
     try {
             const answer = new AnswerModel(req.body)
             await answer.save();

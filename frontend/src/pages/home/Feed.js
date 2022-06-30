@@ -46,7 +46,7 @@ function Feed() {
   const [notes, setNotes] = useState(true)
   const [qa, setQa] = useState(true)
   const FollowedNotesAndQuestions = FollowedPosts?.concat(FollowedQuestions);
-  const { showAlert, dispatch, openNote, liked, search, setSearch, openModal } = useContext(HomeContext)
+  const { showAlert, dispatch, openNote, liked, search, setSearch, openModal, showVerified  } = useContext(HomeContext)
 
   useEffect(() => {
     dispatch(getAllPosts())
@@ -138,6 +138,7 @@ function Feed() {
       setSearch={(e) => setSearch(e.target.value)}
     >
       <Container className={classes.container}>
+      {showVerified ? <Alert severity="success" style={{backgroundColor:'#64A85E82'}}>Your account has been successfully verified, welcome!</Alert> : ""}
         <div className="main-tabs-home mt-3">
           <Button.Group widths='3'>
             <Button onClick={handleAll}>All</Button>

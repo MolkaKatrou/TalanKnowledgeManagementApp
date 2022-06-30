@@ -2,22 +2,20 @@ const isEmpty = require('./IsEmpty');
 const validator = require('validator');
 
 function ValidateLogin(data){
-    let errors ={};
-    
+    let errors ={};   
     data.email = !isEmpty(data.email) ? data.email : "";
     data.password = !isEmpty(data.password) ? data.password :"";
 
 
     if (!validator.isEmail(data.email)){
-        errors.email ="The email format is incorrect. Please provide correct one";
+        errors.email ="The email format is incorrect. Please provide a correct one";
     }
     if (validator.isEmpty(data.email)){
         errors.email ="Please enter the email address";
         
     }
     if (validator.isEmpty(data.password)){
-        errors.password ="Please enter the password";
-        
+        errors.password ="Please enter the password";     
     }
 
 
@@ -31,8 +29,10 @@ function ValidatePassword(data){
     let errors ={};
     data.password = !isEmpty(data.password) ? data.password :"";
     data.confirm = !isEmpty(data.confirm) ? data.confirm : "";
-
-
+    
+    if (!validator.isLength(data.password , {min:8})){
+        errors.password ="The password should have at least 8 characters";
+    }
     if (validator.isEmpty(data.password)){
         errors.password ="Please enter your password";
     }
@@ -43,6 +43,7 @@ function ValidatePassword(data){
         errors.confirm = "The passwords don't match";
     }
 
+
     return {
         errors,
         isValid: isEmpty(errors)
@@ -52,7 +53,7 @@ function ValidateUser(data){
     let errors ={};
     data.email = !isEmpty(data.email) ? data.email : "";
     data.username = !isEmpty(data.username) ? data.username : "";
-    data.password = !isEmpty(data.password) ? data.password :"";
+    //data.password = !isEmpty(data.password) ? data.password :"";
     data.occupation = !isEmpty(data.occupation) ? data.occupation : "";
     data.role = !isEmpty(data.role) ? data.role : "";
     data.firstname = !isEmpty(data.firstname) ? data.firstname : "";
@@ -70,14 +71,9 @@ function ValidateUser(data){
     if (validator.isEmpty(data.username)){
         errors.username ="Please enter the username";
     }
-    if (validator.isEmpty(data.password)){
-        errors.password ="Please enter the password";
-    }
-    if (!validator.isLength(data.password , {min:8})){
-        errors.password ="The password should have at least 8 characters";
-    }
+
     if (validator.isEmpty(data.occupation)){
-        errors.occupation ="Please choose the user's occupation at the TALAN";
+        errors.occupation ="Please choose the user's occupation at TALAN";
     }
     if (validator.isEmpty(data.lastname)){
         errors.lastname ="Please enter the last name";
@@ -95,7 +91,7 @@ function ValidateUser(data){
         errors.role ="Please Choose the user's role";
     }
       if (validator.isEmpty(data.adress)){
-        errors.adress ="Please Choose the user's adress";
+        errors.adress ="Please Choose the user's home address";
     }
 
     return {
@@ -108,7 +104,7 @@ function ValidateEmail(data){
     let success={};
     data.email = !isEmpty(data.email) ? data.email : "";
     if (!validator.isEmail(data.email)){
-        errors.email ="The email format is incorrect. Please provide correct one";
+        errors.email ="The email format is incorrect. Please provide a correct one";
     }
     if (validator.isEmpty(data.email)){
         errors.email ="Please enter the email address";

@@ -14,6 +14,8 @@
     
      background-color: rgb(225, 228, 232);
 
+  }
+
     .link{
       text-decoration: none;
       color: green;
@@ -24,11 +26,20 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    @media screen and (max-width: 800px) {
+      .link {
+        padding: 8px;
+        margin-right: 10px;
+        font-size: 14px;
+        
+       
+    }
+    }
     .link:hover{
       background-color: rgb(99, 146, 98);
       color:white
     }
-  }
+
 
   .cellWithImg {
     display: flex;
@@ -44,20 +55,18 @@
   }
 
   .cellWithStatus {
-    padding: 5px;
-    border-radius: 5px;
 
-    &.active {
+    .active {
       background-color: rgba(0, 128, 0, 0.05);
+      padding: 7px 7px;
+      border-radius: 15px;
       color: green;
     }
-    &.pending {
+    .pending {
       background-color: rgba(255, 217, 0, 0.05);
+      padding: 7px 7px;
+      border-radius: 15px;
       color: goldenrod;
-    }
-    &.passive {
-      background-color: rgba(255, 0, 0, 0.05);
-      color: crimson;
     }
   }
 
@@ -72,6 +81,11 @@
       color: darkblue;
       border: 1px dotted rgba(0, 0, 139, 0.596);
       cursor: pointer;
+
+      &:hover {
+        background-color: rgb(160, 160, 206);
+        color:white
+      }
     }
 
     .UpdateButton {
@@ -80,6 +94,10 @@
       color: rgba(92, 71, 15, 0.596);
       border: 1px dotted rgba(92, 71, 15, 0.596);
       cursor: pointer;
+      &:hover {
+        background-color: rgba(92, 71, 15, 0.596);
+        color:white
+      }
     }
     
     .deleteButton {
@@ -88,6 +106,10 @@
       color: crimson;
       border: 1px dotted rgba(220, 20, 60, 0.6);
       cursor: pointer;
+      &:hover {
+        background-color: rgb(211, 94, 117);
+        color:white
+      }
     }
   }
 }

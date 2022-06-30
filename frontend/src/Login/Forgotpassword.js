@@ -5,6 +5,8 @@ import axios from 'axios'
 import AdminInput from '../Components/inputs/AdminInput'
 import Alert from '@mui/material/Alert';
 import { HomeContext } from '../Context/HomeContext'
+import styles from "./styles.module.css";
+
 
 
 function Forgotpassword() {
@@ -13,7 +15,6 @@ function Forgotpassword() {
     const [errors, setErrors] = useState({});
     const [success, setSuccess] = useState({});
     const [show, setShow] = useState(false);
-    const navigate = useNavigate()
 
     function onChangeHandler(e) {
         setEmail({
@@ -42,17 +43,19 @@ function Forgotpassword() {
     return (
         <>
         <Navbar/>
+        <div className={styles.container} style={{paddingTop:'20px', height:'87.5vh'}}>
         <div className='main h-100 w-100' >
             <div className='container h-100' >
                 <div className='row h-100'>
-                    <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100'>
-                        <div className='d-table-cell align-middle'>
+                    <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100' style={{marginTop:'-80px' , backgroundColor:'#dfdfe9'}}>
+                        <div className='d-table-cell align-middle' >
+                        { show ? <Alert severity="success">We sent you the link — Check your Email!</Alert> : ""}
                             <div className='text-center mt-5'>
-                                <h1 className='h2' style={{color :'rgb(8, 8, 126)', fontFamily:'PT Sans'}}>{t('Reset password')}</h1>
+                                <h1 className='h2' style={{color :'rgb(8, 8, 126)', fontFamily:'PT Sans', fontWeight:'600'}}>{t('Reset password')}</h1>
                                 <p  style={{color:'grey', fontFamily:'PT Sans'}}> {t('Enter your email to reset your password')}</p>
                             </div>
-                           { show ? <Alert severity="success">We sent you the link — Check your Email!</Alert> : ""}
-                            <div className='card mt-5'>
+                      
+                            <div className='card mt-5' style={{ backgroundColor:'#dfdfe9'}} >
                                 <div className='card-body'>
                                     <div className='m-sm-4'>
                                         <form onSubmit={PostEmail}>
@@ -81,6 +84,7 @@ function Forgotpassword() {
                     </div>
                 </div>
             </div>
+        </div>
         </div>
         </>
     )

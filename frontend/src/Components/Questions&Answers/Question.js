@@ -106,26 +106,26 @@ function Question({ question }) {
     if (upVotes.length > 0) {
       return upVotes.find((vote) => vote === userId)
         ? (
-          <i class="fa-solid fa-circle-up" style={{ color: 'green' }}></i>
+          <i className="fa-solid fa-circle-up" style={{ color: 'green' }}></i>
         ) : (
-          <i class="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
+          <i className="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
         );
     }
 
-    return <i class="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
+    return <i className="fa-solid fa-circle-up" style={{ color: 'gray' }}></i>
   };
 
   const DownVote = () => {
     if (downVotes.length > 0) {
       return downVotes.find((vote) => vote === userId)
         ? (
-          <i class="fa-solid fa-circle-down" style={{ color: 'green' }}></i>
+          <i className="fa-solid fa-circle-down" style={{ color: 'green' }}></i>
         ) : (
-          <i class="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
+          <i className="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
         );
     }
 
-    return <i class="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
+    return <i className="fa-solid fa-circle-down" style={{ color: 'gray' }}></i>
   };
 
   const handleUpVote = async () => {
@@ -204,7 +204,7 @@ function Question({ question }) {
             <div className='row'>
               <div className='col-5'> {question?.createdby.fullname} </div>
 
-              <Typography className='col-5' onClick={() => navigate(`/category/${question?.category._id}/notes`)} style={{ color: `${question?.category.color}`, textAlign: 'center', fontWeight: '600', display: location.pathname === `/category/${question?.category._id}/notes` ? "none" : "flex" }}>
+              <Typography component={'div'} className='col-5' onClick={() => navigate(`/category/${question?.category._id}/notes`)} style={{ color: `${question?.category.color}`, textAlign: 'center', fontWeight: '600', display: location.pathname === `/category/${question?.category._id}/notes` ? "none" : "flex" }}>
                 {`  ${question?.category.name} `}
 
               </Typography>
@@ -238,12 +238,11 @@ function Question({ question }) {
           </Col>
 
           <Col sm={5} xs={8} lg={8} md={7} onClick={() => navigate(`/Main-Question/${question?._id}`)}>
-            <Typography style={{ color: 'blue', marginBottom: '20px', cursor: 'pointer' }}>
+            <Typography component={'div'} style={{ color: 'blue', marginBottom: '20px', cursor: 'pointer' }}>
               {question?.title}
             </Typography>
             <Typography
               variant="subtitle1"
-              color="text.secondary"
               component="div" >
               <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', marginTop: '10px' }}
                 className='card-content' >{ReactHtmlParser(question?.body)}</div>

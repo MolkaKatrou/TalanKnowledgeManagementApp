@@ -82,7 +82,9 @@ export default function CategoryQA() {
           :
 
           filteredCategories.map((category, index) => (
+            <Grid category={category._id}>
             <CategoryBanner category={category} />
+            </Grid>
           ))}
 
         <div className="main">

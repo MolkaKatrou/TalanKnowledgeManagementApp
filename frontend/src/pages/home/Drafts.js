@@ -46,7 +46,7 @@ export default function Drafts() {
 
 
   const renderDrafts = Drafts.reverse().map((post, index) => (
-    <div >
+    <div key={post._id} >
       <Post
         post={post}
       />

@@ -137,7 +137,7 @@ export default function AddNote() {
             <SlidingPane
                 className={classes.SlidingPane}
                 isOpen={openNote}
-                width={window.innerWidth < 600 ? "100%" : "45%"}
+                width={window.innerWidth < 600 ? "100%" : "47%"}
                 onRequestClose={Clear}
             >
 

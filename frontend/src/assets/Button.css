@@ -55,3 +55,20 @@
   color: #fff;
   transition: 250ms;
 }
+
+
+
+@media screen and (max-width: 1200px) {
+  .btn--outline {
+    padding: 5px 15px;
+    margin-right: 40px;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .btn--outline {
+    padding: 2px 20px;
+    margin-right: 190px;
+
+  }
+}

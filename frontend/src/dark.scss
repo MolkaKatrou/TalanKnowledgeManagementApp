@@ -52,7 +52,7 @@
 
     .home {
       display: flex;
-      background-color: black;
+      background-color: #111;
       .homeContainer{
         background-color: #111;
 
@@ -86,4 +86,25 @@
     input{
         background-color: transparent;
     }
+
+    .single {
+      background-color: #111;
+    }
+      .new {
+        background-color: #111;
+      }
+      .form-control {
+        border-color: white;
+        background-color: transparent;
+        color:white
+      }
+      .Search-admin{
+        color:white
+      }
+
+      .dark-input{
+        border-color: white;
+
+      }
+      
   }

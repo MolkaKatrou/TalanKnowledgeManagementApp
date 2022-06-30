@@ -5,7 +5,7 @@ import { Button } from 'semantic-ui-react'
 import { useDispatch, useSelector } from "react-redux";
 import { CardMedia } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
-import { FollowCategory } from "../Redux/Actions/categoryAction";
+import { FollowCategory, getAllCategories } from "../Redux/Actions/categoryAction";
 import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import '../assets/Navbar.css';
 import { HomeContext } from "../Context/HomeContext";
@@ -71,6 +71,7 @@ import { createCategoryList } from "../utils/functions";
         } else {
           setFollowers([...category.followers, userId]);
         }
+        dispatch(getAllCategories())
       };
     
     return (
@@ -82,7 +83,7 @@ import { createCategoryList } from "../utils/functions";
                         {category.name}
                     </Typography>
 
-                    <Typography variant="subtitle1" style={{color:'#817A7A'}}>
+                    <Typography variant="subtitle1" style={{color:'#817A7A'}} component={'div'}>
                         {parentCategory.map(obj => {return obj.name})}
                     </Typography>
                 </CardContent>
