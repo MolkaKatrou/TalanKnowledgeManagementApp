@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BookmarkQuestion, DownVoteQuestion, UpVoteQuestion } from "../../Redux/Actions/questionsActions";
 import { useParams } from "react-router-dom";
 import moment from 'moment';
-import ReactHtmlParser from "react-html-parser";
+//import ReactHtmlParser from "react-html-parser";
 import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import { HomeContext } from "../../Context/HomeContext";
@@ -133,7 +133,7 @@ function QuestionAnswer({ question }) {
                         </div>
                     </div>
                     <div className="question-answer">
-                       <div className='card-content'>{ReactHtmlParser(question?.body)}</div>
+                       <div className='card-content' dangerouslySetInnerHTML={{__html: question?.body}}/>
                     </div>
                 </div>
             </div>

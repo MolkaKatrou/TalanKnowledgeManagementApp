@@ -65,6 +65,7 @@ const Details = ({ title }) => {
                     errors={errors.lastname}
                     value={form.lastname}
                     icon="fa fa-user"
+                    onKeyDown={()=> {delete errors.lastname}}
                   />
                 </div>
                 <div className="mb-3 col-md-6">
@@ -76,6 +77,7 @@ const Details = ({ title }) => {
                     errors={errors.firstname}
                     value={form.firstname}
                     icon="fa fa-user"
+                    onKeyDown={()=> {delete errors.firstname}}
                   />
                 </div>
 
@@ -88,6 +90,7 @@ const Details = ({ title }) => {
                   errors={errors.email}
                   value={form.email}
                   icon="fa fa-envelope"
+                  onKeyDown={()=> {delete errors.email}}
 
                 />
 
@@ -101,6 +104,7 @@ const Details = ({ title }) => {
                     errors={errors.username}
                     value={form.username}
                     icon="fa fa-user"
+                    onKeyDown={()=> {delete errors.username}}
 
                   />
                 </div>
@@ -113,6 +117,7 @@ const Details = ({ title }) => {
                     errors={errors.phone}
                     value={form.phone}
                     icon="fa fa-phone"
+                    onKeyDown={()=> {delete errors.phone}}
                   />
                 </div>
                
@@ -124,13 +129,20 @@ const Details = ({ title }) => {
                     errors={errors.adress}
                     value={form.adress}
                     icon="fa fa-home"
+                    onKeyDown={()=> {delete errors.adress}}
                   />
                    <div className="mb-3 col-md-6">
                 <AdminRoleOption
                   label="occupation"
                   type="text"
                   name="occupation"
-                  onChangeHandler={onChangeHandler}
+                  onChangeHandler={(e) => {
+                    setForm({
+                      ...form,
+                      [e.target.name]: e.target.value,
+                    });
+                    delete errors.occupation
+                  }}
                   errors={errors.occupation}
                   value={form.occupation}
                   icon="fa fa-briefcase"
@@ -141,7 +153,13 @@ const Details = ({ title }) => {
                   label="Role"
                   type="text"
                   name="role"
-                  onChangeHandler={onChangeHandler}
+                  onChangeHandler={(e) => {
+                    setForm({
+                      ...form,
+                      [e.target.name]: e.target.value,
+                    });
+                    delete errors.role
+                  }}
                   errors={errors.role}
                   value={form.role}
                   icon="fa fa-briefcase"

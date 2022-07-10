@@ -9,6 +9,11 @@ const messageModel = mongoose.Schema({
          type: String, 
          trim: true 
         },
+    file: {
+        type: String,
+        default: ""
+    },
+
     chat: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "chat" 

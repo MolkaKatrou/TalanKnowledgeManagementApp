@@ -10,7 +10,7 @@ import { HomeContext } from "../../Context/HomeContext";
 import { DownVoteAnswer, UpVoteAnswer, deleteAnswer, CommentAnswer, deleteAnswerComment, getAllAnswers, updateAnswer } from "../../Redux/Actions/questionsActions";
 import { Confirm } from "semantic-ui-react";
 import toast from "react-hot-toast";
-import ReactHtmlParser from "react-html-parser";
+//import ReactHtmlParser from "react-html-parser";
 import ReactQuill from "react-quill";
 import Editor from "react-quill/lib/index";
 import { getAllPosts } from "../../Redux/Actions/postsActions";
@@ -43,7 +43,6 @@ function Answer({ answer }) {
     const [activeAnswer, setActiveAnswer] = useState(null)
     const [activeComment, setActiveComment] = useState(null)
     const isEditing = activeAnswer && activeAnswer.type === "editing" && activeAnswer.id
-    const isEditingComment = activeComment && activeComment.type === "editingComment" && activeComment.id
 
 
     useEffect(() => {
@@ -54,15 +53,16 @@ function Answer({ answer }) {
         setNewAnswer(value);
     };
 
-    const handleNotification = (type) => {
+    const handleNotification = (type, receiver) => {
         socket.emit("sendNotification", {
             sender: auth.user,
-            receiver: answer.createdby,
+            receiver,
             postId: answer?.question._id,
             post: 'question',
             type,
         });
     };
+
 
     const handleCancel = () => {
         setActiveAnswer(null)
@@ -91,7 +91,8 @@ function Answer({ answer }) {
         }
         const newComments = dispatch(CommentAnswer(finalComment, answer._id));
         setFetch(!fetch)
-        handleNotification(6)
+        handleNotification(6, answer?.createdby)
+        handleNotification(13, answer?.question?.createdby)
         setComment('');
         setShow(false)
         setComments(newComments);
@@ -212,7 +213,7 @@ function Answer({ answer }) {
                     </div>
 
                     {!isEditing && <div className="question-answer">
-                        <div className='card-content'>{ReactHtmlParser(answer?.body)}</div>
+                        <div className='card-content' dangerouslySetInnerHTML={{__html: answer?.body}}/>
                     </div>}
 
                     {isEditing && <div className="question-answer">

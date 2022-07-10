@@ -13,7 +13,7 @@ function AdminUserInput({ name, onChangeHandler, errors, value, label }) {
                 value={value}
                 onChange={onChangeHandler}
                 name={name}
-                className={(classnames("form-control", { "is-invalid": errors }))}
+                className={(classnames("form-control select", { "is-invalid": errors }))}
             >
                 <option disabled selected>Select the role</option>
                 <option >USER</option>

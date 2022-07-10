@@ -13,7 +13,7 @@ import EditIcon from '@mui/icons-material/EditOutlined';
 import { Confirm } from 'semantic-ui-react'
 import { BookmarkQuestion, deleteQuestion, DownVoteQuestion, getAllQuestions, UpVoteQuestion } from "../../Redux/Actions/questionsActions";
 import { HomeContext } from "../../Context/HomeContext";
-import ReactHtmlParser from "react-html-parser";
+//import ReactHtmlParser from "react-html-parser";
 import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import UpdateQuestionModal from "./UpdateQuestionModal";
@@ -80,8 +80,8 @@ function Question({ question }) {
   }
 
   const Bookmarks = () => {
-    if (bookmarks.length > 0) {
-      return bookmarks.find((bookmark) => bookmark === userId)
+    if (bookmarks?.length > 0) {
+      return bookmarks?.find((bookmark) => bookmark === userId)
         ? (
           <BookmarkIcon style={{ color: '#937474' }} />
         ) : (
@@ -103,8 +103,8 @@ function Question({ question }) {
   };
 
   const UpVote = () => {
-    if (upVotes.length > 0) {
-      return upVotes.find((vote) => vote === userId)
+    if (upVotes?.length > 0) {
+      return upVotes?.find((vote) => vote === userId)
         ? (
           <i className="fa-solid fa-circle-up" style={{ color: 'green' }}></i>
         ) : (
@@ -116,8 +116,8 @@ function Question({ question }) {
   };
 
   const DownVote = () => {
-    if (downVotes.length > 0) {
-      return downVotes.find((vote) => vote === userId)
+    if (downVotes?.length > 0) {
+      return downVotes?.find((vote) => vote === userId)
         ? (
           <i className="fa-solid fa-circle-down" style={{ color: 'green' }}></i>
         ) : (
@@ -146,7 +146,7 @@ function Question({ question }) {
       setDownVotes(question?.downVotes.filter((id) => id !== userId));
     }
     else {
-      setUpVotes(question?.upVotes.filter((id) => id !== userId));
+      setUpVotes(question?.upVotes?.filter((id) => id !== userId));
       setDownVotes([...question?.downVotes, userId]);
       handleNotification(5)
 
@@ -155,7 +155,7 @@ function Question({ question }) {
 
   const UpdateQuestion = (e) => {
     e.stopPropagation();
-    setCurrentQuestionId(question._id);
+    setCurrentQuestionId(question?._id);
     onOpen()
   }
 
@@ -164,7 +164,7 @@ function Question({ question }) {
       <Card className={classes.card}>
         <CardHeader
           avatar={
-            <ChakraProvider><Avatar name={question?.createdby.fullname} src={question?.createdby.pic}></Avatar></ChakraProvider>
+            <ChakraProvider><Avatar name={question?.createdby?.fullname} src={question?.createdby?.pic}></Avatar></ChakraProvider>
           }
           action={
             <>
@@ -202,10 +202,10 @@ function Question({ question }) {
           }
           title={
             <div className='row'>
-              <div className='col-5'> {question?.createdby.fullname} </div>
+              <div className='col-5'> {question?.createdby?.fullname} </div>
 
-              <Typography component={'div'} className='col-5' onClick={() => navigate(`/category/${question?.category._id}/notes`)} style={{ color: `${question?.category.color}`, textAlign: 'center', fontWeight: '600', display: location.pathname === `/category/${question?.category._id}/notes` ? "none" : "flex" }}>
-                {`  ${question?.category.name} `}
+              <Typography component={'div'} className='col-5' onClick={() => navigate(`/category/${question?.category._id}/notes`)} style={{ color: `${question?.category?.color}`, textAlign: 'center', fontWeight: '600', display: location.pathname === `/category/${question?.category._id}/notes` ? "none" : "flex" }}>
+                {`  ${question?.category?.name} `}
 
               </Typography>
 
@@ -213,7 +213,7 @@ function Question({ question }) {
           subheader={<div className='d-flex'>
           {moment(question?.createdAt).fromNow()}
 
-          {question.createdAt !== question.updated_At ? 
+          {question?.createdAt !== question?.updated_At ? 
           <div className='d-flex' >
 
             <div style={{fontWeight:'700'}} className='mx-2'>{t('updated')} </div>{` ${moment(question?.updated_At).fromNow()}`} 
@@ -226,11 +226,11 @@ function Question({ question }) {
           <Col sm={6} lg={3} md={4}>
             <Button.Group style={{ marginTop: '-15px', marginLeft: '-6px' }}>
               <IconButton onClick={handleUpVote}> <UpVote /></IconButton>
-              <IconButton style={{ marginLeft: '-3px', marginRight: '-3px' }}> <i>{upVotes.length - downVotes.length}</i></IconButton>
+              <IconButton style={{ marginLeft: '-3px', marginRight: '-3px' }}> <i>{upVotes?.length - downVotes?.length}</i></IconButton>
               <IconButton onClick={handleDownVote}><DownVote /></IconButton>
             </Button.Group>
             <div className="d-flex" style={{ marginLeft: '-10px' }}>
-              <Button style={{ fontSize: '78%', width: '58%' }} color='violet' className='mt-3 mx-3' onClick={() => navigate(`/Main-Question/${question?._id}`)}>{`${AllAnswers.length}  ${t('Answer')}${AllAnswers.length > 1 ? 's' : ''}`}</Button>
+              <Button style={{ fontSize: '78%', width: '58%' }} color='violet' className='mt-3 mx-3' onClick={() => navigate(`/Main-Question/${question?._id}`)}>{`${AllAnswers?.length}  ${t('Answer')}${AllAnswers?.length > 1 ? 's' : ''}`}</Button>
               <IconButton onClick={handleBookmark} className="MyCustomButton" style={{ marginLeft: '-20px' }}>
                 <Bookmarks />
               </IconButton>
@@ -245,7 +245,7 @@ function Question({ question }) {
               variant="subtitle1"
               component="div" >
               <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', marginTop: '10px' }}
-                className='card-content' >{ReactHtmlParser(question?.body)}</div>
+                className='card-content' dangerouslySetInnerHTML={{__html: question?.body}}/>
             </Typography>
           </Col>
         </CardContent>

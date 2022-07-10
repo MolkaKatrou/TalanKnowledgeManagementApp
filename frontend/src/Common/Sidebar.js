@@ -340,9 +340,7 @@ const handleSearch = (e) => {
           <ListItem component={NavLink} className={classes.item} to='/users' onClick={() => navigate('/admin')}>
             <AdminPanel className={classes.icon} />
             <Typography className={classes.text} component={'div'}>
-
-              Admin Dashboard
-
+              {t('Admin Dashboard')}
             </Typography>
           </ListItem>
         ) : (
@@ -363,7 +361,7 @@ const handleSearch = (e) => {
         </IconButton>
         <InputBase
           className='mx-1'
-          placeholder="Search.."
+          placeholder={t("Search..")}
           onChange={handleSearch}
         />
       </Box>

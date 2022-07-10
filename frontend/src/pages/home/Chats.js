@@ -10,6 +10,7 @@ import ChatBox from '../../Components/Chats/ChatBox'
 import MyChats from '../../Components/Chats/MyChats'
 import { HomeContext } from '../../Context/HomeContext'
 import AddNote from './AddNote'
+import Home from './Home'
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Chats() {
-    const {fetchAgain, setFetchAgain } = useContext(HomeContext)
+    const { fetchAgain, setFetchAgain } = useContext(HomeContext)
     const classes = useStyles()
     const auth = useSelector(state => state.auth)
     const user = {
@@ -37,21 +38,13 @@ function Chats() {
 
     return (
         <>
-        
-            <HomeNavbar />
-            <Grid container style={{ height: '100vh' }}>
-                <Grid item sm={2} xs={2} >
-                    <Sidebar user={user} />
-                </Grid>
-                <Grid item sm={10} xs={10} className={classes.container}>
-                    <Box className='d-flex justify-content-between' style={{ padding: '10px', height: '100%', width: "100%" }}>
-                      <ChakraProvider>
-                        <MyChats fetchAgain={fetchAgain} />
-                        <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-                     </ChakraProvider>
-                    </Box>
-                </Grid>
-            </Grid>
+
+            <Home>
+                <ChakraProvider>
+                    <MyChats fetchAgain={fetchAgain} />
+                    <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+                </ChakraProvider>
+            </Home>
         </>
     )
 }

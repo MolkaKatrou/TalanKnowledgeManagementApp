@@ -33,10 +33,6 @@ const Navbar = () => {
               onClick={() => dispatch({ type: "TOGGLE" })}
             />
           </div>
-          <div className="item mx-4">
-            <NotificationsNoneOutlinedIcon className="icon" />
-            <div className="counter">1</div>
-          </div>
       
      
           <div className="item mx-4">

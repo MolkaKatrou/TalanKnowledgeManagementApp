@@ -50,11 +50,11 @@ function Resetpassword() {
                     <div className='row h-100'>
                         <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100'>
                             <div className='d-table-cell align-middle'>
-                            {show ? <Alert severity="success">Your password has been successfully reset!</Alert> : ""}
+                            {show ? <Alert severity="success">{t('Your password has been successfully reset!')}</Alert> : ""}
                             {errors.expired ? <Alert severity="error">{errors.expired}</Alert> : ""}
 
                                 <div className='text-center mt-5'>
-                                    <h1 className='h2' style={{ color: 'rgb(8, 8, 126)', fontWeight:'600' }}>Reset password</h1>
+                                    <h1 className='h2' style={{ color: 'rgb(8, 8, 126)', fontWeight:'600' }}>{t('Reset password')}</h1>
                                 </div>
 
                                 <div className='card mt-4' style={{ backgroundColor:'#dfdfe9'}} >
@@ -62,26 +62,27 @@ function Resetpassword() {
                                         <div className='m-sm-4'>
                                             <form className='p-5' onSubmit={changePassword}>
 
-                                                < Passwordinput
+                                                <Passwordinput
                                                     name="password"
-                                                    placeholder="Enter your new password"
+                                                    placeholder={t("Enter your new password")}
                                                     icon="fa fa-key"
                                                     onChangeHandler={(e)=>setPassword(e.target.value)}
-                                                    errors={errors.password}
+                                                    onKeyDown={()=> {delete errors.password}}
                                                 />
                                                 <div className='mt-4'>
-                                                    < Passwordinput
+                                                    <Passwordinput
                                                         name="confirm"
-                                                        placeholder="Confirm your password"
+                                                        placeholder={t("Confirm your new password")}
                                                         icon="fa fa-key"
                                                         onChangeHandler={(e)=>setConfirm(e.target.value)}
                                                         errors={errors.confirm}
+                                                        onKeyDown={()=> {delete errors.confirm}}
                                                     />
                                                 </div>
 
 
                                                 <div className='text-center mt-3 p-3'>
-                                                    <button type="submit" className='button btn-login'>Reset Password</button>
+                                                    <button type="submit" className='button btn-login'>{t('Reset Password')}</button>
                                                 </div>
                                             </form>
 

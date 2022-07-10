@@ -56,7 +56,7 @@ const EmailVerify = () => {
                             <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100'>
                                 <div className='d-table-cell align-middle'>
                                     <Alert variant="filled" severity="success">
-                                        {t(`Welcome ${firstname}, Change your password for your account to be verified!`)}
+                                        {t(`Welcome`)} {`${firstname}`}, {t('Change your password for your account to be verified!')}
                                     </Alert>
                                     <div className='text-center mt-5'>
                                         <h1 className='h2' style={{ color: 'rgb(8, 8, 126)',fontFamily:'PT Sans', fontWeight:'600' }}>{t('Set your password')}</h1>
@@ -68,18 +68,20 @@ const EmailVerify = () => {
                                               <form className='p-5' onSubmit={changePassword}>
                                                     <Passwordinput
                                                         name="password"
-                                                        placeholder="Enter your new password"
+                                                        placeholder={t("Enter your new password")}
                                                         icon="fa fa-key"
                                                         onChangeHandler={(e) => setPassword(e.target.value)}
                                                         errors={errors.password}
+                                                        onKeyDown={()=> {delete errors.password}}
                                                     />
                                                     <div className='mt-5'>
                                                         <Passwordinput
                                                             name="confirm"
-                                                            placeholder="Confirm your password"
+                                                            placeholder={t("Confirm your password")}
                                                             icon="fa fa-key"
                                                             onChangeHandler={(e) => setConfirm(e.target.value)}
                                                             errors={errors.confirm}
+                                                            onKeyDown={()=> {delete errors.confirm}}
                                                         />
                                                     </div>
                                                     <div className='text-center mt-5'>

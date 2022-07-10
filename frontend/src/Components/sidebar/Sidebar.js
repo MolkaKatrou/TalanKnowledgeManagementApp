@@ -1,7 +1,6 @@
 import "./sidebar.scss";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import StoreIcon from "@mui/icons-material/Store";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { Link } from "react-router-dom";

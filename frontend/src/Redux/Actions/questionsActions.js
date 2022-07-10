@@ -1,5 +1,5 @@
 import {GET_QUESTION,DELETE_QUESTION,BOOKMARK_QUESTION, GET_QUESTIONS, VOTE_UP, UPDATE_QUESTION,
-   VOTE_DOWN, ERRORS,GET_ANSWERS,UPDATE_ANSWER,DELETE_COMMENT, VOTE_UP_ANSWER, VOTE_DOWN_ANSWER, DELETE_ANSWER, CREATE_COMMENT} from '../types'
+   VOTE_DOWN, ERRORS,GET_ANSWERS,UPDATE_ANSWER,DELETE_COMMENT, VOTE_UP_ANSWER, VOTE_DOWN_ANSWER, DELETE_ANSWER, CREATE_COMMENT, FETCH_BY_SEARCH} from '../types'
 import axios from 'axios'
 
 export const getAllQuestions = () => async dispatch => {    
@@ -181,6 +181,16 @@ try {
  catch (error) {
   console.log(error.message);
 }
+};
+
+export const getPostsBySearch = (searchQuery) => async (dispatch) => {
+  try {
+    const res = await axios.get(`/Api/search?searchQuery=${searchQuery.search || 'none'}`)
+    console.log(res.data)
+    dispatch({ type: FETCH_BY_SEARCH, payload: { data: res.data } });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const CommentAnswer =(value,id) => async dispatch =>{

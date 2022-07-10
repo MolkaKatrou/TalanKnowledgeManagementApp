@@ -47,13 +47,13 @@ i18next
     },
   })
 const loadingMarkup = (
-  <div style={{ }}>
+  <div>
     <CircularProgress style={{
       display: 'flex',
       justifyContent: 'center',
       marginLeft: 'auto',
       marginRight: 'auto',
-      marginTop: '150px'
+      marginTop: '200px'
     }} />
   </div>
 )
@@ -62,9 +62,9 @@ const loadingMarkup = (
 ReactDOM.render(
   <Suspense fallback={loadingMarkup}>
     <Provider store={store}>
-    <DarkModeContextProvider>
-      <App />
-   </DarkModeContextProvider>
+      <DarkModeContextProvider>
+        <App />
+      </DarkModeContextProvider>
     </Provider>
   </Suspense>,
   document.getElementById('root')

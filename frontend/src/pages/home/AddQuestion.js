@@ -26,6 +26,7 @@ function AddQuestion() {
   const [category, setCategory] = useState("")
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [empty, setEmpty] = useState(false);
   const classes = useStyles()
   const categoriesList = useSelector(state => state.categories)
   const auth = useSelector(state => state.auth)
@@ -43,6 +44,10 @@ const onFilesChange = (files) => {
     setBody("")
     setTitle("")
     setCategory("")
+    setEmpty(true)
+    setTimeout(() => {
+      setEmpty(false)
+    }, 4000);
   }
 
   const onSubmit = async (e) => {
@@ -122,6 +127,7 @@ const onFilesChange = (files) => {
                       placeholder={t("Ask Your Question")}
                       onEditorChange={onEditorChange}
                       onFilesChange={onFilesChange}
+                      empty={body}
                   />
              
                   

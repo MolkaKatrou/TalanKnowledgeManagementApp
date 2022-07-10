@@ -656,3 +656,7 @@ body {
   border: 1px solid #685718;
 }
 
+.select > option {
+  background-color: 'rgb(233, 233, 227)' 
+}
+

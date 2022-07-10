@@ -29,8 +29,6 @@ app.use('./frontend/public', express.static('uploads'));
 /*passport*/
 app.use(passport.initialize());
 
-
-
 const URI = process.env.ATLAS_URI
 mongoose.connect(URI,
     err => {
@@ -87,6 +85,7 @@ const io = require("socket.io")(server, {
       })  
 
       socket.on("typing", (room) => socket.in(room).emit("typing"));
+
       socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));    
 
       socket.on('new message', (newMessageReceived)=>{

@@ -13,9 +13,12 @@ import {
   Text,
   Image,
 } from "@chakra-ui/react";
+import { useContext } from 'react';
+import { HomeContext } from '../../Context/HomeContext';
 
 const ProfileModal = ({ user, children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {t} = useContext(HomeContext)
 
   return (
     <>
@@ -42,11 +45,6 @@ const ProfileModal = ({ user, children }) => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Image
-              borderRadius="full"
-              boxSize="150px"
-              alt={user.fullname}
-            />
             <Text
               fontSize={{ base: "28px", md: "30px" }}
               fontFamily="Work sans"
@@ -55,7 +53,7 @@ const ProfileModal = ({ user, children }) => {
             </Text>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onClose}>Close</Button>
+            <Button onClick={onClose}>{t("Close")}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

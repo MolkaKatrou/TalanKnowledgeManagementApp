@@ -118,9 +118,10 @@ const getPostsBySearch = async (req, res) => {
     try {
         const title = new RegExp(searchQuery, "i");
         const content = new RegExp(searchQuery, "i");
+        const body = new RegExp(searchQuery, "i");
 
-        const posts = await noteModel.find({title}).populate('category').populate('createdby');
-        const questions = await QuestionModel.find({title}).populate('category').populate('createdby');
+        const posts = await noteModel.find({$or: [{title},{content}]}).populate('category').populate('createdby');
+        const questions = await QuestionModel.find({  $or: [{title}, {body}]}).populate('category').populate('createdby');
         const all = posts.concat(questions)
         res.status(201).json(all);
     } catch (error) {    

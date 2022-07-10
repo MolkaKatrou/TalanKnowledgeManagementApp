@@ -20,10 +20,15 @@ import styled from "styled-components";
 var selectedChatCompare
 
 export default function SingleChat({ fetchAgain, setFetchAgain }) {
-    const {t, socket, selectedChat, isTyping, setIsTyping, setSelectedChat, socketConnected, setSocketConnected, notificationChat, setNotificationChat, notification, setNotification, token } = useContext(HomeContext)
+    const {t, socket, selectedChat, setSelectedChat, socketConnected, setSocketConnected, notificationChat, setNotificationChat, notification, setNotification, token } = useContext(HomeContext)
     const [messages, setMessages] = useState([]);
+    const [isTyping, setIsTyping]=useState(false)
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState("")
+    const [uploadedFile, setUploadedFile] = useState({})
+
+    const [filename, setFilename] = useState("")
+
     const [newMessage, setNewMessage] = useState("");
     const toast = useToast();
     const [typing, setTyping] = useState(false);
@@ -91,13 +96,12 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
         formData.append("file", file);
         axios.post('/Api/uploadfiles', formData, config)
             .then(response => {
-                console.log("http://localhost:4000/" + response.data.url, response.data.fileName);
-                let message = newMessage;
-                message += response.data.fileName ;
-                setNewMessage(message);
-               
+                const {success, url, fileName} = response.data
+                setUploadedFile({success : true, url, fileName})
+                let message = newMessage
+                message+=response.data.fileName
+                setNewMessage(message)
              })
-
     }
 
     const fetchMessages = async () => {
@@ -131,11 +135,11 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
 
     const sendMessage = async (event) => {
         socket.emit('stop typing', selectedChat._id)
-        try {
-            setNewMessage('')        
-            
-            const { data } = await axios.post("/api/message", { content: newMessage, chatId: selectedChat });
+        try {        
+            const { data } = await axios.post("/api/message", { content: newMessage.replace(uploadedFile.fileName,' '), file:uploadedFile.url, chatId: selectedChat});
             console.log(data)
+            setNewMessage('')   
+            setUploadedFile({})
             socket.emit("new message", data)
             setMessages([...messages, data]);
         } catch (error) {
@@ -151,10 +155,16 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
         }
     }
 
+
     useEffect(() => {
         fetchMessages();
         selectedChatCompare = selectedChat;
     }, [selectedChat]);
+
+    useEffect(() => { 
+        socket.on('typing', () => setIsTyping(true))
+        socket.on('stop typing', () => setIsTyping(false))
+    })
 
     useEffect(() => {
         socket.on("message received", (newMessageReceived) => {
@@ -170,12 +180,6 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
             }
         })
     })
-
-    useEffect(() => {
-        socket.on('typing', () => setIsTyping(true))
-        socket.on('stop typing', () => setIsTyping(false))
-    })
-
 
 
 
@@ -259,7 +263,7 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                             />
                         ) : (
                             <div className="messages">
-                                <ScrollableChat messages={messages} user={user} />
+                                <ScrollableChat messages={messages} user={user} src={uploadedFile.url} />
                             </div>
                         )}
 

@@ -10,7 +10,7 @@ import UserListItem from './UserListItem';
 
 
 export default function GroupChatModal({ children }) {
-  const { chats, setChats } = useContext(HomeContext)
+  const { chats, setChats,t } = useContext(HomeContext)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [groupChatName, setGroupChatName] = useState();
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -120,20 +120,20 @@ export default function GroupChatModal({ children }) {
             d="flex"
 
           >
-            Create Group Chat
+           {t('Create Group Chat')}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody d="flex" flexDir="column" alignItems="center">
             <FormControl>
               <Input
-                placeholder="Chat Name"
+                placeholder={t("Chat Name")}
                 mb={3}
                 onChange={(e) => setGroupChatName(e.target.value)}
               />
             </FormControl>
             <FormControl>
               <Input
-                placeholder="Add Users eg: John, Piyush, Jane"
+                placeholder={t("Add Users eg: John, Piyush, Jane")}
                 mb={1}
                 onChange={(e) => handleSearch(e.target.value)}
               />
@@ -163,7 +163,7 @@ export default function GroupChatModal({ children }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleSubmit}>Create Chat</Button>
+            <Button colorScheme="blue" onClick={handleSubmit}>{t('Create Chat')}</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

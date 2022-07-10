@@ -46,7 +46,6 @@ function MainQuestion() {
   const { id } = useParams()
   const classes = useStyles()
   const { questions, loading } = useSelector((state) => state.questions);
-  //const filteredQuestion = questions.filter(q => q._id == id)
   const filteredQuestion = questions?.find((q) => q?._id === id);
   const [answer, setAnswer] = useState("");
   const [files, setFiles] = useState([]);
@@ -54,6 +53,11 @@ function MainQuestion() {
   const auth = useSelector(state => state.auth)
   const { answers } = useSelector((state) => state.answers);
   const Answers = answers?.filter(answer => answer?.question?._id == id)
+
+  useEffect(() => {
+    dispatch(getAllQuestions())
+  }, [])
+  
 
   const handleNotification = (type) => {
     socket.emit("sendNotification", {
@@ -112,7 +116,7 @@ function MainQuestion() {
 
 
            
-                <Grid key={filteredQuestion._id}>
+                <Grid key={filteredQuestion?._id}>
                   <QuestionAnswer question={filteredQuestion} />
                 </Grid>
               

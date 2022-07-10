@@ -24,12 +24,12 @@ const New = ({ title }) => {
   const [fullname, setFullname] = useState('')
 
 
-  const onChangeHandler = (e) => {
+  const onChangeHandler = (e, name) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
-
+    delete errors.name
   };
 
   const onSubmitHandler = (e) => {
@@ -37,7 +37,7 @@ const New = ({ title }) => {
     dispatch(AddProfile(form, setShow, setMessage, e))
     setFullname(form.firstname + ' ' + form.lastname.toUpperCase())
     if (show) {
-    toast.success(`${fullname} is successfully added! `)
+      toast.success(`${fullname} is successfully added! `)
     }
 
   }
@@ -55,7 +55,7 @@ const New = ({ title }) => {
       <Sidebar />
       <div className="newContainer">
         <Navbar />
-        {show ? <Alert severity="success" style={{backgroundColor:'#89CA97'}}>{`${fullname} is successfully added! `}</Alert> : ""}
+        {show ? <Alert severity="success" style={{ backgroundColor: '#64A85E82' }}>{`${fullname} is successfully added! `}</Alert> : ""}
         <div className="top">
           <h1>{title}</h1>
         </div>
@@ -75,6 +75,7 @@ const New = ({ title }) => {
                   onChangeHandler={onChangeHandler}
                   errors={errors.firstname}
                   placeholder="Enter the first name"
+                  onKeyDown={() => { delete errors.firstname }}
                 />
               </div>
               <div className="formInput">
@@ -86,6 +87,7 @@ const New = ({ title }) => {
                   errors={errors.lastname}
                   icon="fa fa-user"
                   placeholder="Enter the last name"
+                  onKeyDown={() => { delete errors.lastname }}
                 />
               </div>
               <div className="formInput">
@@ -97,6 +99,7 @@ const New = ({ title }) => {
                   errors={errors.email}
                   icon="fa fa-envelope"
                   placeholder="Enter the email"
+                  onKeyDown={() => { delete errors.email }}
                 />
               </div>
               <div className="formInput">
@@ -108,6 +111,7 @@ const New = ({ title }) => {
                   errors={errors.username}
                   icon="fa fa-at"
                   placeholder="Enter the username"
+                  onKeyDown={() => { delete errors.username }}
                 />
               </div>
 
@@ -120,6 +124,7 @@ const New = ({ title }) => {
                   onChangeHandler={onChangeHandler}
                   errors={errors.adress}
                   placeholder="Enter the adress"
+                  onKeyDown={() => { delete errors.adress }}
                 />
 
               </div>
@@ -135,6 +140,7 @@ const New = ({ title }) => {
                   errors={errors.phone}
                   icon="fa fa-phone"
                   placeholder="Enter the phone number"
+                  onKeyDown={() => { delete errors.phone }}
                 />
               </div>
 
@@ -145,19 +151,31 @@ const New = ({ title }) => {
                   label="Occupation"
                   type="text"
                   name="occupation"
-                  onChangeHandler={onChangeHandler}
                   errors={errors.occupation}
                   icon="fa fa-briefcase"
+                  onChangeHandler={(e) => {
+                    setForm({
+                      ...form,
+                      [e.target.name]: e.target.value,
+                    });
+                    delete errors.occupation
+                  }}
                 />
               </div>
- 
+
 
               <div className="formInput">
                 <AdminUserInput
                   label="Role"
                   type="text"
                   name="role"
-                  onChangeHandler={onChangeHandler}
+                  onChangeHandler={(e) => {
+                    setForm({
+                      ...form,
+                      [e.target.name]: e.target.value,
+                    });
+                    delete errors.role
+                  }}
                   errors={errors.role}
                   icon="fa fa-briefcase"
                 />

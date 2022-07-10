@@ -2,6 +2,7 @@
     "app_title": "Talan",
     "language": "Language",
     "About" : "About",
+    "Welcome" : "Welcome",
     "SignIn" : "SIGN IN",
     "Login" :"LOGIN",
     "Logout" :"Logout",
@@ -24,6 +25,7 @@
      "Enter your email" :"Enter your email",
      "Enter your password":"Enter your password",
      "Reset password" : "Reset password",
+     "Reset Password" : "Reset Password",
      "Enter your email to reset your password":"Enter your email to reset your password",
      "forgot your password?" :"forgot your password?",
      "Reset it" :"Reset it",
@@ -33,6 +35,7 @@
      "Confirm New Password" : "Confirm New Password",
      "Enter your new password" : "Enter your new password",
      "Enter your old password" : "Enter your current password",
+     "Your password has been successfully reset!" :"Your password has been successfully reset!",
      "Ask Question" :"Ask Question",
      "My Following" :"My Following",
      "Online Friends" :"Online Friends",
@@ -93,12 +96,33 @@
      "Click on a collaborator to start Chatting":"Click on a collaborator to start Chatting",
      "Search Collaborators" :"Search Collaborators",
      "New Group Chat" :"New Group Chat",
-     "Enter a message.." :"Enter a message.."
-     
-
-     
-     
-
+     "Enter a message.." :"Enter a message..",
+     "Change your password for your account to be verified!" : "Change your password for your account to be verified!",
+     "We sent you the link — Check your Email!" :"We sent you the link — Check your Email!",
+     "Questions/Answers" : "Questions/Answers",
+     "All" : "All",
+     "Your account has been successfully verified, welcome!":"Your account has been successfully verified, welcome!",
+     "liked your post" :"liked your post",
+     "bookmarked your post":"bookmarked your post",
+     "commented on your post":"commented on your post",
+     "upvoted your question":"upvoted your question",
+     "downvoted your question":"downvoted your question",
+     "commented on an answer on your question":"commented on an answer on your question",
+     "upvoted your answer":"upvoted your answer",
+     "downvoted your answer":"downvoted your answer",
+     "replied to your comment":"replied to your comment",
+     "mentioned you in a comment":"mentioned you in a comment",
+     "answered your question":"answered your question",
+     "followed the category you created":"followed the category you created",
+     "commented on your answer":"commented on your answer",
+     "Close":"Close",
+     "My Chats":"My Chats",
+     "Chat Name":"Chat Name",
+     "Create Group Chat":"Create Group Chat",
+     "Add Users eg: John, Piyush, Jane":"Add Members eg: John, Piyush, Jane",
+     "Create Chat":"Create Chat",
+     "Admin Dashboard":"Admin Dashboard",
+     "Search..":"Search.."
 
     
 

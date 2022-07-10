@@ -6,7 +6,10 @@ import { isFirstMessage, isLastMessage, isSameSender, isSameSenderMargin, isSame
 import Linkify from 'react-linkify';
 
 
-export default function ScrollableChat({ messages, user }) {
+export default function ScrollableChat({ messages, user, src }) {
+    const ext = (filename)=>{
+        return filename.split('.').pop();
+    }
     return (
         <ScrollableFeed>
             {messages &&
@@ -43,6 +46,9 @@ export default function ScrollableChat({ messages, user }) {
                         >
                             <Linkify properties={{ target: '_blank' }}>
                                 {m.content}
+                                
+                                {m.file && (ext(m.file)=='jpg' || ext(m.file)==='png' || ext(m.file)==='gif') && <a href={m.file} target="_blank" download ><img src={m.file}/></a> }
+                                {m.file && (ext(m.file)=='pdf' || ext(m.file)==='txt' || ext(m.file)==='docx') && <a href={m.file} target="_blank" download >{m.file}</a>}
                             </Linkify>
 
                         </span>

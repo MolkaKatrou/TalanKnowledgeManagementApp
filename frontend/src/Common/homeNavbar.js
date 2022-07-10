@@ -11,7 +11,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useDispatch } from 'react-redux';
 import { ChangePasswordAction, Logout } from "../Redux/Actions/authActions";
 import { useSelector } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Menu, MenuButton, MenuList, Button, MenuItem, ChakraProvider, Divider, Avatar, AvatarBadge, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { HomeContext } from '../Context/HomeContext';
 import { getSender } from '../Components/Chats/ChatLogic';
@@ -21,6 +21,10 @@ import Passwordinput from '../Components/inputs/Password';
 import toast from 'react-hot-toast';
 import i18next from 'i18next';
 import classNames from 'classnames'
+import SearchBar from '../Components/SearchBar';
+import { getAll } from '../Redux/Actions/postsActions';
+import { getAllCategories } from '../Redux/Actions/categoryAction';
+import { createCategoryList } from '../utils/functions';
 
 
 
@@ -52,7 +56,7 @@ function useQuery() {
 }
 
 
-export default function HomeNavbar({ searchPost, handleKeyPress, search, setSearch }) {
+export default function HomeNavbar({ searchPost, handleKeyPress, search, setSearch, filteredData, setFilteredData }) {
   const classes = useStyles()
   const [form, setForm] = useState({});
   const errors = useSelector(state => state.errors)
@@ -60,9 +64,19 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
   const navigate = useNavigate()
   const { setSocketConnected, notification, socket, notifications, setNotifications, setNotification, selectedChat, setSelectedChat, notificationChat, setNotificationChat, t, languages, currentLanguage, currentLanguageCode } = useContext(HomeContext)
   const auth = useSelector(state => state.auth)
+  const { id } = useParams();
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const { postsQuestions } = useSelector(state => state.all)
+  const location = useLocation()
+  const filteredPosts = postsQuestions.filter(post => post.category._id == id && post.isDraft===false)
+
+  useEffect(() => {
+    dispatch(getAll())
+    dispatch(getAllCategories())
+  }, [])
+
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -84,14 +98,9 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
     dispatch(ChangePasswordAction(e, form))
   }
 
-  const onKeyPressForm = (e) => {
-    if (e.keyCode === 13) {
-      dispatch(ChangePasswordAction(e, form))
-    }
-  }
-
   const LogoutHandler = () => {
     dispatch(Logout())
+    socket.emit("disconnect", auth.user)
   }
 
 
@@ -99,35 +108,41 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
     let action;
 
     if (type === 1) {
-      action = "liked your post";
+      action = t("liked your post");
     } else if (type === 2) {
-      action = "bookmarked your post";
+      action = t("bookmarked your post");
     } else if (type === 3) {
-      action = "commented on your post";
+      action = t("commented on your post");
     }
     else if (type === 4) {
-      action = "upvoted your question";
+      action = t("upvoted your question");
 
     } else if (type === 5) {
-      action = "downvoted your question";
+      action = t("downvoted your question");
     }
     else if (type === 6) {
-      action = "commented on an answer on your question";
+      action = t("commented on your answer");
     }
     else if (type === 7) {
-      action = "upvoted your answer";
+      action = t("upvoted your answer");
     }
     else if (type === 8) {
-      action = "downvoted your answer";
+      action = t("downvoted your answer");
     }
     else if (type === 9) {
-      action = "replied to your comment";
+      action = t("replied to your comment");
     }
     else if (type === 10) {
-      action = "mentioned you in a comment";
+      action = t("mentioned you in a comment");
     }
     else if (type === 11) {
-      action = "answered your question";
+      action = t("answered your question");
+    }
+    else if (type === 12) {
+      action = t("followed the category you created");
+    }
+    else if (type === 13) {
+      action = t("commented on an answer on your question");
     }
     else {
       action = ".."
@@ -144,26 +159,21 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
 
 
   return (
-    <AppBar position='fixed' >
+    <AppBar position='fixed'>
       <Toolbar className="d-flex justify-content-between" style={{ backgroundColor: '#8084ac' }}>
         <Typography component={'div'} variant="h6" onClick={() => { navigate('/Home') }}>
           <img style={{ cursor: 'pointer', marginRight: '200px', width: "90px" }} src={logo} alt='logo' />
         </Typography>
-        <div className={classes.search}>
-          <Search className='mx-3' onClick={searchPost} />
-          <InputBase
-            onKeyDown={handleKeyPress}
-            placeholder='Search'
-            className='me-2'
-            name="search"
-            variant="outlined"
-            fullWidth
-            value={search}
-            onChange={setSearch}
-          />
-        </div>
+          <SearchBar
+            data={location.pathname === `/category/${id}/notes` || location.pathname === `/category/${id}/QA` ?  filteredPosts : postsQuestions}
+            search={search}
+            setSearch={setSearch}
+            handleKeyPress={handleKeyPress} 
+            searchPost={searchPost}
+            filteredData={filteredData}
+            setFilteredData={setFilteredData}
+            />
         <div className="d-flex align-items-center">
-
           <ChakraProvider>
             <Menu >
               <MenuButton
@@ -201,6 +211,9 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
                       }
                       else if (notif.post === 'question') {
                         navigate(`/Main-Question/${notif.postId}`)
+                      }
+                      else if (notif.post === 'category') {
+                        navigate(`/category/${notif.postId}/notes`)
                       }
                       setNotifications(notifications.filter((n) => n !== notif));
 
@@ -304,61 +317,58 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
                     aria-labelledby="responsive-dialog-title"
                   >
 
-
-                    <DialogContent style={{ paddingRight: '150px' }} className="border bg-light" >
+                    <DialogContent style={{ paddingRight: '150px', backgroundColor:'#EAE4F1' }} className="border" >
                       <div style={{ fontWeight: '600', fontSize: '17px', color: '#3B285E' }}>{t('Change Password')}</div>
                       <div className='mx-3 mt-3'>
-                        <form className="bg-light ">
-                          <FormControl isRequired style={{width:'360px'}}>
+                        <form style={{backgroundColor:'#EAE4F1'}}>
+                          <FormControl isRequired style={{ width: '360px' }}>
                             <FormLabel>{t('Old Password')}</FormLabel>
-                            < Passwordinput
-                              onKeyDown={onKeyPressForm}
+                            <Passwordinput
                               name="old_password"
                               placeholder={t("Enter your old password")}
                               icon="fa fa-key"
                               onChangeHandler={onChangeHandler}
                               errors={errors.old_password}
+                              onKeyDown={() => { delete errors.old_password }}
                             />
                           </FormControl>
 
                           <FormControl mt={4} isRequired>
                             <FormLabel>{t('New Password')}</FormLabel>
                             <Passwordinput
-                              onKeyDown={onKeyPressForm}
                               name="new_password"
                               placeholder={t("Enter your new password")}
                               icon="fa fa-key"
                               onChangeHandler={onChangeHandler}
                               errors={errors.new_password}
+                              onKeyDown={() => { delete errors.new_password }}
+
+
                             />
                           </FormControl>
 
                           <FormControl mt={4} isRequired>
                             <FormLabel>{t('Confirm New Password')}</FormLabel>
                             <Passwordinput
-                              onKeyDown={onKeyPressForm}
                               name="confirm_password"
                               placeholder={t("Confirm your new password")}
                               type="text"
                               icon="fa fa-key"
                               onChangeHandler={onChangeHandler}
                               errors={errors.confirm_password}
+                              onKeyDown={() => { delete errors.confirm_password }}
                             />
                           </FormControl>
-                          <div className="bg-light">
-                      <Button autoFocus onClick={handleClose}>
-                        {t('Cancel')}
-                      </Button>
+                          <div className="mt-4" style={{backgroundColor:'#EAE4F1'}}>
+                            <Button size='md'
+                              border='2px'
+                              colorScheme='pink' 
+                              mr={0} 
+                              onClick={ChangepasswordHandler}>
+                              {t('Save')}
+                            </Button>
 
-
-                      <Button size='md'
-                  
-                        border='2px'
-                        colorScheme='pink' mr={0} onClick={ChangepasswordHandler}>
-                        {t('Save')}
-                      </Button>
-
-                    </div>
+                          </div>
                         </form>
 
                       </div>
@@ -366,7 +376,7 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
                       <FormControl fullWidth className='mt-4' >
                         <div style={{ fontWeight: '600', fontSize: '17px', color: '#3B285E' }}>{t('Change Language')}</div>
                         <ChakraProvider>
-                          <div className="dropdown mt-2" style={{marginLeft:'-15px'}}>
+                          <div className="dropdown mt-2" style={{ marginLeft: '-15px' }}>
                             <button
                               className="btn dropdown-toggle"
                               data-bs-toggle="dropdown"
@@ -406,7 +416,7 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
                       </FormControl>
 
                     </DialogContent>
-                  
+
                   </Dialog>
                   <Divider className='mt-2 mb-2' />
                   <MenuItem icon={<LogoutIcon />} onClick={LogoutHandler} >

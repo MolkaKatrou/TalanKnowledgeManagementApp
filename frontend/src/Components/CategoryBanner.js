@@ -18,14 +18,23 @@ import { createCategoryList } from "../utils/functions";
  function CategoryBanner({ category }) {
     const {id} = useParams()
     const dispatch=useDispatch();
-    const {t, followers, setFollowers} = useContext(HomeContext)
+    const {t, followers, setFollowers, socket} = useContext(HomeContext)
     const auth = useSelector(state => state.auth)
     const userId = auth.user.id
     const hasFollowedCategory = category.followers.find((follower) => follower === userId);
     const categoriesList = useSelector(state => state.categories)
-    const parentCategory = createCategoryList(categoriesList.categories).filter(cat => cat.value == category.parentId)
-    //const parentCategory = createCategoryList(categoriesList.categories).find(cat => cat.value == category.parentId);
+    const parentCategory = createCategoryList(categoriesList.categories).find(cat => cat?.value === category?.parentId);
 
+    const handleNotification = (type) => {
+        socket.emit("sendNotification", {
+          sender: auth.user,
+          receiver: category?.createdby,
+          type,
+          postId: category?.value,
+          post: 'category',
+    
+        });
+      };
 
     useEffect(() => {
           setFollowers(category.followers)
@@ -70,6 +79,7 @@ import { createCategoryList } from "../utils/functions";
           setFollowers(category.followers.filter((id) => id !== userId));
         } else {
           setFollowers([...category.followers, userId]);
+          handleNotification(12)
         }
         dispatch(getAllCategories())
       };
@@ -84,7 +94,7 @@ import { createCategoryList } from "../utils/functions";
                     </Typography>
 
                     <Typography variant="subtitle1" style={{color:'#817A7A'}} component={'div'}>
-                        {parentCategory.map(obj => {return obj.name})}
+                        {parentCategory?.name}
                     </Typography>
                 </CardContent>
             </Box>

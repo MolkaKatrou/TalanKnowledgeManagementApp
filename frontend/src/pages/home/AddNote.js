@@ -21,7 +21,8 @@ const Styles = makeStyles((theme) => ({
     },
 
     SlidingPane: {
-        backgroundColor: '#E9E6EA'
+        backgroundColor: '#dedce6',
+        borderLeft:'1px solid #8a72ed',
     },
 
     buttons: {
@@ -137,7 +138,7 @@ export default function AddNote() {
             <SlidingPane
                 className={classes.SlidingPane}
                 isOpen={openNote}
-                width={window.innerWidth < 600 ? "100%" : "47%"}
+                width={window.innerWidth < 600 ? "100%" : "58%"}
                 onRequestClose={Clear}
             >
 
@@ -151,10 +152,10 @@ export default function AddNote() {
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}>
 
-                            <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} disabled value="">{t('Select a category')}</option>
+                            <option style={{ backgroundColor: '#dedce6' }} disabled value="">{t('Select a category')}</option>
                             {
                                 createCategoryList(categoriesList.categories).map(option =>
-                                    <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value={option.value}>{option.name}</option>)
+                                    <option style={{ backgroundColor: '#dedce6' }} value={option.value}>{option.name}</option>)
                             }
 
                         </select>

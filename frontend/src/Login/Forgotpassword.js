@@ -49,7 +49,7 @@ function Forgotpassword() {
                 <div className='row h-100'>
                     <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100' style={{marginTop:'-80px' , backgroundColor:'#dfdfe9'}}>
                         <div className='d-table-cell align-middle' >
-                        { show ? <Alert severity="success">We sent you the link — Check your Email!</Alert> : ""}
+                        { show ? <Alert severity="success">{t('We sent you the link — Check your Email!')}</Alert> : ""}
                             <div className='text-center mt-5'>
                                 <h1 className='h2' style={{color :'rgb(8, 8, 126)', fontFamily:'PT Sans', fontWeight:'600'}}>{t('Reset password')}</h1>
                                 <p  style={{color:'grey', fontFamily:'PT Sans'}}> {t('Enter your email to reset your password')}</p>
@@ -67,10 +67,11 @@ function Forgotpassword() {
                                                 icon="fa fa-envelope"
                                                 onChangeHandler={onChangeHandler}
                                                 errors={errors.email}
-                                                success={success.email}
+                                                onKeyDown={()=> {delete errors.email}}
+                                               
                                             />
                                             <div className='text-center mt-5 p-3'>
-                                            <button type="submit" className='button btn-login' >Reset Password</button>
+                                            <button type="submit" className='button btn-login' >{t('Reset Password')}</button>
                                             </div>
                                         </form>
 

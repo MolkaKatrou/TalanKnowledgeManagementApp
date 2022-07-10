@@ -9,7 +9,7 @@ import UserListItem from "./UserListItem";
 import { HomeContext } from "../../Context/HomeContext";
 import AddIcon from '@mui/icons-material/Add';
 import { useSelector } from "react-redux";
-import { getSender } from "./ChatLogic";
+import { getSender, getSenderPic } from "./ChatLogic";
 import GroupChatModal from "./GroupChatModal";
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -111,7 +111,7 @@ const MyChats = ({ fetchAgain }) => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Button onClick={onOpen}  variant='outline' borderColor='blue.500' fontSize={{ base: "17px", md: "10px", lg: "11px" }} colorScheme='blackAlpha'>My Chats</Button>
+                    <Button onClick={onOpen}  variant='outline' borderColor='blue.500' fontSize={{ base: "17px", md: "10px", lg: "11px" }} colorScheme='blackAlpha'>{t('My Chats')}</Button>
                     <GroupChatModal>
                         <Button
                      colorScheme='telegram' variant='solid'
@@ -159,7 +159,10 @@ const MyChats = ({ fetchAgain }) => {
                                         size="sm"                                                                 
                                         name={!chat.isGroupChat
                                             ? getSender(auth.user, chat.users)
-                                            : chat.chatName}                                      
+                                            : chat.chatName}   
+                                        src={!chat.isGroupChat
+                                                ? getSenderPic(auth.user, chat.users)
+                                                : ''}                                         
                                     />
                                     <Text>
                                         {!chat.isGroupChat

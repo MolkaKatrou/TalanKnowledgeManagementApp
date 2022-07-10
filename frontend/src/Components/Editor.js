@@ -9,8 +9,6 @@ import AttachmentIcon from '@mui/icons-material/Attachment';
 import ImageIcon from '@mui/icons-material/ImageOutlined';
 import '../assets/editor.css'
 
-
-
 hljs.configure({
     languages: ['javascript', 'ruby', 'python', 'rust'],
 })
@@ -45,8 +43,8 @@ class Editor extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.props.empty)
         this._isMounted = true;
-        console.log(this.state.editorHtml)
         if (this.props.currentId) {
            this.setState({ editorHtml: this.props.question?.body })
         }
@@ -221,7 +219,7 @@ class Editor extends React.Component {
                     onChange={this.handleChange}
                     modules={this.modules}
                     formats={this.formats}
-                    value={this.state.editorHtml}
+                    value={!this.props.empty && !this.props.currentId ? "" : this.state.editorHtml }
                     placeholder={this.props.placeholder}
                 />
 

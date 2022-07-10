@@ -18,7 +18,7 @@ import { HomeContext } from '../../Context/HomeContext';
 import { Menu, MenuButton, MenuList, MenuItem, Avatar } from "@chakra-ui/react";
 import { ChakraProvider } from '@chakra-ui/react'
 import { Confirm } from 'semantic-ui-react'
-import ReactHtmlParser from "react-html-parser";
+//import ReactHtmlParser from "react-html-parser";
 import toast from 'react-hot-toast';
 
 const ITEM_HEIGHT = 48;
@@ -218,12 +218,11 @@ export default function Post({ post }) {
           </div>}
         >
         </CardHeader>
-        <CardContent onClick={() => post.isDraft === false ? navigate(`/post/${post._id}`) : ''} >
-
+        <CardContent>
           <Typography component={'div'} style={{ fontWeight: '550', fontFamily: 'Raleway,sans-serif', fontSize: '16px' }}>
             {post.title}
           </Typography>
-          <div className='card-content mt-3'>{ReactHtmlParser(post?.content)}</div>
+          <div className='card-content mt-3' dangerouslySetInnerHTML={{__html: post?.content}}/>
         </CardContent>
         {post.isDraft === false ?
           <CardActions disableSpacing>

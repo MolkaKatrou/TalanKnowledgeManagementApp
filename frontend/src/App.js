@@ -86,7 +86,6 @@ function App() {
   const [chats, setChats] = useState();
   const [notificationChat, setNotificationChat] = useState(false)
   const [socketConnected, setSocketConnected] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
   const dispatch = useDispatch()
   const token = JSON.parse(localStorage?.getItem('jwt'))?.split(" ")[1]
   const auth = useSelector(state => state.auth)
@@ -130,18 +129,12 @@ function App() {
     });
   });
 
-  /*useEffect(() => {
-    notificationsRef.current = notifications;
-    const newArray = Array.from(new Set(notifications.map(el => JSON.stringify(el)))).map(el => JSON.parse(el));
-    setNewNotifications(newArray)
-  }, [])*/
-
 
   return (
     <HomeContext.Provider
       value={{
         socket, fetchAgain, setFetchAgain, notifications, setNotifications,
-        socketConnected, setSocketConnected, isTyping, setIsTyping,
+        socketConnected, setSocketConnected,
         token, dispatch, openNote, liked, setLiked, search, setSearch,
         followers, setFollowers, setOpenNote, showAlert, setShowAlert, currentId, setCurrentId,
         selectedChat, setSelectedChat, notification, setNotification, chats, setChats,
@@ -181,9 +174,16 @@ function App() {
           <Route path='/Home' element={<Privaterouter user={user}>  <Feed /></Privaterouter>} />
           <Route path='/Home/search' element={<Privaterouter user={user}>  <Feed /></Privaterouter>} />
           <Route path='/Bookmarks' element={<Privaterouter user={user}>  <Bookmark /></Privaterouter>} />
+          <Route path='/Bookmarks/search' element={<Privaterouter user={user}>  <Bookmark/></Privaterouter>} />
           <Route path='/Drafts' element={<Privaterouter user={user}>  <Drafts /></Privaterouter>} />
+          <Route path='/Drafts/search' element={<Privaterouter user={user}>  <Drafts/></Privaterouter>} />
+          
           <Route path='/category/:id/notes' element={<Privaterouter user={user}>  <CategoryNotes /></Privaterouter>} />
+          <Route path='/category/:id/notes/search' element={<Privaterouter user={user}>  <CategoryNotes /></Privaterouter>} />
+
           <Route path='/category/:id/QA' element={<Privaterouter user={user}>  <CategoryQA /></Privaterouter>} />
+          <Route path='/category/:id/QA/search' element={<Privaterouter user={user}>  <CategoryQA /></Privaterouter>} />
+
           <Route path='/post/:id' element={<Privaterouter user={user}>  <PostDetails /></Privaterouter>} />
           <Route path='/Add-Question' element={<Privaterouter user={user}>  <AddQuestion /></Privaterouter>} />
           <Route path='/Main-Question/:id' element={<Privaterouter user={user}>  <MainQuestion /></Privaterouter>} />

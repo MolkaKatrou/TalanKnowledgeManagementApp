@@ -10,6 +10,7 @@ import { HomeContext } from '../../Context/HomeContext';
 import Alert from '@mui/material/Alert';
 import { getAllAnswers, getAllQuestions } from '../../Redux/Actions/questionsActions';
 import { Button, Divider } from 'semantic-ui-react';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,42 +42,17 @@ function Feed() {
   const questions = QuestionsList.questions
   const FollowedPosts = posts?.filter(post => post.category.followers.includes(userId) && post.isDraft===false)
   const FollowedQuestions = questions?.filter(question => question.category.followers.includes(userId))
-  const navigate = useNavigate()
   const query = useQuery();
   const [notes, setNotes] = useState(true)
   const [qa, setQa] = useState(true)
   const FollowedNotesAndQuestions = FollowedPosts?.concat(FollowedQuestions);
-  const { showAlert, dispatch, openNote, liked, search, setSearch, openModal, showVerified  } = useContext(HomeContext)
+  const {t, showAlert, dispatch, openNote, liked, search, setSearch, openModal, showVerified  } = useContext(HomeContext)
 
   useEffect(() => {
     dispatch(getAllPosts())
     dispatch(getAllQuestions())
     dispatch(getAllAnswers())
   }, [dispatch, openNote, liked,openModal])
-
-  const searchPost = async () => {
-    if (search.trim()) {
-      dispatch(getPostsBySearch({ search }));
-      /*data.then(function(result) {
-        console.log(result) 
-     })*/
-      navigate(`/Home/search?searchQuery=${search || 'none'}`);
-    }
-    else {
-      navigate('/Home');
-      dispatch(getAllPosts())
-
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.keyCode === 13) {
-      searchPost();
-    }
-  };
-
-
-
 
   const handleAll = () => {
     setNotes(true)
@@ -131,19 +107,14 @@ function Feed() {
 
 
   return (
-    <Home
-      handleKeyPress={handleKeyPress}
-      searchPost={searchPost}
-      search={search}
-      setSearch={(e) => setSearch(e.target.value)}
-    >
+    <Home>
       <Container className={classes.container}>
-      {showVerified ? <Alert severity="success" style={{backgroundColor:'#64A85E82'}}>Your account has been successfully verified, welcome!</Alert> : ""}
+      {showVerified ? <Alert severity="success" style={{backgroundColor:'#64A85E82'}}>{t('Your account has been successfully verified, welcome!')}</Alert> : ""}
         <div className="main-tabs-home mt-3">
           <Button.Group widths='3'>
-            <Button onClick={handleAll}>All</Button>
-            <Button onClick={handleNotes}>Notes</Button>
-            <Button onClick={handleQa}>Questions/Answers</Button>
+            <Button onClick={handleAll}> {t('All')}</Button>
+            <Button onClick={handleNotes}> {t('Notes')}</Button>
+            <Button onClick={handleQa}> {t('Questions/Answers')}</Button>
           </Button.Group>
         </div>
 

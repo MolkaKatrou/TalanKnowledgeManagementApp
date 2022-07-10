@@ -1,4 +1,4 @@
-import {GET_QUESTIONS, GET_QUESTION, DELETE_QUESTION, VOTE_UP, VOTE_DOWN, BOOKMARK_QUESTION } from "../types";
+import {GET_QUESTIONS, GET_QUESTION, DELETE_QUESTION, VOTE_UP, VOTE_DOWN, BOOKMARK_QUESTION, FETCH_BY_SEARCH } from "../types";
 
 const initialState = {
   questions: [],
@@ -26,6 +26,13 @@ export default function (state = initialState, action) {
         ...state, 
         questions: state.questions.filter((question) => question._id !== action.payload) 
       };
+      case FETCH_BY_SEARCH:
+        return {
+          ...state,
+          questions: action.payload.data.filter((q=> q?.body)),
+          loading: false
+        };
+  
 
       case VOTE_UP:
         return {

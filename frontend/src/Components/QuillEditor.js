@@ -9,7 +9,11 @@ import 'highlight.js/styles/stackoverflow-light.css'
 import AttachmentIcon from '@mui/icons-material/Attachment';
 import ImageIcon from '@mui/icons-material/ImageOutlined';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import '../assets/editor.css'
+import '../assets/editor.css';
+import QuillCursors from "quill-cursors";
+import * as Y from "yjs";
+import { WebrtcProvider } from "y-webrtc";
+import { QuillBinding } from "y-quill";
 
 
 hljs.configure({
@@ -143,6 +147,7 @@ PollBlot.tagName = 'p';
 PollBlot.className = 'poll-inner-post';
 Quill.register(PollBlot);
 Quill.register('modules/magicUrl', MagicUrl)
+Quill.register('modules/cursors', QuillCursors);
 
 class QuillEditor extends React.Component {
     currentId;
@@ -162,7 +167,8 @@ class QuillEditor extends React.Component {
             files: [],
         };
 
-        this.reactQuillRef = null;
+        this.reactQuillRef = null
+        this.quillRef = null;
         this.inputOpenImageRef = React.createRef();
         this.inputOpenVideoRef = React.createRef();
         this.inputOpenFileRef = React.createRef();
@@ -174,6 +180,7 @@ class QuillEditor extends React.Component {
             this.setState({ editorHtml: this.props.post?.content })
         }
     }
+
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -344,6 +351,7 @@ class QuillEditor extends React.Component {
 
                     <button className="ql-list" value="ordered"></button>
                     <button className="ql-list" value="bullet"></button>
+                    
 
                     <button className="ql-code-block" />
                     <button className="ql-video" />
@@ -360,7 +368,7 @@ class QuillEditor extends React.Component {
                     formats={this.formats}
                     value={this.state.editorHtml}
                     placeholder={this.props.placeholder}
-                    
+
                 />
 
 

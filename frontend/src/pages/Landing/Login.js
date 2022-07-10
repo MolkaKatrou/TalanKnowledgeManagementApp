@@ -16,14 +16,14 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 
 export default function Login() {
-  const {t} = useContext(HomeContext)
+  const {t, socket, setSocketConnected} = useContext(HomeContext)
   const [form, setForm] = useState({});
   const dispatch = useDispatch()
   const errors = useSelector(state=>state.errors)
   const [type, setType] = useState("password");
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false);
-  
+  const auth = useSelector(state=>state.auth)  
 
   const onChange = (e) => {
     setForm({
@@ -65,6 +65,7 @@ export default function Login() {
                 icon="fa fa-at"
                 onChangeHandler={onChange}
                 errors={errors.email}
+                onKeyDown={()=> {delete errors.email}}
 
               />
               < Passwordinput
@@ -74,6 +75,7 @@ export default function Login() {
                 onChangeHandler={onChange}
                 errors={errors.password}
                 icon="fa fa-key"
+                onKeyDown={()=> {delete errors.password}}
               />
 
 
