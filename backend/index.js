@@ -11,11 +11,21 @@ const RouterNotes = require('./Routes/notes.route.js');
 const RouterQuestions = require('./Routes/questions.route.js');
 const RouterChat = require('./Routes/chat.route.js');
 const RouterMessages = require('./Routes/messages.route.js');
-const { Socket } = require('socket.io');
-
 
 
 const app = express();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend", "build")));
+  app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, "../frontend", "build", "index.html"))
+  });
+  console.log("Running production");
+} else {
+  app.get('/', (req, res) => {
+      res.send("Server is working 😇")
+  });
+}
  
 app.use(express.json());
 app.use(bodyParser.json()); 
@@ -29,7 +39,8 @@ app.use('./frontend/public', express.static('uploads'));
 /*passport*/
 app.use(passport.initialize());
 
-const URI = process.env.ATLAS_URI
+const URI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PWD}@cluster0.jipim.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`
+
 mongoose.connect(URI,
     err => {
         if(err) throw err;

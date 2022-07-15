@@ -6,7 +6,10 @@
   "scripts": {
     "server": "nodemon index.js",
     "client": "npm run start --prefix ..//frontend",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+    "build" :"npm run build --prefix ..//frontend",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "docker-build-client": "NPM_CONFIG_PRODUCTION=false npm run build",
+    "docker-build-webapp": "concurrently \"npm run docker-build-client\" \"npm run server\""
   },
   "keywords": [],
   "author": "",

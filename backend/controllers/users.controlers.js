@@ -282,6 +282,167 @@ const UpdateUser = async (req, res) => {
         req.body,
         { new: true }
       );
+      transporter.sendMail({
+        to: req.body.email,
+        from: 'molka.katrou@ensi-uma.tn',
+        subject: "Account Informations Update",
+        html: `<html>
+      <head>
+        <style>
+          table {
+            border-collapse: separate;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+            width: 100%; }
+            table td {
+              font-family: sans-serif;
+              font-size: 14px;
+              vertical-align: top; 
+          }
+    
+          .body {
+            background-color: #f6f6f6;
+            width: 100%; 
+          }
+          .container {
+            display: block;
+            margin: 0 auto !important;
+            /* makes it centered */
+            max-width: 580px;
+            padding: 10px;
+            width: 580px; 
+          }
+          .content {
+            box-sizing: border-box;
+            display: block;
+            margin: 0 auto;
+            max-width: 580px;
+            padding: 10px; 
+          }
+          .main {
+            background: #ffffff;
+            border-radius: 3px;
+            width: 100%; 
+          }
+    
+          .wrapper {
+            box-sizing: border-box;
+            padding: 20px; 
+          }
+    
+          .content-block {
+            padding-bottom: 4px;
+            padding-top: 4px;
+          }
+    
+          .footer {
+            clear: both;
+            margin-top: 13px;
+            text-align: center;
+            width: 100%; 
+          }
+            .footer td,
+            .footer p,
+            .footer span{
+              color: #999999;
+              font-size: 12px;
+              text-align: center; 
+          }
+          .btn {
+            margin-top: 30px;
+            box-sizing: border-box;
+            width: 100%; 
+          }
+            .btn > tbody > tr > td {
+              padding-bottom: 15px; }
+            .btn table {
+              width: auto; 
+          }
+            .btn table td {
+              background-color: #ffffff;
+              border-radius: 5px;
+              text-align: center; 
+          }
+            .btn a {
+              background-color: #ffffff;
+              border: solid 1px #3498db;
+              border-radius: 5px;
+              box-sizing: border-box;
+              color: #3498db;
+              cursor: pointer;
+              display: inline-block;
+              font-size: 14px;
+              font-weight: bold;
+              margin: 0;
+              padding: 12px 25px;
+              text-decoration: none;
+              text-transform: capitalize; 
+          }
+          .btn a:hover {
+            background-color: #2E2A50;
+            border: solid 1px #2E2A50;
+            
+        }
+    
+          .btn-primary table td {
+            background-color: #3498db; 
+          }
+    
+          .btn-primary a {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: #ffffff; 
+          }
+    
+        </style>
+      </head>
+      <body>
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+          <tr>
+            <td>&nbsp;</td>
+            <td class="container">
+              <div class="content">        
+                <table role="presentation" class="main" style="border-top: 3px solid #d4dadf;  margin-top:30px; border-bottom: 3px solid #d4dadf;"">
+   
+                  <tr>
+                    <td class="wrapper">
+                      <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td>
+                          <p>Hello </strong><span style="text-transform:uppercase">${req.body.firstname}</span><strong></strong>, <p/>
+                          <p>We have updated your account's Personal informations to fit with your current status at Talan Consulting</p>
+                                             
+                            <p>  Best regards.</p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>                  
+                <div class="footer">
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0">                     
+                  <tr>
+                  <td align="center" class="content-block powered-by">
+                    To know more about us,
+                  </td>
+                </tr>
+                <tr>
+                <td align="center" class="content-block powered-by">
+                 Visit <a href="https://talan.com/">Talan Group</a> at any time.
+                </td>
+              </tr>
+                  </table>
+                </div>
+                <!-- END FOOTER -->
+    
+              </div>
+            </td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+      </body>
+    </html>`
+      })
       res.status(201).json(data);
     }
   } catch (error) {
@@ -291,7 +452,174 @@ const UpdateUser = async (req, res) => {
 
 const DeleteUser = async (req, res) => {
   try {
+    const data = await UserModel.findOne({ _id: req.params.id });
     await UserModel.findOneAndDelete({ _id: req.params.id });
+    transporter.sendMail({
+      to: data.email,
+      from: 'molka.katrou@ensi-uma.tn',
+      subject: "Account Deletion",
+      html: `<html>
+    <head>
+      <style>
+        table {
+          border-collapse: separate;
+          mso-table-lspace: 0pt;
+          mso-table-rspace: 0pt;
+          width: 100%; }
+          table td {
+            font-family: sans-serif;
+            font-size: 14px;
+            vertical-align: top; 
+        }
+  
+        .body {
+          background-color: #f6f6f6;
+          width: 100%; 
+        }
+        .container {
+          display: block;
+          margin: 0 auto !important;
+          /* makes it centered */
+          max-width: 580px;
+          padding: 10px;
+          width: 580px; 
+        }
+        .content {
+          box-sizing: border-box;
+          display: block;
+          margin: 0 auto;
+          max-width: 580px;
+          padding: 10px; 
+        }
+        .main {
+          background: #ffffff;
+          border-radius: 3px;
+          width: 100%; 
+        }
+  
+        .wrapper {
+          box-sizing: border-box;
+          padding: 20px; 
+        }
+  
+        .content-block {
+          padding-bottom: 4px;
+          padding-top: 4px;
+        }
+  
+        .footer {
+          clear: both;
+          margin-top: 13px;
+          text-align: center;
+          width: 100%; 
+        }
+          .footer td,
+          .footer p,
+          .footer span{
+            color: #999999;
+            font-size: 12px;
+            text-align: center; 
+        }
+        .btn {
+          margin-top: 30px;
+          box-sizing: border-box;
+          width: 100%; 
+        }
+          .btn > tbody > tr > td {
+            padding-bottom: 15px; }
+          .btn table {
+            width: auto; 
+        }
+          .btn table td {
+            background-color: #ffffff;
+            border-radius: 5px;
+            text-align: center; 
+        }
+          .btn a {
+            background-color: #ffffff;
+            border: solid 1px #3498db;
+            border-radius: 5px;
+            box-sizing: border-box;
+            color: #3498db;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+            padding: 12px 25px;
+            text-decoration: none;
+            text-transform: capitalize; 
+        }
+        .btn a:hover {
+          background-color: #2E2A50;
+          border: solid 1px #2E2A50;
+          
+      }
+  
+        .btn-primary table td {
+          background-color: #3498db; 
+        }
+  
+        .btn-primary a {
+          background-color: #3498db;
+          border-color: #3498db;
+          color: #ffffff; 
+        }
+  
+      </style>
+    </head>
+    <body>
+      <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+        <tr>
+          <td>&nbsp;</td>
+          <td class="container">
+            <div class="content">        
+              <table role="presentation" class="main" style="border-top: 3px solid #d4dadf;  margin-top:30px; border-bottom: 3px solid #d4dadf;"">
+ 
+                <tr>
+                  <td class="wrapper">
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td>
+                        <p>Hello </strong><span style="text-transform:uppercase">${data.firstname}</span><strong></strong>, <p/>
+                        <p>We have unfortuanately deleted your account associated with this Email from our database, you will no longer
+                        be able to access our knowledge management plateform at TALAN CONSULTING<br/>                              
+                        </p>
+
+                        <p>We are sorry to see you go.<br/>                              
+                        </p>
+                                                        
+                          <p>Best regards.</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>                  
+              <div class="footer">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">                     
+                <tr>
+                <td align="center" class="content-block powered-by">
+                  To know more about us,
+                </td>
+              </tr>
+              <tr>
+              <td align="center" class="content-block powered-by">
+               Visit <a href="https://talan.com/">Talan Group</a> at any time.
+              </td>
+            </tr>
+                </table>
+              </div>
+              <!-- END FOOTER -->
+  
+            </div>
+          </td>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+    </body>
+  </html>`
+    })
     res.status(201).json({ message: "User deleted with success!" });
   } catch (error) {
     console.log(error.message);
