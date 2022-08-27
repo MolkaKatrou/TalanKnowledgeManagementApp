@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Container, Grid, makeStyles } from "@material-ui/core"
 import styled from "styled-components";
 import Home from './Home';
+import '../../Components/chart/chart.scss'
 import { Avatar, Button, ButtonGroup, ChakraProvider, Editable, EditableInput, EditablePreview, Flex, FormControl, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, useEditableControls } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { HomeContext } from '../../Context/HomeContext';
@@ -9,9 +10,6 @@ import { setUser, UpdateUser } from '../../Redux/Actions/authActions';
 import store from '../../Redux/store'
 import UploadIcon from '@mui/icons-material/FileUploadOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import EditIcon from '@mui/icons-material/Edit';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
 import WorkIcon from '@mui/icons-material/Work';
 import CategoriesModal from '../../Components/CategoriesModal';
 import { createCategoryList } from '../../utils/functions';
@@ -19,6 +17,7 @@ import { useParams } from 'react-router-dom';
 import Post from '../../Components/posts/Post';
 import { getAllPosts } from '../../Redux/Actions/postsActions';
 import Question from '../../Components/Questions&Answers/Question';
+import { DarkModeContext } from '../../Context/darkModeContext';
 
 
 
@@ -42,7 +41,7 @@ function Profile() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const categoryModal1 = useDisclosure()
   const categoryModal2 = useDisclosure()
-  const { token} = useContext(HomeContext)
+  const { token,t } = useContext(HomeContext)
   const classes = useStyles()
   const [image, setImage] = useState("")
   const auth = useSelector(state => state.auth)
@@ -54,8 +53,9 @@ function Profile() {
   const Createdposts = postsList.posts.filter(post => post?.createdby?._id === id)
   const Createdquestions = questionsList.questions.filter(post => post?.createdby?._id === id)
   const allcreated = Createdposts.concat(Createdquestions)
+  const { darkMode } = useContext(DarkModeContext)
 
-  
+
   useEffect(() => {
     if (image) {
       const data = new FormData()
@@ -140,13 +140,11 @@ function Profile() {
 
   return (
     <Home>
-      <Container className={classes.container}>
-
-        <ArtCard>
-          <UserInfo>
+      <Container className={`${classes.container} backgroundColor`}>
+        <div className='artCard'>
+          <div className='UserInfo'>
             <CardBackground />
             <a>
-
               <ChakraProvider>
                 <Avatar onClick={onOpen} size='lg' style={{ cursor: 'pointer' }} name={auth.user.fullname} src={auth.user.pic}></Avatar>
                 <Modal
@@ -156,9 +154,9 @@ function Profile() {
                 >
                   <ModalOverlay />
                   <ModalContent>
-                    <ModalHeader> Change Profile Picture</ModalHeader>
+                    <ModalHeader> {t("Change Profile Picture")}</ModalHeader>
                     <ModalCloseButton />
-                    <ModalBody pb={6} className='d-flex'>
+                    <ModalBody  pb={6} className='d-flex '>
                       <div>
                         <FormControl>
                           <label htmlFor="profilePhoto">
@@ -169,7 +167,7 @@ function Profile() {
                               style={{ display: 'none', cursor: 'pointer' }}
                               onChange={(e) => updatePhoto(e.target.files[0])}
                             />
-                            <AddPhotoText> <UploadIcon /> Upload a photo</AddPhotoText>
+                            <AddPhotoText> <UploadIcon /> {t("Upload a photo")}</AddPhotoText>
                           </label>
                         </FormControl>
                         <FormControl mt={4}>
@@ -179,7 +177,7 @@ function Profile() {
                               onClick={deletePhoto}
 
                             />
-                            <AddPhotoText><DeleteIcon /> Delete the photo</AddPhotoText>
+                            <AddPhotoText><DeleteIcon /> {t("Delete the photo")}</AddPhotoText>
                           </label>
                         </FormControl>
                       </div>
@@ -190,111 +188,58 @@ function Profile() {
 
                     <ModalFooter>
                       <Button onClick={onClose} colorScheme='blue' mr={3}>
-                        Save
+                        {t('Save')}
                       </Button>
-                      <Button onClick={onClose}>Cancel</Button>
+                      <Button onClick={onClose}>{t('Cancel')}</Button>
                     </ModalFooter>
                   </ModalContent>
                 </Modal>
               </ChakraProvider>
 
 
-              <Link>Welcome, there!</Link>
+              <Link className='dark'>{t("Welcome, there!")}</Link>
             </a>
-          </UserInfo>
-          <Widget>
-
+          </div>
+          <div className='widget-profile'>
             <div className='d-flex mx-2'>
               <WorkIcon style={{ color: 'rgb(191, 205, 222)' }} />
               <h1 className='mx-2 mt-1'>{`${auth.user.occupation}, Talan Consulting`}</h1>
-              <img style={{ width: '15px' }} src='/favicon.ico'></img>
+              <img style={{ width: '15px', height: '30%' }} src='/favicon.ico'></img>
             </div>
-          </Widget>
-          <Item>
-            <span onClick={categoryModal1.onOpen} style={{ cursor: 'pointer' }}>
-              My Categories
+          </div>
+          <div className='Item-profile'>
+            <span className='dark' onClick={categoryModal1.onOpen} style={{ cursor: 'pointer' }}>
+              {t('My Categories')}
             </span>
             <CategoriesModal
               categoryModal={categoryModal1}
-              title="Categories I Created"
+              title={t("Categories I Created")}
               categories={CreatedCategories}
             ></CategoriesModal>
-          </Item>
-        </ArtCard>
+          </div>
+        </div>
 
-        <CommunityCard>
-
+        <div className='communityCard'>
           <a>
-            <span onClick={categoryModal2.onOpen} style={{ cursor: 'pointer' }}>Followed Categories</span>
+            <span onClick={categoryModal2.onOpen} style={{ cursor: 'pointer' }}>{t('Followed Categories')}</span>
             <CategoriesModal
               categoryModal={categoryModal2}
-              title="Categories I Follow"
+              title={t("Categories I Follow")}
               categories={FollowedCategories}
-
-            ></CategoriesModal>
-
+            />
           </a>
           <a>
-            <span>My activities</span>
+            <span className='dark'>{t('My activities')}</span>
           </a>
-        </CommunityCard>
+        </div>
 
-
-        
-          <PostsCard>
-     
-            {renderLatestAllCreated }
-       
-            </PostsCard>
-
-      
-
+        <div className='PostsCard'>
+          {renderLatestAllCreated}
+        </div>
       </Container>
     </Home>
   )
 }
-
-
-const ArtCard = styled.div`
-  text-align: center;
-  overflow: hidden;
-  margin-bottom: 8px;
-  background-color: #F0F1F4;
-  border-radius: 5px;
-  transition: box-shadow 83ms;
-  position: relative;
-  border: none;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
-`;
-
-const Card = styled.div`
-  overflow: hidden;
-  margin-bottom: 8px;
-  background-color: #F0F1F4;
-  border-radius: 5px;
-  transition: box-shadow 83ms;
-  position: relative;
-  border: none;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 15%), 0 0 0 rgb(0 0 0 / 20%);
-`;
-
-
-const UserInfo = styled.div`
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  padding: 12px 12px 16px;
-  word-wrap: break-word;
-  word-break: break-word;
-`;
-
-const CardBackground = styled.div`
-  background: url("/photos/card-bg.svg");
-  background-position: center;
-  background-size: 462px;
-  height: 54px;
-  margin: -12px -12px 0;
-`;
-
-
 
 const Link = styled.div`
   font-size: 16px;
@@ -312,95 +257,12 @@ const AddPhotoText = styled.div`
   cursor:pointer;
 `;
 
-const Widget = styled.div`
-  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-  padding-top: 12px;
-  padding-bottom: 12px;
-  & > a {
-    text-decoration: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px 12px;
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.08);
-    }
-    div {
-      display: flex;
-      flex-direction: column;
-      text-align: left;
-      span {
-        font-size: 12px;
-        line-height: 1.333;
-        &:first-child {
-          color: rgba(0, 0, 0, 0.6);
-        }
-        &:nth-child(2) {
-          color: rgba(0, 0, 0, 1);
-        }
-      }
-    }
-  }
-  svg {
-    color: rgba(0, 0, 0, 1);
-  }
-`;
-
-const Item = styled.a`
-  border-color: rgba(0, 0, 0, 0.8);
-  text-align: left;
-  padding: 12px;
-  font-size: 12px;
-  display: block;
-  span {
-    display: flex;
-    align-items: center;
-    color: rgba(0, 0, 0, 1);
-    svg {
-      color: rgba(0, 0, 0, 0.6);
-    }
-  }
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.08);
-  }
-`;
-
-const CommunityCard = styled(ArtCard)`
-
-  padding: 8px 0 0;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  a {
-    color: black;
-    padding: 4px 12px 4px 12px;
-    font-size: 12px;
-    &:hover {
-      color: #0a66c2;
-    }
-    span {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      &:hover {
-        color: #0a66c2;
-      }
-    }
-    &:last-child {
-      color: rgba(0, 0, 0, 0.6);
-      text-decoration: none;
-      border-top: 1px solid #d6cec2;
-      padding: 12px;
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.08);
-      }
-    }
-  }
-`;
-
-const PostsCard = styled(Card)`
-  padding: 40px 5px 5px;
-  }
+const CardBackground = styled.div`
+  background: url("/photos/card-bg.svg");
+  background-position: center;
+  background-size: 462px;
+  height: 54px;
+  margin: -12px -12px 0;
 `;
 
 export default Profile

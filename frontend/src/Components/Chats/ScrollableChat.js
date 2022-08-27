@@ -1,17 +1,18 @@
 import { Avatar, Tooltip } from '@chakra-ui/react';
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
-import ScrollableFeed from "react-scrollable-feed";
 import { isFirstMessage, isLastMessage, isSameSender, isSameSenderMargin, isSameUser } from './ChatLogic';
 import Linkify from 'react-linkify';
+import ScrollToBottom from 'react-scroll-to-bottom';
 
-
-export default function ScrollableChat({ messages, user, src }) {
+export default function ScrollableChat({ messages, user }) {
+    
     const ext = (filename)=>{
         return filename.split('.').pop();
     }
+
     return (
-        <ScrollableFeed>
+        <ScrollToBottom className="messages">
             {messages &&
                 messages.map((m, i) => (
                     <div style={{ display: "flex" }} key={m._id}>
@@ -54,6 +55,6 @@ export default function ScrollableChat({ messages, user, src }) {
                         </span>
                     </div>
                 ))}
-        </ScrollableFeed>
+    </ScrollToBottom>
     )
 }

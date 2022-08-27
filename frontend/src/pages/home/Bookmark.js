@@ -37,18 +37,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Bookmark() {
-  const show = true
   const classes = useStyles()
   const auth = useSelector(state => state.auth)
   const userId = auth.user.id
-  const { posts } = useSelector((state) => state.posts);
-  const { questions } = useSelector((state) => state.questions);
-  const bookmarkedQuestions = questions.filter(question => question?.bookmarks?.includes(userId))
-  const bookmarkedPosts = posts.filter(post => post?.bookmarks?.includes(userId) && post.isDraft === false)
   const { postsQuestions, loading } = useSelector(state => state.all)
   const bookmarkedPostsQuestions = postsQuestions.filter(post => post?.bookmarks?.includes(userId))
-  console.log(bookmarkedPostsQuestions)
-  const { showAlert, openNote, setOpenNote, dispatch, liked } = useContext(HomeContext)
+  const { showAlert, openNote, dispatch, liked, t } = useContext(HomeContext)
 
   useEffect(() => {
     dispatch(getAllPosts())
@@ -76,17 +70,15 @@ function Bookmark() {
 
   return (
     <Home>
-      <Container className={classes.container}>
+      <Container className={`${classes.container} backgroundColor`}>
         {loading ?
 
           < CircularProgress size="3em" elevation={4} className={classes.loadingPaper} />
           :
           <>
 
-            <Grid className={classes.mainContainer} container spacing={3}>
-
-
-              {bookmarkedPostsQuestions.length > 0 ? renderPosts : <div className={classes.loadingPaper} style={{ color: 'gray' }}>No Bookmarks</div>}
+            <Grid className={classes.mainContainer} container rowSpacing={1} columnSpacing={{xs:1,sm:2,md:3}}>
+              {bookmarkedPostsQuestions.length > 0 ? renderPosts : <div className={classes.loadingPaper} style={{ color: 'gray' }}>{t('No Bookmarks')}</div>}
             </Grid>
           </>
         }

@@ -12,30 +12,8 @@ import { HomeContext } from '../../Context/HomeContext'
 import AddNote from './AddNote'
 import Home from './Home'
 
-const useStyles = makeStyles((theme) => ({
-    container: {
-        paddingTop: theme.spacing(8),
-        height: '100%',
-        backgroundColor: 'rgb(225, 228, 232)'
-    },
-    loadingPaper: {
-        display: 'flex',
-        justifyContent: 'center',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginTop: '250px'
-    },
-}));
-
 function Chats() {
     const { fetchAgain, setFetchAgain } = useContext(HomeContext)
-    const classes = useStyles()
-    const auth = useSelector(state => state.auth)
-    const user = {
-        isConnected: auth.isConnected,
-        role: auth.user.role
-    }
-
     return (
         <>
 

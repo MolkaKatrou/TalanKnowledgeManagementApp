@@ -4,6 +4,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { Add } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core'
 import SlidingPane from "react-sliding-pane";
+import LoadingButton from '@mui/lab/LoadingButton';
 import "react-sliding-pane/dist/react-sliding-pane.css";
 import QuillEditor from '../../Components/QuillEditor';
 import { createPost, deletePost, getAllPosts, updatePost } from '../../Redux/Actions/postsActions';
@@ -12,6 +13,8 @@ import { HomeContext } from '../../Context/HomeContext';
 import { createCategoryList } from '../../utils/functions';
 import toast from 'react-hot-toast';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import { DarkModeContext } from '../../Context/darkModeContext';
+import { getAllCategories } from '../../Redux/Actions/categoryAction';
 
 const Styles = makeStyles((theme) => ({
     fab: {
@@ -22,7 +25,12 @@ const Styles = makeStyles((theme) => ({
 
     SlidingPane: {
         backgroundColor: '#dedce6',
-        borderLeft:'1px solid #8a72ed',
+        borderLeft: '1px solid #8a72ed',
+    },
+
+    SlidingPanedark: {
+        backgroundColor: 'rgb(20, 20, 20)',
+        borderLeft: '1px solid #111',
     },
 
     buttons: {
@@ -44,9 +52,15 @@ export default function AddNote() {
     const { posts, loading } = useSelector((state) => state.posts);
     const post = useSelector((state) => (currentId ? posts?.find((p) => p?._id === currentId) : null));
     const [open, setOpen] = React.useState(false);
+    const { darkMode } = useContext(DarkModeContext)
+    const [loadingButton, setLoadingButton]=useState(false)
 
 
+  useEffect(() => {
+    dispatch(getAllCategories())
+  }, [])
   
+
     const onEditorChange = (value) => {
         setContent(value)
     }
@@ -55,7 +69,9 @@ export default function AddNote() {
         setFiles(files)
     }
 
-    useEffect(() => {
+
+
+    useEffect(() => { 
         if (post) {
             setTitle(post.title);
             setCategory(post.category._id);
@@ -74,9 +90,9 @@ export default function AddNote() {
     }
 
     const handleClickOpen = () => {
-        if (title && category && content && !currentId) {setOpen(true);}
-        else{Clear()}
-       };
+        if (title && category && content && !currentId) { setOpen(true); }
+        else { Clear() }
+    };
 
     const SaveDraft = (e) => {
         const variables = {
@@ -84,7 +100,7 @@ export default function AddNote() {
             category: category,
             title: title,
             content: content,
-            isDraft : true
+            isDraft: true
         }
         dispatch(createPost(variables));
         Clear()
@@ -99,24 +115,24 @@ export default function AddNote() {
             category: category,
             title: title,
             content: content,
-            isDraft : false,
+            isDraft: false,
         }
         if (!title || !category || !content) {
             toast.error(t('Fill all the fields to create your post'))
         }
         else {
             if (currentId === 0) {
-                dispatch(createPost(variables));
+                dispatch(createPost(variables, setLoadingButton));
                 dispatch(getAllPosts())
                 toast.success(t('Post successfully created'));
-                Clear()
+                if(!loadingButton){Clear()}
             }
-            else if (currentId && !post.isDraft) {  
+            else if (currentId && !post.isDraft) {
                 dispatch(updatePost(currentId, variables))
                 toast.success(t('Post successfully updated'));
                 Clear()
             }
-            else if(currentId && post.isDraft){
+            else if (currentId && post.isDraft) {
                 dispatch(createPost(variables));
                 dispatch(deletePost(post._id))
                 toast.success(t('Post successfully created'));
@@ -136,15 +152,13 @@ export default function AddNote() {
             </Tooltip>
 
             <SlidingPane
-                className={classes.SlidingPane}
+                className={darkMode ? classes.SlidingPanedark : classes.SlidingPane}
                 isOpen={openNote}
                 width={window.innerWidth < 600 ? "100%" : "58%"}
-                onRequestClose={Clear}
             >
-
                 <form>
                     <div className="form-group col-md-12">
-                        <label style={{ fontWeight: 'bold' }}> {t('Category')} <span className="required"> <span className="text-danger">*</span> </span> </label>
+                        <label style={{ fontWeight: 'bold', color: darkMode ? 'rgba(184, 173, 173, 0.4)' : '#111' }}> {t('Category')} <span className="required"> <span className="text-danger">*</span> </span> </label>
                         <select
                             className="form-control"
                             placeholder="Title"
@@ -152,22 +166,22 @@ export default function AddNote() {
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}>
 
-                            <option style={{ backgroundColor: '#dedce6' }} disabled value="">{t('Select a category')}</option>
+                            <option style={{ backgroundColor: darkMode ? 'rgb(20, 20, 20)' : '#dedce6', color: darkMode ? '#dedce6' : "black" }} disabled value="">{t('Select a category')}</option>
                             {
                                 createCategoryList(categoriesList.categories).map(option =>
-                                    <option style={{ backgroundColor: '#dedce6' }} value={option.value}>{option.name}</option>)
+                                    <option style={{ backgroundColor: darkMode ? 'rgb(20, 20, 20)' : '#dedce6', color: darkMode ? '#dedce6' : 'black' }} value={option.value}>{option.name}</option>)
                             }
 
                         </select>
                     </div>
                     <div className="form-group col-md-12 mt-3">
-                        <label style={{ fontWeight: 'bold' }}>{t('Title')} <span className="required"> <span className="text-danger">*</span> </span> </label>
+                        <label style={{ fontWeight: 'bold', color: darkMode ? 'rgba(184, 173, 173, 0.4)' : '#111' }}>{t('Title')} <span className="required"> <span className="text-danger">*</span> </span> </label>
                         <input
                             type="text"
                             name="title"
                             className='form-control'
                             placeholder={t("Title")}
-                            style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif' }}
+                            style={{ backgroundColor: 'transparent', fontFamily: 'sans-serif', color: darkMode ? 'rgba(255, 250, 222)' : 'black' }}
                             required
                             onChange={(e) => { setTitle(e.target.value) }}
                             value={title}
@@ -175,7 +189,7 @@ export default function AddNote() {
                         />
                     </div>
                     <div className="form-group col-md-12 editor mt-3">
-                        <label style={{ fontWeight: 'bold' }}> Note <span className="required"> <span className="text-danger">*</span> </span> </label>
+                        <label style={{ fontWeight: 'bold', color: darkMode ? 'rgba(184, 173, 173, 0.4)' : '#111' }}> Note <span className="required"> <span className="text-danger">*</span> </span> </label>
 
                         <QuillEditor
                             currentId={currentId}
@@ -189,28 +203,29 @@ export default function AddNote() {
                             <Button variant='outlined' style={{ fontFamily: 'PT Sans', fontWeight: 'bold' }} color="secondary" className='me-5' onClick={handleClickOpen}  >
                                 {t('Cancel')}
                             </Button>
-                            <Button variant='outlined' style={{ fontFamily: 'PT Sans', fontWeight: 'bold' }} color="primary" type='submit' onClick={onSubmit}>
+  
+                            <LoadingButton  loading={loadingButton} variant='outlined' style={{ fontFamily: 'PT Sans', fontWeight: 'bold' }} color="primary" type='submit' onClick={onSubmit}>             
                                 {currentId && post.isDraft === false ? t('Edit') : t('Create')}
-                            </Button>
+                            </LoadingButton> 
                         </div>
                         <Dialog
                             open={open}
                             aria-labelledby="alert-dialog-title"
                             aria-describedby="alert-dialog-description"
-                            
+
                         >
                             {/*<DialogTitle style={{color:'#626688', backgroundColor:'#E3E4E6', fontWeight:'700'}}>
                                 {"Want to save the post as a draft?"}
                         </DialogTitle>*/}
-                            <DialogContent style={{backgroundColor:'#E3E4E6'}}>
+                            <DialogContent style={{ backgroundColor: '#E3E4E6' }}>
                                 <DialogContentText id="alert-dialog-description" >
-                                {t('You can save this post and share it later from your drafts')}
+                                    {t('You can save this post and share it later from your drafts')}
                                 </DialogContentText>
                             </DialogContent>
-                            <DialogActions style={{backgroundColor:'#E3E4E6'}}>
+                            <DialogActions style={{ backgroundColor: '#E3E4E6' }}>
                                 <div className='mx-3 mt-2'>
-                                <Button className='mx-3' variant='outlined' color="primary"  onClick={Clear}>{t('Cancel')}</Button>
-                                <Button variant='contained'color="primary" onClick={SaveDraft} endIcon={<SaveAsIcon/>} autoFocus>{t('Save')}</Button>
+                                    <Button className='mx-3' variant='outlined' color="primary" onClick={Clear}>{t('Cancel')}</Button>
+                                    <Button variant='contained' color="primary" onClick={SaveDraft} endIcon={<SaveAsIcon />} autoFocus>{t('Save')}</Button>
                                 </div>
                             </DialogActions>
                         </Dialog>

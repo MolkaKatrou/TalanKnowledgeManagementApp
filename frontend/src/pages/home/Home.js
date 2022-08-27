@@ -43,7 +43,7 @@ const Home = ({ children }) => {
   const navigate = useNavigate()
   const { id } = useParams()
   const [filteredData, setFilteredData] = useState([]);
-  const { dispatch, search, setSearch } = useContext(HomeContext)
+  const { dispatch, search, setSearch, setLoading, loading } = useContext(HomeContext)
   const location = useLocation()
   const classes=useStyles()
 
@@ -58,7 +58,7 @@ const Home = ({ children }) => {
 
   const searchPost = async () => {
     if (search.trim()) {
-      dispatch(getPostsBySearch({ search }));
+      dispatch(getPostsBySearch({ search }, setLoading));
       if (location.pathname === '/Home') {
         navigate(`/Home/search?searchQuery=${search || 'none'}`);
       }
@@ -82,35 +82,33 @@ const Home = ({ children }) => {
 
     }
     else {
-
       if (location.pathname === `/Bookmarks/search`) {
         navigate('/Bookmarks');
-        dispatch(getAllPosts())
-        dispatch(getAllQuestions())
+        dispatch(getAllPosts(setLoading))
+        dispatch(getAllQuestions(setLoading))
       }
       else if (location.pathname === `/Drafts/search`) {
         navigate('/Drafts');
-        dispatch(getAllPosts())
-        dispatch(getAllQuestions())
+        dispatch(getAllPosts(setLoading))
+        dispatch(getAllQuestions(setLoading))
 
       }
       else if (location.pathname === `/category/${id}/notes/search`) {
         navigate(`/category/${id}/notes`);
-        dispatch(getAllPosts())
-        dispatch(getAllQuestions())
+        dispatch(getAllPosts(setLoading))
+        dispatch(getAllQuestions(setLoading))
 
       }
       else if (location.pathname === `/category/${id}/QA/search`) {
         navigate(`/category/${id}/QA`);
-        dispatch(getAllPosts())
-        dispatch(getAllQuestions())
+        dispatch(getAllPosts(setLoading))
+        dispatch(getAllQuestions(setLoading))
 
       }
       else {
         navigate('/Home');
-        dispatch(getAllPosts())
-        dispatch(getAllQuestions())
-
+        dispatch(getAllPosts(setLoading))
+        dispatch(getAllQuestions(setLoading))
       }
 
 
@@ -125,12 +123,9 @@ const Home = ({ children }) => {
   };
 
 
-  /*useEffect(() => {
-    dispatch(getAllPosts())
-    dispatch(getAllQuestions())
-    dispatch(getAllAnswers())
-    dispatch(getAll())
-  }, [openModal,showAlert,liked,openNote,dispatch])*/
+  useEffect(() => {
+    setLoading(false)
+  }, [])
 
   return (
 
@@ -160,7 +155,7 @@ const Home = ({ children }) => {
           <Grid item sm={2} xs={2} >
             <Sidebar user={user} />
           </Grid>
-          <Grid item sm={10} xs={10} className={classes.container}>
+          <Grid item sm={10} xs={10} className={`${classes.container} backgroundColor`}>
             <Box className='d-flex justify-content-between' style={{ padding: '10px', height: '100%', width: "100%" }}>        
                 {children}
             </Box>

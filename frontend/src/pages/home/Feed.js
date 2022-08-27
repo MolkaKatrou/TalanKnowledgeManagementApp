@@ -11,6 +11,8 @@ import Alert from '@mui/material/Alert';
 import { getAllAnswers, getAllQuestions } from '../../Redux/Actions/questionsActions';
 import { Button, Divider } from 'semantic-ui-react';
 import axios from 'axios';
+import { ChakraProvider } from '@chakra-ui/react';
+import PostsLoading from '../../Components/PostsLoading';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -46,7 +48,7 @@ function Feed() {
   const [notes, setNotes] = useState(true)
   const [qa, setQa] = useState(true)
   const FollowedNotesAndQuestions = FollowedPosts?.concat(FollowedQuestions);
-  const {t, showAlert, dispatch, openNote, liked, search, setSearch, openModal, showVerified  } = useContext(HomeContext)
+  const {t, showAlert, dispatch, openNote, liked, search, setSearch, openModal, showVerified, loading  } = useContext(HomeContext)
 
   useEffect(() => {
     dispatch(getAllPosts())
@@ -108,24 +110,27 @@ function Feed() {
 
   return (
     <Home>
-      <Container className={classes.container}>
+      <Container className={`${classes.container} backgroundColor`}>
       {showVerified ? <Alert severity="success" style={{backgroundColor:'#64A85E82'}}>{t('Your account has been successfully verified, welcome!')}</Alert> : ""}
         <div className="main-tabs-home mt-3">
-          <Button.Group widths='3'>
-            <Button onClick={handleAll}> {t('All')}</Button>
-            <Button onClick={handleNotes}> {t('Notes')}</Button>
-            <Button onClick={handleQa}> {t('Questions/Answers')}</Button>
+          <Button.Group widths='3' className='buttonGroup'>
+            <Button active={ notes && qa ? 'true' : ''}  className='buttonGroup' onClick={handleAll}> {t('All')}</Button>
+            <Button active={ notes && !qa ? 'true' : ''}  className='buttonGroup' onClick={handleNotes}> {t('Notes')}</Button>
+            <Button active={ !notes && qa ? 'true' : ''}  className='buttonGroup' onClick={handleQa}> {t('Questions/Answers')}</Button>
           </Button.Group>
         </div>
 
         <Divider className='mb-4' />
 
         {postsList.loading ?
-
           < CircularProgress size="3em" elevation={4} className={classes.loadingPaper} />
-          :
+          : loading ?
+          <ChakraProvider>
+            <PostsLoading/>
+          </ChakraProvider> :
           notes && qa ? renderLatestAll : notes && !qa ? renderLatestPosts : renderLatestQuestions
         }
+           
       </Container>
     </Home>
   )

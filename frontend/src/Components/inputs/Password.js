@@ -16,7 +16,7 @@ function Passwordinput({ onChangeHandler,onKeyDown, value, name, placeholder, ic
   return (
         <div className="mb-3">
         <div className="input-group">
-          <span style={{ backgroundColor: 'transparent'}}  className="input-group-text" >
+          <span style={{ backgroundColor: 'transparent'}}  className="input-group-text dark" >
             <i className={icon}></i>
           </span>
                     <input
@@ -29,7 +29,7 @@ function Passwordinput({ onChangeHandler,onKeyDown, value, name, placeholder, ic
                         className={(classnames("form-control password-input", {"is-invalid" : errors}))}                        
                         placeholder={placeholder} />
                     
-                        <span style={{ backgroundColor: 'transparent'}} className="input-group-text" onClick={togglePassword}>
+                        <span style={{ backgroundColor: 'transparent'}} className="input-group-text dark" onClick={togglePassword}>
                             {type === "password" ? <i className="fa fa-eye-slash" aria-hidden="true"></i> : <i className="fa fa-eye"></i>}
                         </span>
                    

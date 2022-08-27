@@ -106,21 +106,16 @@ function MainQuestion() {
 
   return (
     <Home>
-      <Container className={classes.container}>
+      <Container className={`${classes.container} backgroundColor`}>
         {loading ?
           <CircularProgress size="1em" elevation={2} className={classes.loadingPaper} />
           :
 
           <div className="main">
             <div className="main-container">
-
-
-           
                 <Grid key={filteredQuestion?._id}>
                   <QuestionAnswer question={filteredQuestion} />
                 </Grid>
-              
-
               <div style={{ flexDirection: "column" }} className="all-questions">
                 <div className="d-flex justify-content-between">
                   <div
@@ -133,9 +128,9 @@ function MainQuestion() {
                   </div>
                   <ChakraProvider>
                     <Stack spacing={3}>
-                      <Select variant='filled' style={{ backgroundColor: 'rgb(233, 233, 227)' }} onChange={(e) => handleChange(e.target.value)} >
-                        <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='newest' >{t('Newest answers')}</option>
-                        <option style={{ backgroundColor: 'rgb(233, 233, 227)' }} value='popular' >{t('Most popular answers')}</option>
+                      <Select variant='filled' className='select-questions' onChange={(e) => handleChange(e.target.value)} >
+                        <option className='select-questions' value='newest' >{t('Newest answers')}</option>
+                        <option className='select-questions' value='popular' >{t('Most popular answers')}</option>
                       </Select>
                     </Stack>
 
@@ -159,14 +154,8 @@ function MainQuestion() {
                         answer={answer}
                       />
                     </Grid>
-                  )
-                  )
+                  ))
                 }
-
-
-
-
-
 
               </div>
             </div>

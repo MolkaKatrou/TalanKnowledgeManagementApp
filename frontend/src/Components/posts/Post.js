@@ -15,11 +15,14 @@ import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import moment from 'moment';
 import { HomeContext } from '../../Context/HomeContext';
-import { Menu, MenuButton, MenuList, MenuItem, Avatar } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, Avatar, Button } from "@chakra-ui/react";
 import { ChakraProvider } from '@chakra-ui/react'
 import { Confirm } from 'semantic-ui-react'
 //import ReactHtmlParser from "react-html-parser";
 import toast from 'react-hot-toast';
+import Delete from '@mui/icons-material/Delete';
+
+
 
 const ITEM_HEIGHT = 48;
 
@@ -96,24 +99,24 @@ export default function Post({ post }) {
         ? (
           <BookmarkIcon style={{ color: '#937474' }} />
         ) : (
-          <BookmarkOutlinedIcon />
+          <BookmarkOutlinedIcon className='info-post'/>
         );
     }
 
-    return <BookmarkOutlinedIcon />
+    return <BookmarkOutlinedIcon className='info-post' />
   };
 
   const Likes = () => {
     if (likes?.length > 0) {
       return likes?.find((like) => like === userId)
         ? (
-          <><FavoriteIcon style={{ color: '#DA3131' }} />&nbsp;<span style={{ fontSize: '16px' }}>{likes?.length > 2 ? t(`You and ${likes?.length - 1} others`) : `${likes?.length} ${t('Like')}${likes?.length > 1 ? 's' : ''}`}</span></>
+          <><FavoriteIcon style={{ color: '#DA3131' }} />&nbsp;<span className='info-post' style={{ fontSize: '16px' }}>{likes?.length > 2 ? t(`You and ${likes?.length - 1} others`) : `${likes?.length} ${t('Like')}${likes?.length > 1 ? 's' : ''}`}</span></>
         ) : (
-          <><FavoriteOutlinedIcon />&nbsp;<span style={{ fontSize: '16px' }}>{likes?.length} {likes?.length === 1 ? t('Like') : t('Likes')}</span></>
+          <><FavoriteOutlinedIcon className='info-post' />&nbsp;<span className='info-post' style={{ fontSize: '16px' }}>{likes?.length} {likes?.length === 1 ? t('Like') : t('Likes')}</span></>
         );
     }
 
-    return <><FavoriteOutlinedIcon />&nbsp;<span style={{ fontSize: '16px' }}>{t('Like')}</span></>;
+    return <><FavoriteOutlinedIcon className='info-post' />&nbsp;<span className='info-post' style={{ fontSize: '16px' }}>{t('Like')}</span></>;
   };
 
   const handleLike = async () => {
@@ -147,7 +150,7 @@ export default function Post({ post }) {
 
   return (
     <ChakraProvider>
-      <Card className={classes.card} style={{ border: post.isDraft ? '1px solid #856565' : '' }}>
+      <Card className={`${classes.card} card-color`} style={{ border: post.isDraft ? '1px solid #856565' : '' }}>
         <CardHeader
           avatar={
             <ChakraProvider>
@@ -163,7 +166,7 @@ export default function Post({ post }) {
                 auth.user.email === post?.createdby?.email ? (
                   <Menu isLazy>
                     <MenuButton><MoreVertIcon /></MenuButton>
-                    <MenuList>
+                    <MenuList className='backgroundColor'>
                       <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
                         onClick={() => { setOpen(true) }}
                       >
@@ -179,13 +182,14 @@ export default function Post({ post }) {
                 ) : ('')
               }
               <Confirm
-                confirmButton={t("Delete Post")}
+                confirmButton={t("Delete Post")} 
                 cancelButton={t('Cancel')}
                 content={t('Are you sure you want to delete this post?')}
                 open={open}
                 onCancel={() => { setOpen(false) }}
                 onConfirm={DeletePost}
-                style={{ height: '22%' }}
+                style={{ height: '19%', overflow:'hidden'}}
+                className='backgroundColor'
               />
             </>
 
@@ -206,20 +210,21 @@ export default function Post({ post }) {
 
             </div>
           }
-          subheader={<div className='d-flex'>
+          subheader={
+          <div className='d-flex info-post'>
             {moment(post?.createdAt).fromNow()}
 
             {post.createdAt !== post.updated_At && post.isDraft === false ? 
-            <div className='d-flex' >
-
-              <div style={{fontWeight:'700'}} className='mx-2'>{t('Updated')} </div>{` ${moment(post?.updated_At).fromNow()}`} 
-              </div> : ''}
+            <p className='d-flex'>
+              <span style={{fontWeight:'700'}} className='mx-2'>{t('updated')} </span>
+                {`${moment(post?.updated_At).fromNow()}`} 
+              </p> : ''}
 
           </div>}
         >
         </CardHeader>
         <CardContent>
-          <Typography component={'div'} style={{ fontWeight: '550', fontFamily: 'Raleway,sans-serif', fontSize: '16px' }}>
+          <Typography component={'div'} style={{ fontWeight: '550', fontFamily: 'Raleway,sans-serif', fontSize: '16px' }} onClick={() => navigate(`/post/${post?._id}`)}>
             {post.title}
           </Typography>
           <div className='card-content mt-3' dangerouslySetInnerHTML={{__html: post?.content}}/>
@@ -230,8 +235,8 @@ export default function Post({ post }) {
               <Likes />
             </IconButton>
             <IconButton onClick={() => navigate(`/post/${post?._id}`)} className="MyCustomButton" >
-              <CommentIcon fontSize="small" />&nbsp;
-              <span style={{ fontSize: '16px' }}>{post?.comments?.length} {t('Comments')}</span>
+              <CommentIcon className='info-post' fontSize="small" />&nbsp;
+              <span className='info-post' style={{ fontSize: '16px' }}>{post?.comments?.length} {t('Comments')}</span>
             </IconButton>
             <IconButton onClick={handleBookmark} className="MyCustomButton">
               <Bookmarks />

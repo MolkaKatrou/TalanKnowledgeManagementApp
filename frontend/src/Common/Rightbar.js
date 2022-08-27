@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     position: "fixed",
     background: 'rgb(225, 228, 232)',
     top: 0,
-    border: "1px solid #aaa",
+    borderLeft: "1px solid #aaa",
     borderRight: 'none'
   }
 }));
@@ -56,7 +56,7 @@ const Rightbar = () => {
   }, [dispatch])
 
   return (
-    <Container className={classes.container}>
+    <Container className={`${classes.container} backgroundColor`}>
       <Box position="fixed" width={300}>
 
         <ChakraProvider>

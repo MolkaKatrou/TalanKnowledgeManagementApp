@@ -1,12 +1,17 @@
-FROM node:latest
+FROM node:16
 
-WORKDIR /usr/src/app
+WORKDIR /src
 
-COPY package*.json ./
+COPY package.json ./
+COPY package-lock.json ./
 
-RUN npm install --force
+RUN rm -rf node_modules
 
-COPY . .
+RUN npm install
+RUN npm i react-scripts
+RUN npm rebuild node-sass
+
+COPY . ./
 
 EXPOSE 3000 
 

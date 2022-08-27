@@ -1,35 +1,26 @@
 import "./new.scss";
 import React, { useContext, useEffect, useState } from "react";
-import AdminInput from "../../../Components/inputs/AdminInput";
-import Alert from '@mui/material/Alert';
-import AdminRoleOption from "../../../Components/inputs/AdminRoleOption";
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { AddProfile } from '../../../Redux/Actions/authActions'
-import axios from "axios";
 import Sidebar from "../../../Components/sidebar/Sidebar";
 import Navbar from "../../../Components/navbar/Navbar";
-import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import AdminUserInput from "../../../Components/inputs/AdminUserInput";
-import add from '../../../images/add-user.png'
-import { Box, Button, FormControl, MenuItem, Select, TextField } from "@mui/material";
+import { Box, FormControl, MenuItem, Select, TextField } from "@mui/material";
 import { createCategoryList } from "../../../utils/functions";
 import { ColorPicker, createColor } from "material-ui-color";
 import { HomeContext } from "../../../Context/HomeContext";
 import { createCategory, getAllCategories } from "../../../Redux/Actions/categoryAction";
 import toast from "react-hot-toast";
+import { DarkModeContext } from "../../../Context/darkModeContext";
 
 const Categorynew = ({ title }) => {
     const { t } = useContext(HomeContext)
-    const navigate = useNavigate()
     const dispatch = useDispatch()
     const categoriesList = useSelector(state => state.categories)
     const [category, setCategory] = useState('')
-    const [categories, setCategories] = useState([]);
     const [parentCategoryId, SetParentCategoryId] = useState('')
-    const [show, setShow] = useState(false)
     const categoriesResult = categoriesList.categories
     const [color, setColor] = useState(createColor(""));
+    const {darkMode} = useContext(DarkModeContext)
 
     const ChangeColor = (value) => {
         setColor(value);
@@ -43,16 +34,16 @@ const Categorynew = ({ title }) => {
         }
 
         if (!category) {
-            toast.error('Choose a category name');
+            toast.error(t('Choose a category name'));
             return;
         }
         if (createCategoryList(categoriesResult).find((c) => c.name.toLowerCase() === category.toLowerCase())) {
-            toast.error('This category already exists');
+            toast.error(t('This category already exists'));
             return;
         }
 
         dispatch(createCategory(form));
-        toast.success('Category successfully created');
+        toast.success(t('Category successfully created'));
         setCategory('')
         SetParentCategoryId('')
     }
@@ -75,7 +66,7 @@ const Categorynew = ({ title }) => {
                 <div className="bottom">
                     <form onSubmit={AddCategory}>
                         <div>
-                            <label style={{ fontWeight: 'bold' }}>Category<span className="text-danger">*</span></label>
+                            <label style={{ fontWeight: 'bold' }}>{t('Category')}<span className="text-danger">*</span></label>
                             <TextField
                                 autoFocus
                                 margin="dense"
@@ -90,7 +81,7 @@ const Categorynew = ({ title }) => {
 
                          
                             <FormControl sx={{ m: 0, minWidth: 250 }} className='mt-5'>
-                            <label style={{ fontWeight: 'bold' }}>Parent Category<span className="text-danger">*</span></label>
+                            <label style={{ fontWeight: 'bold' }}>{t('Parent Category')}<span className="text-danger">*</span></label>
                                 <Select
                                     value={parentCategoryId}
                                     onChange={(e) => { SetParentCategoryId(e.target.value) }}
@@ -98,12 +89,12 @@ const Categorynew = ({ title }) => {
                                     className='mt-3 dark-input'
 
                                 >
-                                    <MenuItem value="">
+                                    <MenuItem className='dark'  value="">
                                         <em>None</em>
                                     </MenuItem>
                                     {
                                         createCategoryList(categoriesList.categories).map(option =>
-                                            <MenuItem value={option.value}>{option.name}</MenuItem>
+                                            <MenuItem className='dark' value={option.value}>{option.name}</MenuItem>
                                         )
                                     }
 
@@ -111,11 +102,11 @@ const Categorynew = ({ title }) => {
                             </FormControl>
                             
                             <Box my={4} >
-                            <label style={{ fontWeight: 'bold' }}>Category Color<span className="text-danger mt-2">*</span></label>
-                                <ColorPicker className='mt-4 dark-input' placeholder='Choose a color' value={color} onChange={ChangeColor} />
+                            <label style={{ fontWeight: 'bold' }}>{t('Category Color')}<span className="text-danger mt-2">*</span></label>
+                                <ColorPicker className='mt-4 dark-input dark' placeholder='Choose a color' value={color} onChange={ChangeColor} />
                             </Box>
                         </div>
-                        <button className="btn btn-success mt-3" type="submit"> Add Category </button>
+                        <button className="btn btn-success mt-3" type="submit"> {t('Add Category')} </button>
                     </form>
                 </div>
             </div>

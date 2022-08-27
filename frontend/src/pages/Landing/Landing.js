@@ -11,11 +11,11 @@ export default function Landing () {
   return (
     <>
     <Navbar/>
-    <section className="home-container">
+    <section className="home-container backgroundColor">
       <div className="home-wrapper">
       <img src={image1}/>
       <div className="Left-wrapper">
-      <h1>{t('Landing1')}</h1>
+      <h1 className='login-h2'>{t('Landing1')}</h1>
       <h2>{t('Landing2')} </h2>
       <div className="get-started">
         <Button

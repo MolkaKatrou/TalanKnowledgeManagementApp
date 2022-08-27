@@ -1,17 +1,18 @@
 import moment from 'moment'
 import React, { useContext, useEffect, useState } from 'react'
 import TextArea from "react-textarea-autosize";
-import { commentPost, deleteComment, updateComment } from '../../Redux/Actions/postsActions'
-import { Comment, Confirm } from 'semantic-ui-react'
-import toast from 'react-hot-toast'
+import { deleteComment, updateComment } from '../../Redux/Actions/postsActions';
+import { Comment, Confirm } from 'semantic-ui-react';
+import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Button, ChakraProvider } from '@chakra-ui/react';
 import { HomeContext } from '../../Context/HomeContext';
-import { Box, Divider } from '@material-ui/core'
+import { Divider } from '@material-ui/core'
 import CommnetArea from './CommnetArea';
 
 
 export default function SingleComment({ c, parentId = null, handleSubmitReply, replies, activeComment, setActiveComment }) {
+    const comment = c?.comment.replace(/(\@.*\ )/gi, match => <span style="color: blue"> {match} </span>);
     const auth = useSelector(state => state.auth)
     const [open, setOpen] = useState(false)
     const [text, setText] = useState(c.comment)
@@ -44,6 +45,7 @@ export default function SingleComment({ c, parentId = null, handleSubmitReply, r
     }
 
     return (
+        <>
         <Comment.Group>
             <Comment >
                 <ChakraProvider>
@@ -51,8 +53,8 @@ export default function SingleComment({ c, parentId = null, handleSubmitReply, r
                 </ChakraProvider>
                 <Comment.Content style={{ marginTop: '-35px' }} className='mx-5'>
                     <Comment.Metadata className='mx-2 d-flex'>
-                        <Comment.Author as='a'>{c?.user?.fullname}</Comment.Author>
-                        <div>{moment(c?.createdAt).fromNow()}</div>
+                        <Comment.Author as='a'><div className='info-post'>{c?.user?.fullname}</div></Comment.Author>
+                        <div className='info-post'>{moment(c?.createdAt).fromNow()}</div>
                         {auth.user.id === c?.user?._id ?
                             <div className='d-flex'>
                                 <div className='mx-2' style={{ cursor: 'pointer', color: 'gray' }} onClick={() => setActiveComment({ id: c._id, type: 'editing' })} >Edit</div>
@@ -66,10 +68,13 @@ export default function SingleComment({ c, parentId = null, handleSubmitReply, r
                             open={open}
                             onCancel={() => { setOpen(false) }}
                             onConfirm={() => { DeleteComment(c._id) }}
-                            style={{ height: '22%' }}
+                            style={{ height: '19%', overflow: 'hidden' }}
                         />
                     </Comment.Metadata>
-                    {!isEditing && <Comment.Text className='mx-2'> {c.comment}</Comment.Text>}
+                    {!isEditing &&
+                        <Comment.Text className='mx-2'>
+                            <div className='dark' dangerouslySetInnerHTML={{ __html: c.comment }}></div>
+                        </Comment.Text>}
                     {isEditing &&
                         <div>
                             <TextArea
@@ -95,7 +100,10 @@ export default function SingleComment({ c, parentId = null, handleSubmitReply, r
                 </Comment.Content>
             </Comment>
             {isReplying && (
-                <CommnetArea handleSubmit={handleSubmitReply} hasCancelButton={true} handleCancel={handleCancel} />
+                <CommnetArea
+                    handleSubmit={handleSubmitReply}
+                    hasCancelButton={true}
+                    handleCancel={handleCancel} />
             )}
             {replies.length > 0 && (
                 <div className='mx-5 mt-4'>
@@ -112,5 +120,7 @@ export default function SingleComment({ c, parentId = null, handleSubmitReply, r
             )}
             <Divider className='my-1' />
         </Comment.Group>
+
+        </>
     )
 }

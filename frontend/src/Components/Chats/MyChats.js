@@ -12,8 +12,10 @@ import { useSelector } from "react-redux";
 import { getSender, getSenderPic } from "./ChatLogic";
 import GroupChatModal from "./GroupChatModal";
 import SearchIcon from '@mui/icons-material/Search';
+import { DarkModeContext } from "../../Context/darkModeContext";
 
 const MyChats = ({ fetchAgain }) => {
+    const {darkMode} = useContext(DarkModeContext)
     const auth = useSelector(state => state.auth)
     const {t, chats, setChats, selectedChat, setSelectedChat, notification, setNotification } = useContext(HomeContext)
     const [search, setSearch] = useState("");
@@ -97,6 +99,7 @@ const MyChats = ({ fetchAgain }) => {
                 alignItems="center"
                 p={3}
                 bg="#D4D2DD"
+                className="chats"
                 w={{ base: "100%", md: "31%" }}
                 borderRadius="lg"
                 borderWidth="1px"
@@ -111,7 +114,7 @@ const MyChats = ({ fetchAgain }) => {
                     justifyContent="space-between"
                     alignItems="center"
                 >
-                    <Button onClick={onOpen}  variant='outline' borderColor='blue.500' fontSize={{ base: "17px", md: "10px", lg: "11px" }} colorScheme='blackAlpha'>{t('My Chats')}</Button>
+                    <Button onClick={onOpen} className='item'  variant='outline' borderColor='blue.500' fontSize={{ base: "17px", md: "10px", lg: "11px" }} colorScheme='blackAlpha'>{t('My Chats')}</Button>
                     <GroupChatModal>
                         <Button
                      colorScheme='telegram' variant='solid'
@@ -129,6 +132,7 @@ const MyChats = ({ fetchAgain }) => {
                     flexDir="column"
                     p={3}
                     bg="#D4D2DD"
+                    className="chats"
                     w="100%"
                     h="100%"
                     borderRadius="lg"
@@ -197,17 +201,19 @@ const MyChats = ({ fetchAgain }) => {
             </Box>
             <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
                 <DrawerOverlay />
-                <DrawerContent style={{ backgroundColor: 'rgb(225, 228, 232)' }}>
-                    <DrawerHeader borderBottomWidth='1px'>{t('Search Collaborators')}</DrawerHeader>
+                <DrawerContent style={{ backgroundColor: darkMode ? 'rgb(31, 30, 30)': 'rgb(225, 228, 232)' }}>
+                    <DrawerHeader style={{ color: darkMode ? 'white': 'black' }} borderBottomWidth='1px'>{t('Search Collaborators')}</DrawerHeader>
                     <DrawerBody>
                         <Box d="flex" pb={2}>
                             <InputGroup>
                                 <InputLeftElement
-                                    pointerEvents='none'
-                                    children={<SearchIcon color='gray.300' />}
+                                    pointerEvents='none'  
+                                    color= {darkMode ? 'gray.300' :'gray.500'}            
+                                    children={<SearchIcon/>}
                                 />
                                 <Input
                                     variant='outline'
+                                    color= {darkMode ? 'gray.300' :'gray.800'}   
                                     placeholder="Search by name or email"
                                     _placeholder={{ opacity: 1, color: 'gray.500' }}
                                     mr={2}

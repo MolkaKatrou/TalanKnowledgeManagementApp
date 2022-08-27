@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button } from '../Components/Button';
 import logo from '../images/logo.png'
+import logoDark from '../images/dark-logo2.png'
+
 import '../assets/Navbar.css';
 import { NavLink, Link } from 'react-router-dom';
 import i18next from 'i18next'
 import classNames from 'classnames'
 import { HomeContext } from '../Context/HomeContext';
+import { DarkModeContext } from '../Context/darkModeContext';
 
 const GlobeIcon = ({ width = 24, height = 24 }) => (
   <svg
@@ -39,16 +42,21 @@ function Navbar() {
 
   window.addEventListener('resize', showButton);
   const {  t,languages,currentLanguageCode} = useContext(HomeContext)
+  const {darkMode}= useContext(DarkModeContext)
 
   return (
     <>
-      <nav className='navbar'>
+      <nav className='navbar backgroundColor'>
         <div className='navbar-container'>
           <NavLink
             to='/'
             className='navbar-logo'
             onClick={handleClick}>
-            <img className='mb-3' style={{ width: "98px" }} src={logo} alt='logo' />
+              {darkMode ?
+              <img className='mb-3' style={{marginTop:'-20px', width: "110px" }} src={logoDark} alt='logo' />:
+              <img className='mb-3' style={{ width: "98px" }} src={logo} alt='logo' />
+              }
+            
           </NavLink>
           
           <div className='menu-icon' onClick={handleClick}>
@@ -57,7 +65,7 @@ function Navbar() {
 
           
 
-          <div className={click ? 'nav-menu active' : 'nav-menu'}>
+          <div className={click ? 'nav-menu active backgroundColor' : 'nav-menu'}>
          
           <div className="dropdown nav-item" style={{marginTop:'20px'}}>
             <button
@@ -99,15 +107,15 @@ function Navbar() {
             <li className='nav-item'>
               <NavLink
                 to="/"
-                className='nav-links'
+                className='nav-links dark'
                 onClick={handleClick}>
                 Home
               </NavLink>
             </li>
-            <li className='nav-item'>
+            <li className='nav-item '>
               <NavLink
                 to="/about"
-                className='nav-links'
+                className='nav-links dark'
                 onClick={handleClick}
               >
                 {t('About')}
@@ -116,7 +124,7 @@ function Navbar() {
             <li>
               <NavLink
                 to="/login"
-                className='nav-links-mobile'
+                className='nav-links-mobile '
                 onClick={handleClick}
               >
                 {t('SignIn')}

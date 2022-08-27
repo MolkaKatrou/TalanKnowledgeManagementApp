@@ -2,14 +2,11 @@ import { Avatar, Button, ChakraProvider } from '@chakra-ui/react'
 import { Box } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { useContext } from 'react';
-import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
-import TextArea from "react-textarea-autosize";
 import { HomeContext } from '../../Context/HomeContext';
 import Picker from "emoji-picker-react";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import styled from "styled-components";
-
 import { MentionsInput, Mention } from 'react-mentions'
 import { getAllUsers } from '../../Redux/Actions/authActions';
 import defaultStyle from './defaultStyle';

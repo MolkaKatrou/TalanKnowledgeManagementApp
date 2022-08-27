@@ -27,8 +27,20 @@ const useStyles = makeStyles((theme) => ({
     "&.active": {
       backgroundColor: '--tree-view-bg-color'
     },
+    '&:hover': {
+      backgroundColor: '--tree-view-bg-color',
+      color:'gray',
+    },
+  },
+
+  text:{
+    '&:hover': {
+      color:'var(--tree-view-color)',
+    },
   },
 }));
+
+
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -39,7 +51,8 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
     padding: theme.spacing(0.3),
     fontWeight: theme.typography.fontWeightMedium,
     '&:hover': {
-      backgroundColor: CustomizedTheme.palette.action.hover,
+      backgroundColor: '--tree-view-bg-color',
+      color:'inherit',
     },
 
     '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
@@ -79,8 +92,8 @@ export default function StyledTreeItem(props) {
           key={Id}
           nodeId={Id}
           label={
-            <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5, pr: 2 }} className={classes.ListItem}>
-              <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}  component={NavLink} to={`/category/${Id}/notes`} >
+            <Box sx={{ display: 'flex', alignItems: 'center', p: 0.5, pr: 2 }} className={`${classes.ListItem} dark`}>
+              <Typography className={classes.text} variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}  component={NavLink} to={`/category/${Id}/notes`} >
                 {labelText}
               </Typography>
               <ChakraProvider>
@@ -89,7 +102,7 @@ export default function StyledTreeItem(props) {
                 auth.user.email === createdby?.email ? (
                   <Menu>
                     <MenuButton className='checkbox'><MoreHorizIcon style={{ width: '15px' }} /></MenuButton>
-                    <MenuList style={{ background: 'white', width: '150px' }}>
+                    <MenuList className='backgroundColor' style={{position:'sticky' ,color:'gray', width: '150px' }}>
                       <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
                         onClick={()=>{OnDelete(Id)}}
                       >

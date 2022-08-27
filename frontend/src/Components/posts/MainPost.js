@@ -62,24 +62,24 @@ export default function MainPost({ post }) {
         ? (
           <BookmarkIcon style={{ color: '#937474' }} />
         ) : (
-          <BookmarkOutlinedIcon />
+          <BookmarkOutlinedIcon className='info-post' />
         );
     }
 
-    return <BookmarkOutlinedIcon />
+    return <BookmarkOutlinedIcon className='info-post' />
   };
 
   const Likes = () => {
     if (likes?.length > 0) {
       return likes?.find((like) => like === userId)
         ? (
-          <><FavoriteIcon style={{ color: '#DA3131' }} />&nbsp;<span style={{ fontSize: '16px' }}>{likes?.length > 2 ? t(`You and ${likes?.length - 1} others`) : `${likes?.length} ${t('Like')}${likes?.length > 1 ? 's' : ''}`}</span></>
+          <><FavoriteIcon style={{ color: '#DA3131' }} />&nbsp;<span className='info-post' style={{ fontSize: '16px' }}>{likes?.length > 2 ? t(`You and ${likes?.length - 1} others`) : `${likes?.length} ${t('Like')}${likes?.length > 1 ? 's' : ''}`}</span></>
         ) : (
-          <><FavoriteOutlinedIcon />&nbsp;<span style={{ fontSize: '16px' }}>{likes.length} {likes?.length === 1 ? t('Like') : t('Likes')}</span></>
+          <><FavoriteOutlinedIcon className='info-post' />&nbsp;<span className='info-post' style={{ fontSize: '16px' }}>{likes.length} {likes?.length === 1 ? t('Like') : t('Likes')}</span></>
         );
     }
 
-    return <><FavoriteOutlinedIcon />&nbsp;<span style={{ fontSize: '16px' }}>{t('Like')}</span></>;
+    return <><FavoriteOutlinedIcon className='info-post' />&nbsp;<span className='info-post' style={{ fontSize: '16px' }}>{t('Like')}</span></>;
   };
 
   const handleLike = async () => {

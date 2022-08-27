@@ -12,7 +12,7 @@ import { HomeContext } from '../../Context/HomeContext';
 function Cards() {
   const {t} = useContext(HomeContext)
   return (
-    <div className='cards'>
+    <div className='cards backgroundColor'>
       <h1 className='h1'>{t('offer')}</h1>
       <div className='cards__container'>
         <div className='cards__wrapper'>

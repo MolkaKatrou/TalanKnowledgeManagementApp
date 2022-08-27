@@ -13,15 +13,15 @@ function AdminRoleOption({ name, onChangeHandler, errors, value, label }) {
                 value={value}
                 onChange={onChangeHandler}
                 name={name}
-                className={(classnames("form-control select", { "is-invalid": errors }))}
+                className={(classnames("form-control dark", { "is-invalid": errors }))}
             >
-                <option disabled selected>Select the job</option>
-                <option >Fullstack Developer</option>
-                <option>BI consultant</option>
-                <option >Devops Developer</option>
-                <option >IT Business Analyst </option>
-                <option >Production support engineer</option>
-                <option >Java Software Engineer</option>
+                <option className='backgroundColor dark' disabled selected>Select the job</option>
+                <option className='backgroundColor dark'  >Fullstack Developer</option>
+                <option className='backgroundColor dark'>BI consultant</option>
+                <option className='backgroundColor dark' >Devops Developer</option>
+                <option className='backgroundColor dark' >IT Business Analyst </option>
+                <option className='backgroundColor dark'>Production support engineer</option>
+                <option className='backgroundColor dark' >Java Software Engineer</option>
 
             </select>
             {

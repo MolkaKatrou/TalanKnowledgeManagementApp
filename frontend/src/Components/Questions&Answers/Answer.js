@@ -10,11 +10,12 @@ import { HomeContext } from "../../Context/HomeContext";
 import { DownVoteAnswer, UpVoteAnswer, deleteAnswer, CommentAnswer, deleteAnswerComment, getAllAnswers, updateAnswer } from "../../Redux/Actions/questionsActions";
 import { Confirm } from "semantic-ui-react";
 import toast from "react-hot-toast";
-//import ReactHtmlParser from "react-html-parser";
 import ReactQuill from "react-quill";
 import Editor from "react-quill/lib/index";
-import { getAllPosts } from "../../Redux/Actions/postsActions";
 import AnswerComment from "./AnswerComment";
+import Delete from '@mui/icons-material/Delete';
+
+
 
 
 
@@ -151,31 +152,27 @@ function Answer({ answer }) {
 
     return (
         <div className="mb-2">
-            <div style={{ backgroundColor: '#cacfd4' }}>
+            <div className="answer-container">
                 <div className="d-flex justify-content-between author-answer">
                     <div className=" mt-2 d-flex flex-row my-2 ">
                         <ChakraProvider>
                             <Avatar name={answer.createdby.fullname} src={answer.createdby.pic} size='sm' style={{ height: 32, width: 32 }} className='mx-2' />
                         </ChakraProvider>
-
-
-                        <Box className="mt-2 mx-2" style={{ fontWeight: '600' }}> {answer.createdby.fullname}</Box>
-                        <Box className="mt-2 mx-2 me-2" style={{ color: 'grey' }}>{`Answered ${moment(answer.createdAt).fromNow()}`}</Box>
+                        <Box className=" mx-2 author-infos" style={{ fontWeight: '600', marginTop:'5px'  }}> {answer.createdby.fullname}</Box>
+                        <Box className="mx-2 me-2" style={{ color: 'grey' , marginTop:'5px' }}>{`Answered ${moment(answer.createdAt).fromNow()}`}</Box>
                         {answer.createdAt !== answer.updated_At ?
-                            <Box className="mt-2 mx-2 me-2" style={{ color: 'grey' }}> {t('Updated')}
+                            <Box className="mx-2 me-2" style={{ color: 'grey',marginTop:'5px' }}> {t('Updated')}
                                 <span> {moment(answer?.updated_At).fromNow()} </span>
                             </Box> : ''
                         }
-
-
 
                     </div>
                     {
                         auth.user.email === answer.createdby.email ? (
                             <ChakraProvider>
                                 <Menu isLazy>
-                                    <MenuButton><MoreVertIcon /></MenuButton>
-                                    <MenuList>
+                                    <MenuButton className='info'><MoreVertIcon /></MenuButton>
+                                    <MenuList className='backgroundColor'>
                                         <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
                                             onClick={() => { setOpen(true) }} >
                                             Delete
@@ -196,18 +193,17 @@ function Answer({ answer }) {
                         content={t('Are you sure you want to delete this answer?')}
                         onCancel={() => { setOpen(false) }}
                         onConfirm={() => { DeleteAnswer(answer._id) }}
-                        style={{ height: '22%' }}
+                        style={{ height: '19%', overflow:'hidden' }}                    
                     />
 
 
                 </div>
 
-                <div className="all-questions-container">
-
+                <div className="all-answers-container">
                     <div className="all-questions-left">
                         <div className="all-options" >
                             <IconButton className="arrow" onClick={handleUpVote}> <UpVote /></IconButton>
-                            <p className="arrow"> <i>{upVotes?.length - downVotes?.length || 0}</i></p>
+                            <p className="arrow info"> <i>{upVotes?.length - downVotes?.length || 0}</i></p>
                             <IconButton className="arrow" onClick={handleDownVote}><DownVote /></IconButton>
                         </div>
                     </div>
@@ -247,6 +243,7 @@ function Answer({ answer }) {
 
                 <p
                     style={{ margin: "5px 0px", padding: "10px" }}
+                    className='info'
                     onClick={() => setShow(!show)}>
                     Add a comment
                 </p>

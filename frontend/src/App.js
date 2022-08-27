@@ -79,6 +79,7 @@ function App() {
   const [openModal, setOpenModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [liked, setLiked] = useState('false');
+  const [loading, setLoading] = useState('false')
   const [search, setSearch] = useState('');
   const [followers, setFollowers] = useState([])
   const [selectedChat, setSelectedChat] = useState();
@@ -134,7 +135,7 @@ function App() {
     <HomeContext.Provider
       value={{
         socket, fetchAgain, setFetchAgain, notifications, setNotifications,
-        socketConnected, setSocketConnected,
+        socketConnected, setSocketConnected,loading, setLoading,
         token, dispatch, openNote, liked, setLiked, search, setSearch,
         followers, setFollowers, setOpenNote, showAlert, setShowAlert, currentId, setCurrentId,
         selectedChat, setSelectedChat, notification, setNotification, chats, setChats,

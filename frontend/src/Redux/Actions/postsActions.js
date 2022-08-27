@@ -104,21 +104,24 @@ export const BookmarkPost = (id) => async dispatch => {
   }
 };
 
-export const getPostsBySearch = (searchQuery) => async (dispatch) => {
+export const getPostsBySearch = (searchQuery, setLoading) => async (dispatch) => {
+  setLoading(true)
   try {
     const res = await axios.get(`/Api/search?searchQuery=${searchQuery.search || 'none'}`)
-    console.log(res.data)
     dispatch({ type: FETCH_BY_SEARCH, payload: { data: res.data } });
+    setLoading(false)
   } catch (error) {
     console.log(error);
   }
 };
 
-export const createPost = (post) => async (dispatch) => {
+export const createPost = (post, setLoadingButton) => async (dispatch) => {
+  setLoadingButton(true)
   try {
     const { data } = await axios.post('/Api/notes', post);
     dispatch({ type: CREATE_POST, payload: data });
     dispatch(getAllPosts())
+    setLoadingButton(false)
 
   } catch (error) {
     dispatch({

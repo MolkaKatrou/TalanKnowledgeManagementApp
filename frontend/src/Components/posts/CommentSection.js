@@ -11,6 +11,7 @@ import SingleComment from './Comment';
 import CommnetArea from './CommnetArea';
 
 function CommentSection({ post }) {
+  const [commentId, setCommentId] = useState('')
   const { t, socket, showAlert, replyId, setReplyId} = useContext(HomeContext)
   const auth = useSelector(state => state.auth)
   const dispatch = useDispatch()
@@ -39,7 +40,7 @@ function CommentSection({ post }) {
   };
 
   const handleSubmit = ({user, comment,parentId}) => {
-    const newComments = dispatch(commentPost({user, comment,parentId:null}, post._id));
+    const newComments = dispatch(commentPost({user, comment, parentId:null}, post._id));
     handleNotification(3)
     setComments(newComments);
     toast.success("The comment is successfully added")
@@ -65,14 +66,14 @@ function CommentSection({ post }) {
         <span className='posts_comments'>{t('Comments')}</span>
         <span className="comments_count">{`(${rootComments?.length})`}</span>
       </Typography>
-      {rootComments.map((c, i) => (
+      {rootComments.map((rootComment, i) => (
         <SingleComment
-          c={c}
-          key={c._id}
-          replies={getReplies(c._id)}
+          c={rootComment}
+          key={rootComment._id}
+          replies={getReplies(rootComment._id)}
           activeComment={activeComment}
           setActiveComment={setActiveComment}
-          parentId ={c._id}
+          parentId ={rootComment._id}
           handleSubmitReply={handleSubmitReply}
         />
       ))}

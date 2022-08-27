@@ -11,9 +11,6 @@ import ImageIcon from '@mui/icons-material/ImageOutlined';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import '../assets/editor.css';
 import QuillCursors from "quill-cursors";
-import * as Y from "yjs";
-import { WebrtcProvider } from "y-webrtc";
-import { QuillBinding } from "y-quill";
 
 
 hljs.configure({
@@ -92,7 +89,6 @@ class FileBlot extends BlockEmbed {
         const linkTag = document.createElement('a');
         linkTag.setAttribute('href', value);
         linkTag.download = value;
-        console.log(value)
         linkTag.setAttribute("target", "_blank");
         linkTag.setAttribute("className", "file-link-inner-post");
         linkTag.appendChild(bTag);

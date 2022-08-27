@@ -9,6 +9,7 @@ import AdminUserInput from "../../Components/inputs/AdminUserInput";
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, ChakraProvider } from '@chakra-ui/react';
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 
 const Details = ({ title }) => {
@@ -16,6 +17,7 @@ const Details = ({ title }) => {
   const [errors, setErrors] = useState({});
   const { id } = useParams();
   const navigate = useNavigate();
+  const auth = useSelector(state => state.auth)
 
 
   function onChangeHandler(e) {
@@ -65,7 +67,7 @@ const Details = ({ title }) => {
                     errors={errors.lastname}
                     value={form.lastname}
                     icon="fa fa-user"
-                    onKeyDown={()=> {delete errors.lastname}}
+                    onKeyDown={() => { delete errors.lastname }}
                   />
                 </div>
                 <div className="mb-3 col-md-6">
@@ -77,7 +79,7 @@ const Details = ({ title }) => {
                     errors={errors.firstname}
                     value={form.firstname}
                     icon="fa fa-user"
-                    onKeyDown={()=> {delete errors.firstname}}
+                    onKeyDown={() => { delete errors.firstname }}
                   />
                 </div>
 
@@ -90,7 +92,7 @@ const Details = ({ title }) => {
                   errors={errors.email}
                   value={form.email}
                   icon="fa fa-envelope"
-                  onKeyDown={()=> {delete errors.email}}
+                  onKeyDown={() => { delete errors.email }}
 
                 />
 
@@ -104,7 +106,7 @@ const Details = ({ title }) => {
                     errors={errors.username}
                     value={form.username}
                     icon="fa fa-user"
-                    onKeyDown={()=> {delete errors.username}}
+                    onKeyDown={() => { delete errors.username }}
 
                   />
                 </div>
@@ -117,54 +119,56 @@ const Details = ({ title }) => {
                     errors={errors.phone}
                     value={form.phone}
                     icon="fa fa-phone"
-                    onKeyDown={()=> {delete errors.phone}}
+                    onKeyDown={() => { delete errors.phone }}
                   />
                 </div>
-               
+
                 <AdminInput
-                    label="Adress"
+                  label="Adress"
+                  type="text"
+                  name="adress"
+                  onChangeHandler={onChangeHandler}
+                  errors={errors.adress}
+                  value={form.adress}
+                  icon="fa fa-home"
+                  onKeyDown={() => { delete errors.adress }}
+                />
+                <div className={auth.user.id !== id ? `mb-3 col-md-6` : ''} >
+                  <AdminRoleOption
+                    label="occupation"
                     type="text"
-                    name="adress"
-                    onChangeHandler={onChangeHandler}
-                    errors={errors.adress}
-                    value={form.adress}
-                    icon="fa fa-home"
-                    onKeyDown={()=> {delete errors.adress}}
+                    name="occupation"
+                    onChangeHandler={(e) => {
+                      setForm({
+                        ...form,
+                        [e.target.name]: e.target.value,
+                      });
+                      delete errors.occupation
+                    }}
+                    errors={errors.occupation}
+                    value={form.occupation}
+                    icon="fa fa-briefcase"
                   />
-                   <div className="mb-3 col-md-6">
-                <AdminRoleOption
-                  label="occupation"
-                  type="text"
-                  name="occupation"
-                  onChangeHandler={(e) => {
-                    setForm({
-                      ...form,
-                      [e.target.name]: e.target.value,
-                    });
-                    delete errors.occupation
-                  }}
-                  errors={errors.occupation}
-                  value={form.occupation}
-                  icon="fa fa-briefcase"
-                />
                 </div>
-                <div className="mb-3 col-md-6">
-                <AdminUserInput
-                  label="Role"
-                  type="text"
-                  name="role"
-                  onChangeHandler={(e) => {
-                    setForm({
-                      ...form,
-                      [e.target.name]: e.target.value,
-                    });
-                    delete errors.role
-                  }}
-                  errors={errors.role}
-                  value={form.role}
-                  icon="fa fa-briefcase"
-                />
-                </div>
+                {auth.user.id !== id ? (
+                  <div className="mb-3 col-md-6">
+                    <AdminUserInput
+                      label="Role"
+                      type="text"
+                      name="role"
+                      onChangeHandler={(e) => {
+                        setForm({
+                          ...form,
+                          [e.target.name]: e.target.value,
+                        });
+                        delete errors.role
+                      }}
+                      errors={errors.role}
+                      value={form.role}
+                      icon="fa fa-briefcase"
+                    />
+                  </div>
+                ) : ('')}
 
                 <ChakraProvider>
                   <Button colorScheme='teal' className=' mt-4 mx-2' size='md' onClick={onSubmitHandler}>

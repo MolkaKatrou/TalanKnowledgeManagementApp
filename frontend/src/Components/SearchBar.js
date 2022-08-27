@@ -80,7 +80,7 @@ function SearchBar({ data, search, handleKeyPress, searchPost, filteredData, set
                     <InputBase
                         onKeyDown={handleKeyPress}
                         placeholder={t("Search..")}
-                        className='me-2'
+                        className='me-2 search search-sidebar'
                         name="search"
                         variant="outlined"
                         fullWidth

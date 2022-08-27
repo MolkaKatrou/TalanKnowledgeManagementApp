@@ -13,11 +13,11 @@ function AdminUserInput({ name, onChangeHandler, errors, value, label }) {
                 value={value}
                 onChange={onChangeHandler}
                 name={name}
-                className={(classnames("form-control select", { "is-invalid": errors }))}
+                className={(classnames("form-control dark", { "is-invalid": errors }))}
             >
-                <option disabled selected>Select the role</option>
-                <option >USER</option>
-                <option>ADMIN</option>
+                <option className='backgroundColor dark' disabled selected>Select the role</option>
+                <option className='backgroundColor dark' >USER</option>
+                <option className='backgroundColor dark'>ADMIN</option>
 
             </select>
             {

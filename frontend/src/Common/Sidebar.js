@@ -23,7 +23,10 @@ import { CategoryContext } from '../Context/CategoryContext';
 import { createCategoryList } from '../utils/functions';
 import { Confirm } from 'semantic-ui-react';
 import { HomeContext } from '../Context/HomeContext';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { ChakraProvider } from '@chakra-ui/react';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,25 +35,28 @@ const useStyles = makeStyles((theme) => ({
     overflowX:'hidden',
     overflowY: 'auto',
     background: 'rgb(225, 228, 232)',
-    boxShadow: '0 5px 2px #8084ac',
+    boxShadowRight: '0 5px 2px #8084ac',
     paddingTop: theme.spacing(7),
     position: '-webkit-sticky',
     position: 'sticky',
     top: 0,
     [theme.breakpoints.up("sm")]: {
-      border: "1px solid #8084ac",
+      borderRight: "1px solid #8084ac",
     },
   },
   item: {
-    color: 'black',
+    color: 'rgb(82, 82, 82)',
+    fontWeight:600,
+    fontSize:'13px',
     textDecoration: 'none',
     padding: theme.spacing(1.3),
     "&.active": {
-      background:'rgb(191, 205, 222)',     
+      background:'rgba(120, 133, 150, 0.170)',     
     },
     '&:hover': {
-      backgroundColor: 'rgb(191, 205, 222)',
-      textDecorationStyle: 'none'
+      backgroundColor: 'rgba(120, 133, 150, 0.170)',
+      textDecorationStyle: 'none',
+      color:'rgb(82, 82, 82)',
     },
 
     marginBottom: theme.spacing(0),
@@ -59,12 +65,21 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  itemCategory: {
+    cursor:'default',
+    color: 'rgb(82, 82, 82)',
+    fontWeight:600,
+    fontSize:'13px',
+    textDecoration: 'none',
+    padding: theme.spacing(1.3),
+    marginBottom: theme.spacing(0),
+  },
+
+
   list: {
-    color: 'black',
+    color: '#888',
     marginTop: '-10px',
     marginLeft: '-5px',
-    fontFamily: 'Monaco',
-    fontWeight: '540',
     float: 'left',
     margin: '10px px 0 0'
   },
@@ -73,13 +88,19 @@ const useStyles = makeStyles((theme) => ({
     color: '#8084ac',
     marginRight: theme.spacing(1),
     [theme.breakpoints.up("sm")]: {
-      fontSize: "21px",
+      fontSize: "18px",
+    },
+  },
+  iconCategory: {
+    cursor:'pointer',
+    color: '#8084ac',
+    width:'20px',
+    '&:hover': {
+      color: '#484B75',
     },
   },
   text: {
-    
     fontSize:'13px',
-  
     color: '0000008A',
     [theme.breakpoints.down("xs")]: {
       display: "none",
@@ -90,14 +111,11 @@ const useStyles = makeStyles((theme) => ({
   },
 
   textCategory: {
-    fontFamily: 'Monaco',
     fontWeight: '540',
-    cursor: 'pointer',
     [theme.breakpoints.down("sm")]: {
       display: "none",
 
     },
-
   },
 
   dialogWrapper: {
@@ -269,7 +287,7 @@ const handleSearch = (e) => {
           createdby = {category.createdby}
           labelText={category.name}
           color="#a250f5"
-          bgColor="#f3e8fd"
+          bgColor="#B8BFCA99"
           OnUpdate={UpdateCategory}
           OnDelete={DeleteCategory}
         >
@@ -311,10 +329,10 @@ const handleSearch = (e) => {
 
 
   return (
-    <div className={classes.container} >
+    <div className={`${classes.container} sidebar-background`} >
 
       <List>
-        <ListItem component={NavLink} className={classes.item} to='/Home'>
+        <ListItem component={NavLink} className={`${classes.item} item`} to='/Home'>
           <Home className={classes.icon} />
           <Typography className={classes.text} component={'div'}>
             {t('Home')}
@@ -322,14 +340,14 @@ const handleSearch = (e) => {
         </ListItem>
 
 
-        <ListItem  component={NavLink} className={classes.item} to='/Bookmarks'>
+        <ListItem  component={NavLink} className={`${classes.item} item`} to='/Bookmarks'>
           <Bookmark className={classes.icon} />
           <Typography className={classes.text} component={'div'}>
             {t('Bookmarks')}
           </Typography>
         </ListItem>
 
-        <ListItem  component={NavLink} className={classes.item} to='/Drafts'>
+        <ListItem  component={NavLink} className={`${classes.item} item`} to='/Drafts'>
           <Draft className={classes.icon} />
           <Typography className={classes.text} component={'div'}>
             {t('Drafts')}
@@ -337,7 +355,7 @@ const handleSearch = (e) => {
         </ListItem>
 
         {user.role === "ADMIN" ? (
-          <ListItem component={NavLink} className={classes.item} to='/users' onClick={() => navigate('/admin')}>
+          <ListItem component={NavLink} className={`${classes.item} item`} to='/users' onClick={() => navigate('/admin')}>
             <AdminPanel className={classes.icon} />
             <Typography className={classes.text} component={'div'}>
               {t('Admin Dashboard')}
@@ -348,19 +366,19 @@ const handleSearch = (e) => {
         )}
         <Divider className='mb-3' component="ul" />
 
-        <ListItem className={classes.item}>
+        <ListItem className={`${classes.itemCategory}`}>
           <CategoryIcon className={classes.icon} />
           <Typography className={classes.textCategory} component={'div'}>
            {t('Categories')}
           </Typography>
-          <AddIcon onClick={() => { setOpenAdd(true) }} className='mx-2' style={{ color: '#8084ac', width: '20px' }}></AddIcon>
+          <AddIcon onClick={() => { setOpenAdd(true) }} className={`${classes.iconCategory} mx-2`}></AddIcon>
         </ListItem>
         <Box className='d-flex mx-2'>
         <IconButton >
           <SearchIcon style={{color:'gray'}} />
         </IconButton>
         <InputBase
-          className='mx-1'
+          className={`mx-1 search`}
           placeholder={t("Search..")}
           onChange={handleSearch}
         />
@@ -490,7 +508,6 @@ const handleSearch = (e) => {
           </DialogActions>
         </div>
       </Dialog>
-
       <Confirm
         confirmButton={t("Delete Category")}
         cancelButton={t('Cancel')}
@@ -498,7 +515,7 @@ const handleSearch = (e) => {
         open={openDelete}
         onCancel={() => { setOpenDelete(false) }}
         onConfirm={SubmitDelete}
-        style={{ height: '21%' }}
+        style={{ height: '19%', overflow:'hidden' }}
       />
 
 

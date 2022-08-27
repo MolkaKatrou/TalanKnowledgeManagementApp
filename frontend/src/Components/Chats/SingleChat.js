@@ -1,10 +1,10 @@
-import { Box, FormControl, IconButton, Input, InputGroup, InputRightElement, Spinner, Text, useToast } from '@chakra-ui/react'
-import React, { useContext, useEffect, useState } from 'react'
+import { Box, FormControl,Avatar, IconButton, Input, InputGroup, InputRightElement, Spinner, Text, useToast } from '@chakra-ui/react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { HomeContext } from '../../Context/HomeContext'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ProfileModal from './ProfileModal';
-import { getSender, getSenderFull } from './ChatLogic';
+import { getSender, getSenderFull, getSenderPic } from './ChatLogic';
 import UpdateChatModal from './UpdateChatModal';
 import ScrollableChat from './ScrollableChat';
 import axios from 'axios';
@@ -20,15 +20,13 @@ import styled from "styled-components";
 var selectedChatCompare
 
 export default function SingleChat({ fetchAgain, setFetchAgain }) {
-    const {t, socket, selectedChat, setSelectedChat, socketConnected, setSocketConnected, notificationChat, setNotificationChat, notification, setNotification, token } = useContext(HomeContext)
+    const { t, socket, selectedChat, setSelectedChat, socketConnected, setSocketConnected, notificationChat, setNotificationChat, notification, setNotification, token } = useContext(HomeContext)
     const [messages, setMessages] = useState([]);
-    const [isTyping, setIsTyping]=useState(false)
+    const [isTyping, setIsTyping] = useState(false)
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState("")
     const [uploadedFile, setUploadedFile] = useState({})
-
-    const [filename, setFilename] = useState("")
-
+    const bottomRef = useRef(null);
     const [newMessage, setNewMessage] = useState("");
     const toast = useToast();
     const [typing, setTyping] = useState(false);
@@ -57,24 +55,24 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
 
     useEffect(() => {
         document.addEventListener("click", handleDocumentClick, false);
-      });
+    });
 
-      const handleDocumentClick = event => {
+    const handleDocumentClick = event => {
         let isEmojiClassFound = false;
-    
+
         event &&
-          event.path &&
-          event.path.forEach(elem => {
-            if (elem && elem.classList) {
-              const data = elem.classList.value;
-              if (data.includes("emoji")) {
-                isEmojiClassFound = true;
-              }
-            }
-          }); // end
-        if ( isEmojiClassFound === false && event.target.id !== "emojis-btn")
-          setShowEmojiPicker(false);
-      };
+            event.path &&
+            event.path.forEach(elem => {
+                if (elem && elem.classList) {
+                    const data = elem.classList.value;
+                    if (data.includes("emoji")) {
+                        isEmojiClassFound = true;
+                    }
+                }
+            }); // end
+        if (isEmojiClassFound === false && event.target.id !== "emojis-btn")
+            setShowEmojiPicker(false);
+    };
 
 
     const handleEmojiPickerhideShow = () => {
@@ -96,12 +94,12 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
         formData.append("file", file);
         axios.post('/Api/uploadfiles', formData, config)
             .then(response => {
-                const {success, url, fileName} = response.data
-                setUploadedFile({success : true, url, fileName})
+                const { success, url, fileName } = response.data
+                setUploadedFile({ success: true, url, fileName })
                 let message = newMessage
-                message+=response.data.fileName
+                message += response.data.fileName
                 setNewMessage(message)
-             })
+            })
     }
 
     const fetchMessages = async () => {
@@ -135,10 +133,10 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
 
     const sendMessage = async (event) => {
         socket.emit('stop typing', selectedChat._id)
-        try {        
-            const { data } = await axios.post("/api/message", { content: newMessage.replace(uploadedFile.fileName,' '), file:uploadedFile.url, chatId: selectedChat});
+        try {
+            const { data } = await axios.post("/api/message", { content: newMessage.replace(uploadedFile.fileName, ' '), file: uploadedFile.url, chatId: selectedChat });
             console.log(data)
-            setNewMessage('')   
+            setNewMessage('')
             setUploadedFile({})
             socket.emit("new message", data)
             setMessages([...messages, data]);
@@ -161,7 +159,7 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
         selectedChatCompare = selectedChat;
     }, [selectedChat]);
 
-    useEffect(() => { 
+    useEffect(() => {
         socket.on('typing', () => setIsTyping(true))
         socket.on('stop typing', () => setIsTyping(false))
     })
@@ -226,7 +224,10 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                         />
                         {!selectedChat.isGroupChat ? (
                             <>
-                                {getSender(user, selectedChat.users)}
+                              <div className='d-flex'>
+                                <Avatar size='md' style={{width:'36px' , height:'36px', marginTop:'3px'}} name={getSender(user, selectedChat.users)} src={getSenderPic(user, selectedChat.users)}></Avatar>
+                                <div className='mx-3'>{getSender(user, selectedChat.users)}</div>
+                              </div>
                                 <ProfileModal
                                     user={getSenderFull(user, selectedChat.users)}
                                 />
@@ -236,7 +237,6 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                             <>
                                 {selectedChat.chatName}
                                 <UpdateChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} fetchMessages={fetchMessages} />
-
                             </>
                         )
 
@@ -248,6 +248,7 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                         justifyContent="flex-end"
                         p={3}
                         bg="#E8E8E8"
+                        className="chats"
                         w="100%"
                         h="100%"
                         borderRadius="lg"
@@ -262,11 +263,10 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                                 margin="auto"
                             />
                         ) : (
-                            <div className="messages">
-                                <ScrollableChat messages={messages} user={user} src={uploadedFile.url} />
-                            </div>
+              
+                            <ScrollableChat messages={messages} user={user}/>
                         )}
-
+                        
                         <FormControl
                             onKeyDown={handleKeyPress}
                             id="first-name"
@@ -309,14 +309,14 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
 
                                         <Input
                                             variant="filled"
-                                            bg="#E0E0E0"
+                                            className='inputMessage'
                                             placeholder={t("Enter a message..")}
                                             value={newMessage}
                                             onChange={typingHandler}
                                             autoComplete="off"
 
                                         />
-                                        <InputRightElement children={<SendIcon style={{ color: 'blue', cursor: 'pointer' }} onClick={sendMessage} />} />
+                                        <InputRightElement children={<SendIcon className='question-title' style={{ cursor: 'pointer' }} onClick={sendMessage} />} />
                                     </InputGroup>
                                 </div>
                             </ContainerStyled>

@@ -35,10 +35,9 @@ const useStyles = makeStyles((theme) => ({
 export default function Drafts() {
   const classes = useStyles()
   const auth = useSelector(state => state.auth)
-  const userId = auth.user.id
   const { posts, loading } = useSelector((state) => state.posts);
-  const Drafts = posts.filter(post => post?.isDraft === true)
-  const { openNote, dispatch, showAlert } = useContext(HomeContext)
+  const Drafts = posts.filter(post => post?.isDraft === true && post?.createdby===auth.user.id)
+  const { openNote, dispatch, showAlert,t } = useContext(HomeContext)
 
   useEffect(() => {
     dispatch(getAllPosts())
@@ -56,14 +55,14 @@ export default function Drafts() {
 
 
     <Home>
-      <Container className={classes.container}>
+      <Container className={`${classes.container} backgroundColor`}>
         {loading ?
 
           < CircularProgress size="3em" elevation={4} className={classes.loadingPaper} />
           :
           <>
 
-            {Drafts.length>0 ? renderDrafts : <div className={classes.loadingPaper} style={{color:'gray'}}>No Drafts</div>}
+            {Drafts.length>0 ? renderDrafts : <div className={classes.loadingPaper} style={{color:'gray'}}>{t('No Drafts')}</div>}
 
           </>
         }

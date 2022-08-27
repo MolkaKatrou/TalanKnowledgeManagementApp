@@ -124,7 +124,7 @@ function QuestionAnswer({ question }) {
                     <div className="all-questions-left">
                         <div className="all-options">
                             <IconButton className="arrow" onClick={handleUpVote}> <UpVote /></IconButton>
-                            <p className="arrow"> <i>{upVotes?.length - downVotes?.length || 0}</i></p>
+                            <p className="arrow info"> <i>{upVotes?.length - downVotes?.length || 0}</i></p>
                             <IconButton className="arrow" onClick={handleDownVote}><DownVote /></IconButton>
                             <IconButton onClick={handleBookmark} className="MyCustomButton">
                                 <Bookmarks />

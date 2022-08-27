@@ -34,25 +34,15 @@ export const AddProfile = (form, setShow, setMessage, e)=>dispatch=>{
       });
 }
 
-export const LoginAction = (form, setLoading, loading)=>dispatch=>{
+export const LoginAction = (form)=>dispatch=>{
     axios.post('/Api/login', form) 
     .then(res=>{
-      setLoading(true)
       const {token} = res.data
       const {user} = res.data
       localStorage?.setItem('jwt', JSON.stringify(token))
       localStorage?.setItem('user', JSON.stringify(user))
       dispatch(setUser(user))
       setAuth(token)
-      setTimeout(() => {
-        setLoading(false)
-      }, 2000);
-      if (token && !loading){
-        dispatch({
-            type: ERRORS,
-            payload: {}
-        })
-    }
     })
     
     .catch(err=>{

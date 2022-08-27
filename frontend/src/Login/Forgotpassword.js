@@ -43,19 +43,19 @@ function Forgotpassword() {
     return (
         <>
         <Navbar/>
-        <div className={styles.container} style={{paddingTop:'20px', height:'87.5vh'}}>
+        <div className={`${styles.container} backgroundColor`} style={{paddingTop:'20px', height:'87.6vh'}}>
         <div className='main h-100 w-100' >
             <div className='container h-100' >
                 <div className='row h-100'>
-                    <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100' style={{marginTop:'-80px' , backgroundColor:'#dfdfe9'}}>
+                    <div className='col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100 background-reset' style={{marginTop:'-80px'}}>
                         <div className='d-table-cell align-middle' >
                         { show ? <Alert severity="success">{t('We sent you the link — Check your Email!')}</Alert> : ""}
                             <div className='text-center mt-5'>
-                                <h1 className='h2' style={{color :'rgb(8, 8, 126)', fontFamily:'PT Sans', fontWeight:'600'}}>{t('Reset password')}</h1>
-                                <p  style={{color:'grey', fontFamily:'PT Sans'}}> {t('Enter your email to reset your password')}</p>
+                                <h1 className='h2 login-h2' style={{fontFamily:'PT Sans', fontWeight:'600'}}>{t('Password Reset')}</h1>
+                                <p   style={{color:'grey', fontFamily:'PT Sans'}}> {t('Enter your email to reset your password')}</p>
                             </div>
                       
-                            <div className='card mt-5' style={{ backgroundColor:'#dfdfe9'}} >
+                            <div className='card mt-5 background-reset' >
                                 <div className='card-body'>
                                     <div className='m-sm-4'>
                                         <form onSubmit={PostEmail}>

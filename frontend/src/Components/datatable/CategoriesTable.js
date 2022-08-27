@@ -20,6 +20,9 @@ import Moment from 'react-moment';
 import { getAllCategories } from "../../Redux/Actions/categoryAction";
 import { getAllPosts } from "../../Redux/Actions/postsActions";
 import { getAllQuestions } from "../../Redux/Actions/questionsActions";
+import { Confirm } from "semantic-ui-react";
+import { useContext } from "react";
+import { HomeContext } from "../../Context/HomeContext";
 
 const CategoriesTable = () => {
     const dispatch = useDispatch()
@@ -27,6 +30,11 @@ const CategoriesTable = () => {
     const [show, setShow] = useState(false);
     const {posts} = useSelector(state=>state.posts)
     const {questions} = useSelector(state=>state.questions)
+    const [open, setOpen]=useState(false)
+    const [deleteId, setdeleteId]=useState('')
+    const category = categories?.find(u=>u.value===deleteId)
+    const {t}=useContext(HomeContext)
+
 
 
     useEffect(async () => {
@@ -183,17 +191,24 @@ const CategoriesTable = () => {
 
     ];
 
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this category?")) {
-            axios.delete(`/Api/categories/${id}`)
+    const handleDelete = () => {
+            axios.delete(`/Api/categories/${deleteId}`)
                 .then(res => {
                     setShow(!show)
+                    setOpen(false)
                     setTimeout(() => {
                         toast.success('The Category has been successfully deleted')
                     }, 2000);
                 })
-        }
+        
     }
+
+  
+    const ConfirmDelete = (id) => {
+      setOpen(true)
+      setdeleteId(id)
+  }
+  
 
     const actionColumn = [
         {
@@ -212,7 +227,7 @@ const CategoriesTable = () => {
 
                         <div
                             className="deleteButton"
-                            onClick={() => handleDelete(params.row.value)}
+                            onClick={() => ConfirmDelete(params.row.value)}
                         >
                             Delete
                         </div>
@@ -258,13 +273,22 @@ const CategoriesTable = () => {
                 /> :
 
                 <DataGrid
-
                     getRowId={(row) => row.value}
                     className="datagrid"
                     columns={categoryColumns.concat(actionColumn)}
                     loading='true'
                 />
             }
+
+<Confirm
+        confirmButton={t("Delete The Category")}
+        cancelButton={t('Cancel')}
+        content={`${t('Are you sure you want to delete the category : ' )} ${category?.name}`}
+        open={open}
+        onCancel={() => { setOpen(false) }}
+        onConfirm={handleDelete}
+        style={{ height: '19%', overflow:'hidden' }}
+      />
         </div>
     );
 };

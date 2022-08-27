@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import logo from '../images/logo.png'
-import { alpha, AppBar, Badge, Box, InputBase, makeStyles, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, useTheme, useMediaQuery, InputLabel } from "@material-ui/core"
+import logoDark from '../images/dark-logo2.png'
+import { alpha, AppBar, Box, makeStyles, Typography, Dialog, DialogContent,  useTheme, useMediaQuery } from "@material-ui/core"
 import { Toolbar } from '@mui/material';
-import Search from '@mui/icons-material/Search';
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import Mail from '@mui/icons-material/Mail';
 import Notifications from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -14,25 +15,22 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Menu, MenuButton, MenuList, Button, MenuItem, ChakraProvider, Divider, Avatar, AvatarBadge, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormLabel, Input, Select } from "@chakra-ui/react";
 import { HomeContext } from '../Context/HomeContext';
-import { getSender } from '../Components/Chats/ChatLogic';
 import NotificationBadge from "react-notification-badge";
 import { Effect } from "react-notification-badge";
 import Passwordinput from '../Components/inputs/Password';
-import toast from 'react-hot-toast';
 import i18next from 'i18next';
 import classNames from 'classnames'
 import SearchBar from '../Components/SearchBar';
 import { getAll } from '../Redux/Actions/postsActions';
 import { getAllCategories } from '../Redux/Actions/categoryAction';
-import { createCategoryList } from '../utils/functions';
-
-
+import { DarkModeContext } from '../Context/darkModeContext';
+import LightModeIcon from '@mui/icons-material/LightMode';
 
 const useStyles = makeStyles((theme) => ({
   message: {
     cursor: 'pointer',
     "&:hover": {
-      color: "#565CAA"
+      color: "rgb(52, 76, 105)"
     }
   },
   search: {
@@ -58,11 +56,12 @@ function useQuery() {
 
 export default function HomeNavbar({ searchPost, handleKeyPress, search, setSearch, filteredData, setFilteredData }) {
   const classes = useStyles()
+  const {darkMode} = useContext(DarkModeContext)
   const [form, setForm] = useState({});
   const errors = useSelector(state => state.errors)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { setSocketConnected, notification, socket, notifications, setNotifications, setNotification, selectedChat, setSelectedChat, notificationChat, setNotificationChat, t, languages, currentLanguage, currentLanguageCode } = useContext(HomeContext)
+  const { notification, socket, notifications, setNotifications, notificationChat, setNotificationChat, t, languages, currentLanguage, currentLanguageCode } = useContext(HomeContext)
   const auth = useSelector(state => state.auth)
   const { id } = useParams();
   const [open, setOpen] = React.useState(false);
@@ -70,6 +69,7 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { postsQuestions } = useSelector(state => state.all)
   const location = useLocation()
+  const { dispatchMode } = useContext(DarkModeContext);
   const filteredPosts = postsQuestions.filter(post => post.category._id == id && post.isDraft===false)
 
   useEffect(() => {
@@ -100,7 +100,6 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
 
   const LogoutHandler = () => {
     dispatch(Logout())
-    socket.emit("disconnect", auth.user)
   }
 
 
@@ -160,9 +159,12 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
 
   return (
     <AppBar position='fixed'>
-      <Toolbar className="d-flex justify-content-between" style={{ backgroundColor: '#8084ac' }}>
+      <Toolbar className="d-flex justify-content-between backgroundColor-navbar">
         <Typography component={'div'} variant="h6" onClick={() => { navigate('/Home') }}>
-          <img style={{ cursor: 'pointer', marginRight: '200px', width: "90px" }} src={logo} alt='logo' />
+          {darkMode ?
+          <img style={{ cursor: 'pointer', marginRight: '200px', width: "90px", marginTop:'-10px' }} src={logoDark} alt='logo' />:
+          <img style={{ cursor: 'pointer', marginRight: '200px', width: "75px" }} src={logo} alt='logo' />
+          }
         </Typography>
           <SearchBar
             data={location.pathname === `/category/${id}/notes` || location.pathname === `/category/${id}/QA` ?  filteredPosts : postsQuestions}
@@ -176,6 +178,11 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
         <div className="d-flex align-items-center">
           <ChakraProvider>
             <Menu >
+            <MenuButton className={classes.message} mr={7} onClick={() => dispatchMode({ type: "TOGGLE" })}>
+            {darkMode ? <DarkModeOutlinedIcon/> : <LightModeIcon/> }
+              
+            
+          </MenuButton>
               <MenuButton
                 className={classes.message}
                 mx={5}
@@ -193,7 +200,7 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
               </MenuButton>
             </Menu>
             <Menu >
-              <MenuButton className={classes.message} mx={10}>
+              <MenuButton className={classes.message} mx={8}>
                 <NotificationBadge
                   count={notifications.length}
                   effect={Effect.SCALE}
@@ -229,7 +236,7 @@ export default function HomeNavbar({ searchPost, handleKeyPress, search, setSear
             <ChakraProvider>
               <Menu>
                 <MenuButton> <Avatar p={0} name={auth.user.fullname} src={auth.user.pic} /></MenuButton>
-                <MenuList className='text-secondary' >
+                <MenuList className='text-secondary backgroundColor' >
                   <Box className="d-flex">
                     <Avatar name={auth.user.fullname} src={auth.user.pic} className='mx-3' >  <AvatarBadge bg='green.500' boxSize='1em' /></Avatar>
                     <div>

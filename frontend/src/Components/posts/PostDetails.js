@@ -1,15 +1,9 @@
-import { Card, CardContent, CircularProgress, Container, Divider, makeStyles, IconButton, CardActions, Typography, Grid } from "@material-ui/core";
+import {CircularProgress, Container, makeStyles, Grid } from "@material-ui/core";
 import React, { useEffect, useState, useContext } from "react";
-import CommentSection from "./CommentSection";
-import { getAllPosts, getPost, likePost, BookmarkPost } from "../../Redux/Actions/postsActions";
+import { getAllPosts } from "../../Redux/Actions/postsActions";
 import Home from "../../pages/home/Home";
-import moment from 'moment';
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import {useParams } from "react-router-dom";
 import { HomeContext } from "../../Context/HomeContext";
 import MainPost from "./MainPost";
 
@@ -64,7 +58,7 @@ function PostDetails() {
   }
   return (
     <Home>
-      <Container className={classes.container}>
+      <Container className={`${classes.container} backgroundColor`}>
         {loading ?
 
           <CircularProgress size="1em" elevation={2} className={classes.loadingPaper} />

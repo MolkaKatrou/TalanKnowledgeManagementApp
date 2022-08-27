@@ -10,6 +10,7 @@ import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import '../assets/Navbar.css';
 import { HomeContext } from "../Context/HomeContext";
 import { createCategoryList } from "../utils/functions";
+import { DarkModeContext } from "../Context/darkModeContext";
 
 
   
@@ -17,6 +18,7 @@ import { createCategoryList } from "../utils/functions";
 
  function CategoryBanner({ category }) {
     const {id} = useParams()
+    const {darkMode} = useContext(DarkModeContext)
     const dispatch=useDispatch();
     const {t, followers, setFollowers, socket} = useContext(HomeContext)
     const auth = useSelector(state => state.auth)
@@ -86,10 +88,10 @@ import { createCategoryList } from "../utils/functions";
     
     return (
         <div>
-        <Card style={{ marginBottom: '30px', background: 'rgb(221, 220, 224)', border: `1px solid ${category.color}`, boxShadow: `0 1px 0 0 ${category.color}` }} className='d-flex justify-content-between'>
+        <Card style={{ marginBottom: '30px', background: darkMode? 'rgb(31, 30, 30)' : 'rgb(221, 220, 224)', border: `1px solid ${category.color}`, boxShadow: `0 1px 0 0 ${category.color}` }} className='d-flex justify-content-between'>
             <Box style={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent style={{ flex: '1 0 auto' }}>
-                    <Typography gutterBottom variant="h6" component="div">
+                    <Typography className="dark" gutterBottom variant="h6" component="div">
                         {category.name}
                     </Typography>
 
@@ -110,11 +112,11 @@ import { createCategoryList } from "../utils/functions";
         <Box style={{ width: '100%', marginBottom:'35px' , display:'flex', justifyContent:'center' }}>
             
         <Box className='nav-category'> 
-            <NavLink to= {`/category/${category.value}/notes`}   className='nav-links-categories' >Notes</NavLink>
+            <NavLink  style={{ textDecoration: 'none' }} to= {`/category/${category.value}/notes`}   className='nav-links-categories' >Notes</NavLink>
         </Box>
 
         <Box className='nav-category'>     
-            <NavLink to={`/category/${category.value}/QA`} className='nav-links-categories'> Q/A </NavLink> 
+            <NavLink  style={{ textDecoration: 'none' }} to={`/category/${category.value}/QA`} className='nav-links-categories'> Q/A </NavLink> 
         </Box>
                
           

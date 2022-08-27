@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../App.css';
 import Cards from '../../Components/landing/Cards'
 import Company from '../../Components/landing/Company';
 import Footer from '../../Components/landing/Footer';

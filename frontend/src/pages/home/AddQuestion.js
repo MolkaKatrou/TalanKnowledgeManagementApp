@@ -74,8 +74,8 @@ const onFilesChange = (files) => {
   return (
     <>
       <Home>
-        <Container className={classes.container}>
-          <div className="add-question-container ">
+        <Container className={`${classes.container} backgroundColor`}>
+          <div className="add-question-container">
             <div className="head-title ">
               <h1>{t('Ask A Question')}</h1>
               <img src={qa} style={{ width: '26%' }}></img>
@@ -92,16 +92,16 @@ const onFilesChange = (files) => {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)} >
 
-                  <option style={{ backgroundColor: 'rgba(238, 238, 238)' }} disabled value="">{t('Select a category')}</option>
+                  <option className="backgroundColor-question" disabled value="">{t('Select a category')}</option>
                   {
                     createCategoryList(categoriesList.categories).map(option =>
-                      <option style={{ backgroundColor: 'rgba(238, 238, 238)' }} value={option.value}>{option.name}</option>)
+                      <option className="backgroundColor-question" value={option.value}>{option.name}</option>)
                   }
                 </select>
               </div>
               <div className="title">
                 <label style={{ fontWeight: 'bold', fontSize: '17px' }}> {t('Title')}  <span className="text-danger">*</span> </label>
-                <small>
+                <small className="small">
                   {t('Be specific and imagine you’re asking a question to another person')}
                 </small>
                 <input
@@ -119,7 +119,7 @@ const onFilesChange = (files) => {
               <div className="question-option">
                 <div className="title">
                   <label style={{ fontWeight: 'bold', fontSize: '19px' }}> {t('Body')} <span className="required"> <span className="text-danger">*</span> </span> </label>
-                  <small>
+                  <small  className="small">
                     {t('Include all the information someone would need to answer your question')}
                   </small>
                 

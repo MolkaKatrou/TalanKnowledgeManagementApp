@@ -18,6 +18,9 @@ import BookmarkIcon from '@mui/icons-material/BookmarkOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import UpdateQuestionModal from "./UpdateQuestionModal";
 import toast from "react-hot-toast";
+import Delete from '@mui/icons-material/Delete';
+
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -161,7 +164,7 @@ function Question({ question }) {
 
   return (
     <ChakraProvider>
-      <Card className={classes.card}>
+      <Card className={`${classes.card} card-color`}>
         <CardHeader
           avatar={
             <ChakraProvider><Avatar name={question?.createdby?.fullname} src={question?.createdby?.pic}></Avatar></ChakraProvider>
@@ -172,7 +175,7 @@ function Question({ question }) {
                 auth.user.email === question?.createdby?.email ? (
               <Menu isLazy>
                 <MenuButton><MoreVertIcon /></MenuButton>
-                <MenuList>
+                <MenuList className='backgroundColor'>
                   <MenuItem icon={<DeleteIcon style={{ marginRight: '30px', color: 'gray' }} />}
                     onClick={() => { setOpen(true) }}
                   >
@@ -194,7 +197,7 @@ function Question({ question }) {
                 content={t('Are you sure you want to delete this question?')}
                 onCancel={() => { setOpen(false) }}
                 onConfirm={DeleteQuestion}
-                style={{ height: '20%' }}
+                style={{ height: '19%', overflow:'hidden' }}              
               />
              
             </>
@@ -210,14 +213,14 @@ function Question({ question }) {
               </Typography>
 
             </div>}
-          subheader={<div className='d-flex'>
+          subheader={<div className='d-flex info-post'>
           {moment(question?.createdAt).fromNow()}
 
           {question?.createdAt !== question?.updated_At ? 
-          <div className='d-flex' >
-
-            <div style={{fontWeight:'700'}} className='mx-2'>{t('updated')} </div>{` ${moment(question?.updated_At).fromNow()}`} 
-            </div> : ''}
+          <p className='d-flex' >
+            <span style={{fontWeight:'700'}} className='mx-2'>{t('updated')} </span>
+            {` ${moment(question?.updated_At).fromNow()}`} 
+            </p> : ''}
 
         </div>}
         >
@@ -226,7 +229,7 @@ function Question({ question }) {
           <Col sm={6} lg={3} md={4}>
             <Button.Group style={{ marginTop: '-15px', marginLeft: '-6px' }}>
               <IconButton onClick={handleUpVote}> <UpVote /></IconButton>
-              <IconButton style={{ marginLeft: '-3px', marginRight: '-3px' }}> <i>{upVotes?.length - downVotes?.length}</i></IconButton>
+              <IconButton style={{ marginLeft: '-3px', marginRight: '-3px' }} className='info'> <i>{upVotes?.length - downVotes?.length}</i></IconButton>
               <IconButton onClick={handleDownVote}><DownVote /></IconButton>
             </Button.Group>
             <div className="d-flex" style={{ marginLeft: '-10px' }}>
@@ -238,7 +241,7 @@ function Question({ question }) {
           </Col>
 
           <Col sm={5} xs={8} lg={8} md={7} onClick={() => navigate(`/Main-Question/${question?._id}`)}>
-            <Typography component={'div'} style={{ color: 'blue', marginBottom: '20px', cursor: 'pointer' }}>
+            <Typography component={'div'} className='question-title' style={{ marginBottom: '20px', cursor: 'pointer' }}>
               {question?.title}
             </Typography>
             <Typography

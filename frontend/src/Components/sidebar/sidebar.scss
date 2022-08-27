@@ -34,6 +34,7 @@
         margin-bottom: 5px;
       }
 
+
       li {
         display: flex;
         align-items: center;
@@ -41,7 +42,11 @@
         cursor: pointer;
 
         &:hover {
-          background-color: #ece8ff;
+          background-color: rgb(191, 205, 222);
+        }
+
+        &.active {
+          background-color: rgb(191, 205, 222);
         }
 
         .icon {

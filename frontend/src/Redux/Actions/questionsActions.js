@@ -2,7 +2,7 @@ import {GET_QUESTION,DELETE_QUESTION,BOOKMARK_QUESTION, GET_QUESTIONS, VOTE_UP, 
    VOTE_DOWN, ERRORS,GET_ANSWERS,UPDATE_ANSWER,DELETE_COMMENT, VOTE_UP_ANSWER, VOTE_DOWN_ANSWER, DELETE_ANSWER, CREATE_COMMENT, FETCH_BY_SEARCH} from '../types'
 import axios from 'axios'
 
-export const getAllQuestions = () => async dispatch => {    
+export const getAllQuestions = () => async dispatch => { 
     try{      
         const {data} = await axios.get('/Api/questions')
         dispatch( {
@@ -149,10 +149,10 @@ export const updateAnswer = (id, answer) => async (dispatch) => {
   }
 };
 
-export const deleteAnswerComment = (id2) => async (dispatch) => {
+export const deleteAnswerComment = (id) => async (dispatch) => {
   try {
-    await axios.delete(`/Api/answers/${id2}/comment/${id2}`);
-    dispatch({ type: DELETE_COMMENT, payload: id2 });
+    await axios.delete(`/Api/answers/${id}/comment/${id}`);
+    dispatch({ type: DELETE_COMMENT, payload: id });
   } catch (error) {
     console.log(error);
   }

@@ -2,36 +2,40 @@ import "./navbar.scss";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import FullscreenExitOutlinedIcon from "@mui/icons-material/FullscreenExitOutlined";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import { DarkModeContext } from "../../Context/darkModeContext";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Avatar, ChakraProvider } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import { HomeContext } from "../../Context/HomeContext";
+import LightModeIcon from '@mui/icons-material/LightMode';
+
 
 const Navbar = () => {
-  const { dispatch } = useContext(DarkModeContext);
-  const auth = useSelector(state => state.auth)
+  const {darkMode, dispatchMode } = useContext(DarkModeContext);
+  const auth = useSelector(state => state.auth);
+  const { currentLanguageCode} = useContext(HomeContext)
+  const [language, setLanguage ]=useState('')
 
+  useEffect(() => {
+    currentLanguageCode ==='fr' ? setLanguage('Français') : setLanguage('English')
+  }, [])
+  
 
   return (
     <div className="navbar_admin">
       <div className="wrapper_admin">
-        <div className="search">
-          
+        <div >   
         </div>
         <div className="items">
-          <div className="item mx-2">
-            <LanguageOutlinedIcon className="icon" />
-            English
+          <div className=" mx-2">
+            <LanguageOutlinedIcon />
+            {language}
           </div>
-          <div className="item mx-4">
-            <DarkModeOutlinedIcon
-              className="icon"
-              onClick={() => dispatch({ type: "TOGGLE" })}
-            />
+          <div className=" mx-4 " style={{cursor:'pointer'}} 
+              onClick={() => dispatchMode({ type: "TOGGLE" })}>
+          {darkMode ? <DarkModeOutlinedIcon/> : <LightModeIcon/> }
+        
+      
           </div>
       
      

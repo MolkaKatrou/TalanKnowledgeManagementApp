@@ -13,7 +13,7 @@ function AdminInput({ label, type, success, onKeyDown, labelclass, name, icon, o
         
         <input
           style={{ fontFamily: 'sans-serif' }}
-          className={(classnames("form-control admin-input", { "is-invalid": errors }, { "form-control is-valid": success }))}
+          className={(classnames("form-control admin-input dark", { "is-invalid": errors }, { "form-control is-valid": success }))}
           type={type}
           value={value}
           name={name}

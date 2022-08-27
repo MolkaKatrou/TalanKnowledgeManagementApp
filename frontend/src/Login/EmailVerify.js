@@ -49,7 +49,7 @@ const EmailVerify = () => {
         <>
             <Navbar />
         {validUrl ? (
-            <div className={styles.container}>
+            <div className={`${styles.container} backgroundColor`} style={{height:'87.6vh'}}>
                 <div className='main h-100 w-100' >
                     <div className='container h-100' >
                         <div className='row h-100'>
@@ -59,7 +59,7 @@ const EmailVerify = () => {
                                         {t(`Welcome`)} {`${firstname}`}, {t('Change your password for your account to be verified!')}
                                     </Alert>
                                     <div className='text-center mt-5'>
-                                        <h1 className='h2' style={{ color: 'rgb(8, 8, 126)',fontFamily:'PT Sans', fontWeight:'600' }}>{t('Set your password')}</h1>
+                                        <h1 className='h2' style={{ color: 'rgb(8, 8, 126)',fontFamily:'PT Sans', fontWeight:'600' }}>{t('Set Your Password')}</h1>
                                     </div>
 
                                     <div className='card mt-4' style={{backgroundColor:'#dfdfe9'}}>
@@ -68,7 +68,7 @@ const EmailVerify = () => {
                                               <form className='p-5' onSubmit={changePassword}>
                                                     <Passwordinput
                                                         name="password"
-                                                        placeholder={t("Enter your new password")}
+                                                        placeholder={t("Enter your password")}
                                                         icon="fa fa-key"
                                                         onChangeHandler={(e) => setPassword(e.target.value)}
                                                         errors={errors.password}

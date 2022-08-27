@@ -13,6 +13,8 @@ import { getAllQuestions } from "../../Redux/Actions/questionsActions";
 import { Button } from "semantic-ui-react";
 import { useContext } from "react";
 import { HomeContext } from "../../Context/HomeContext";
+import { ChakraProvider } from "@chakra-ui/react";
+import PostsLoading from "../../Components/PostsLoading";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -36,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function CategoryQA() {
-  const {t,openModal,showAlert} = useContext(HomeContext)
+  const { t, openModal, showAlert, loading } = useContext(HomeContext)
   const { id } = useParams();
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -76,14 +78,14 @@ export default function CategoryQA() {
 
   return (
     <Home>
-      <Container className={classes.container}>
+      <Container className={`${classes.container} backgroundColor`}>
         {QuestionsList.loading ?
           < CircularProgress size="3em" elevation={4} className={classes.loadingPaper} />
           :
 
           filteredCategories.map((category, index) => (
             <Grid category={category._id}>
-            <CategoryBanner category={category} />
+              <CategoryBanner category={category} />
             </Grid>
           ))}
 
@@ -99,8 +101,8 @@ export default function CategoryQA() {
               <p>{`${filteredQuestions.length} Question${filteredQuestions.length > 1 ? 's' : ''}`}</p>
               <div className="main-tabs">
                 <Button.Group>
-                  <Button onClick={()=> setLatest(true)}>{t('Latest')}</Button>
-                  <Button onClick={()=> setLatest(false)}>{t('Most popular')}</Button>
+                  <Button active={latest ? 'true' : ''} className="main-tabs-button" onClick={() => setLatest(true)}>{t('Latest')}</Button>
+                  <Button active={latest ? '' : 'true'} className="main-tabs-button" onClick={() => setLatest(false)}>{t('Most popular')}</Button>
                 </Button.Group>
               </div>
               <div className="main-filter-item">
@@ -111,9 +113,16 @@ export default function CategoryQA() {
             </div>
             <div className="questions">
 
-              <div className="question">
-                {latest ? renderLatestQuestions : renderTrendingQuestions}
-              </div>
+
+              {loading ?
+                <ChakraProvider>
+                  <PostsLoading />
+                </ChakraProvider> :
+                <div className="question">
+                  {latest ? renderLatestQuestions : renderTrendingQuestions}
+                </div>
+              }
+
 
             </div>
           </div>

@@ -11,7 +11,7 @@ import Moment from "react-moment";
 const QuestionsTable = ({rows, answers}) => {
 
   return (
-    <TableContainer component={Paper} className="table">
+    <TableContainer component={Paper} style={{backgroundColor:'rgba(241, 241, 241, 0.993)'}} className="table">
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -22,7 +22,7 @@ const QuestionsTable = ({rows, answers}) => {
             <TableCell className="tableCell">Bookmarks</TableCell>
             <TableCell className="tableCell">Answers</TableCell>
             <TableCell className="tableCell">Created On</TableCell>
-            <TableCell className="tableCell" style={{backgroundColor:'#D7DAC8'}}>Updated On</TableCell>
+            <TableCell className="tableCell" style={{backgroundColor:'rgba(186, 191, 196, 0.993)'}}>Updated On</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -41,7 +41,7 @@ const QuestionsTable = ({rows, answers}) => {
               <TableCell className="tableCell"><div className='mx-4'>{row?.bookmarks?.length}</div></TableCell>
               <TableCell className="tableCell"><div className='mx-3'>{answers.filter(a=> a.question === row._id).length}</div></TableCell>
               <TableCell className="tableCell">{row.createdAt.substr(0,10)}</TableCell>
-              <TableCell className="tableCell" style={{backgroundColor:'#D7DAC8'}}>
+              <TableCell className="tableCell" style={{backgroundColor:'rgba(186, 191, 196, 0.993)'}}>
                 {row.createdAt === row.updated_At ? '---':   row.updated_At.substr(0,10) }
              
               </TableCell>
